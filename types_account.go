@@ -1,0 +1,298 @@
+package transcdr
+
+import (
+	"encoding/json"
+	"time"
+)
+
+// Scopes an API key can carry, besides "*".
+var Scopes = []string{
+	"jobs:read", "jobs:write", "assets:read", "assets:write", "presets:read", "presets:write",
+	"webhooks:read", "webhooks:write", "usage:read", "billing:read", "billing:write", "keys:read", "keys:write",
+	"org:read", "org:write", "connections:read", "connections:write", "automations:read", "automations:write",
+}
+
+// APIKey is a secret API key.
+type APIKey struct {
+	ID     string   `json:"id"`
+	Name   string   `json:"name"`
+	Prefix string   `json:"prefix"`
+	Scopes []string `json:"scopes"`
+	// Mode is live or test.
+	Mode       string     `json:"mode"`
+	LastUsedAt *time.Time `json:"last_used_at"`
+	ExpiresAt  *time.Time `json:"expires_at"`
+	CreatedAt  time.Time  `json:"created_at"`
+	// Secret is present only in the create response.
+	Secret *string `json:"secret,omitempty"`
+}
+
+// APIKeyCreateParams create a key.
+type APIKeyCreateParams struct {
+	Name string `json:"name"`
+	// Scopes default to ["*"]; a key cannot grant more than the key creating it.
+	Scopes []string `json:"scopes,omitempty"`
+	// Mode is live (default) or test.
+	Mode      string     `json:"mode,omitempty"`
+	ExpiresAt *time.Time `json:"expires_at,omitempty"`
+}
+
+// Organization is an organization.
+type Organization struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+	Slug string `json:"slug"`
+	// Plan is the plan id, e.g. starter.
+	Plan         string  `json:"plan"`
+	BillingEmail *string `json:"billing_email"`
+	// JobWebhookSecret signs per-job webhook_url deliveries; returned only to
+	// owners and admins holding org:write.
+	JobWebhookSecret *string `json:"job_webhook_secret,omitempty"`
+	// PlanDetails is the full plan.
+	PlanDetails *Plan `json:"plan_details,omitempty"`
+	// Suspended organizations cannot create jobs.
+	Suspended *bool     `json:"suspended,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+// OrganizationUpdateParams change the organization (owners and admins).
+type OrganizationUpdateParams struct {
+	Name         *string `json:"name,omitempty"`
+	BillingEmail *string `json:"billing_email,omitempty"`
+}
+
+// OrganizationCreateParams create an organization owned by the caller.
+type OrganizationCreateParams struct {
+	Name string `json:"name"`
+}
+
+// Roles.
+const (
+	RoleOwner  = "owner"
+	RoleAdmin  = "admin"
+	RoleMember = "member"
+)
+
+// User is a user, with their role in the organization.
+type User struct {
+	ID             string    `json:"id"`
+	Name           string    `json:"name"`
+	Email          string    `json:"email"`
+	Role           string    `json:"role"`
+	OrganizationID string    `json:"organization_id"`
+	CreatedAt      time.Time `json:"created_at"`
+}
+
+// MemberCreateParams add a member. An existing user's email gives them
+// access (Name and Password are refused); an unknown email creates the user,
+// and then Name and Password are required.
+type MemberCreateParams struct {
+	Email    string `json:"email"`
+	Role     string `json:"role"`
+	Name     string `json:"name,omitempty"`
+	Password string `json:"password,omitempty"`
+}
+
+// MembershipOrganization is the organization of a [Membership].
+type MembershipOrganization struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+	Slug string `json:"slug"`
+	Plan string `json:"plan"`
+}
+
+// Membership is an organization the user belongs to, with their role there.
+type Membership struct {
+	Organization MembershipOrganization `json:"organization"`
+	Role         string                 `json:"role"`
+	CreatedAt    time.Time              `json:"created_at"`
+}
+
+// RegisterParams create a user and an organization.
+type RegisterParams struct {
+	Name             string `json:"name"`
+	Email            string `json:"email"`
+	Password         string `json:"password"`
+	OrganizationName string `json:"organization_name"`
+}
+
+// LoginParams sign in.
+type LoginParams struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+	// OrganizationID picks the organization; by default the one used last.
+	OrganizationID string `json:"organization_id,omitempty"`
+}
+
+// ChangePasswordParams change the signed-in user's password.
+type ChangePasswordParams struct {
+	CurrentPassword string `json:"current_password"`
+	NewPassword     string `json:"new_password"`
+}
+
+// AuthResponse is a session.
+type AuthResponse struct {
+	// Token is a session token; the client does not store it (see
+	// [Client.SetAPIKey]).
+	Token        string       `json:"token"`
+	User         User         `json:"user"`
+	Organization Organization `json:"organization"`
+	// Organizations are every organization the user belongs to.
+	Organizations []Membership `json:"organizations"`
+}
+
+// Me is the caller.
+type Me struct {
+	// User is nil for API keys.
+	User          *User        `json:"user"`
+	Organization  Organization `json:"organization"`
+	Organizations []Membership `json:"organizations"`
+	// APIKey is the key in use, for API keys.
+	APIKey *APIKey  `json:"api_key,omitempty"`
+	Scopes []string `json:"scopes"`
+	// Livemode is false for test-mode keys.
+	Livemode *bool `json:"livemode,omitempty"`
+}
+
+// Announcement kinds.
+const (
+	AnnouncementChangelog     = "changelog"
+	AnnouncementServiceCredit = "service_credit"
+)
+
+// AnnouncementLink is a call to action; a URL that is a path is on the
+// dashboard.
+type AnnouncementLink struct {
+	Label string `json:"label"`
+	URL   string `json:"url"`
+}
+
+// ServiceCredit is what an incident's credit gave back.
+type ServiceCredit struct {
+	IncidentID string  `json:"incident_id"`
+	AmountUSD  float64 `json:"amount_usd"`
+	// Multiplier is how many times the affected charges were credited.
+	Multiplier float64   `json:"multiplier"`
+	Jobs       []string  `json:"jobs"`
+	AppliedAt  time.Time `json:"applied_at"`
+}
+
+// Announcement is a changelog entry or a service-credit notice.
+type Announcement struct {
+	ID string `json:"id"`
+	// Kind is changelog or service_credit.
+	Kind  string `json:"kind"`
+	Title string `json:"title"`
+	// Body is Markdown.
+	Body string `json:"body"`
+	// PublishedAt is nil for a draft (operator console only).
+	PublishedAt *time.Time        `json:"published_at"`
+	Link        *AnnouncementLink `json:"link"`
+	Tags        []string          `json:"tags"`
+	Credit      *ServiceCredit    `json:"credit"`
+	// Seen is always false for API keys.
+	Seen   bool       `json:"seen"`
+	SeenAt *time.Time `json:"seen_at"`
+}
+
+// AnnouncementListParams filter announcements.
+type AnnouncementListParams struct {
+	// Unseen returns only what the signed-in user has not seen.
+	Unseen bool
+	// Kind is changelog or service_credit.
+	Kind  string
+	Limit int
+}
+
+// CapabilityCodec is an output codec the service offers.
+type CapabilityCodec struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Default     bool   `json:"default"`
+	HDR         bool   `json:"hdr"`
+	BitDepths   []int  `json:"bit_depths"`
+	RoyaltyFree bool   `json:"royalty_free"`
+}
+
+// CapabilityMode is an output mode the service offers.
+type CapabilityMode struct {
+	ID          string `json:"id"`
+	Description string `json:"description"`
+}
+
+// Capabilities are what the service supports.
+type Capabilities struct {
+	Codecs           []CapabilityCodec `json:"codecs"`
+	Modes            []CapabilityMode  `json:"modes"`
+	Audio            []string          `json:"audio"`
+	BitDepth         []string          `json:"bit_depth"`
+	Color            []string          `json:"color"`
+	QualityTargets   []string          `json:"quality_targets"`
+	Filters          []string          `json:"filters"`
+	InputContainers  []string          `json:"input_containers"`
+	InputVideoCodecs []string          `json:"input_video_codecs"`
+	InputAudioCodecs []string          `json:"input_audio_codecs"`
+	// Limits are the spec limits, e.g. max_width and segment_seconds.
+	Limits        json.RawMessage `json:"limits"`
+	SystemPresets []Preset        `json:"system_presets"`
+	raw           json.RawMessage
+}
+
+// Raw is the whole response, including fields newer than this SDK.
+func (c *Capabilities) Raw() json.RawMessage { return c.raw }
+
+// UnmarshalJSON decodes and keeps the raw response.
+func (c *Capabilities) UnmarshalJSON(b []byte) error {
+	type plain Capabilities
+	var p plain
+	if err := json.Unmarshal(b, &p); err != nil {
+		return err
+	}
+	*c = Capabilities(p)
+	c.raw = append(json.RawMessage(nil), b...)
+	return nil
+}
+
+// Status is the service status.
+type Status struct {
+	// Status is operational or degraded.
+	Status string `json:"status"`
+	// QueueDepth is jobs waiting to start.
+	QueueDepth int64 `json:"queue_depth"`
+	// RunningJobs is jobs being processed.
+	RunningJobs int64  `json:"running_jobs"`
+	Version     string `json:"version,omitempty"`
+}
+
+// StatsTotals are all-time counters.
+type StatsTotals struct {
+	JobsCompleted       int64   `json:"jobs_completed"`
+	OutputMinutes       float64 `json:"output_minutes"`
+	SourceMinutes       float64 `json:"source_minutes"`
+	BytesDelivered      int64   `json:"bytes_delivered"`
+	RenditionsDelivered int64   `json:"renditions_delivered"`
+	Customers           int64   `json:"customers"`
+}
+
+// StatsDay is one day of stats.
+type StatsDay struct {
+	Date          string  `json:"date"`
+	JobsCompleted int64   `json:"jobs_completed"`
+	OutputMinutes float64 `json:"output_minutes"`
+}
+
+// Stats are public, cached platform-wide counters.
+type Stats struct {
+	Since     time.Time   `json:"since"`
+	UpdatedAt time.Time   `json:"updated_at"`
+	Totals    StatsTotals `json:"totals"`
+	Last24h   struct {
+		JobsCompleted int64   `json:"jobs_completed"`
+		OutputMinutes float64 `json:"output_minutes"`
+	} `json:"last_24h"`
+	Last30d *struct {
+		ActiveCustomers int64 `json:"active_customers"`
+	} `json:"last_30d,omitempty"`
+	// Daily is the last 30 days, oldest first.
+	Daily []StatsDay `json:"daily"`
+}

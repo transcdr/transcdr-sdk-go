@@ -1,0 +1,172 @@
+{
+  "daily": [
+    {
+      "date": "2026-08-29",
+      "jobs_completed": 0,
+      "output_minutes": 0.0
+    },
+    {
+      "date": "2026-08-30",
+      "jobs_completed": 0,
+      "output_minutes": 0.0
+    },
+    {
+      "date": "2026-08-31",
+      "jobs_completed": 0,
+      "output_minutes": 0.0
+    },
+    {
+      "date": "2026-09-01",
+      "jobs_completed": 0,
+      "output_minutes": 0.0
+    },
+    {
+      "date": "2026-09-02",
+      "jobs_completed": 0,
+      "output_minutes": 0.0
+    },
+    {
+      "date": "2026-09-03",
+      "jobs_completed": 0,
+      "output_minutes": 0.0
+    },
+    {
+      "date": "2026-09-04",
+      "jobs_completed": 0,
+      "output_minutes": 0.0
+    },
+    {
+      "date": "2026-09-05",
+      "jobs_completed": 0,
+      "output_minutes": 0.0
+    },
+    {
+      "date": "2026-09-06",
+      "jobs_completed": 0,
+      "output_minutes": 0.0
+    },
+    {
+      "date": "2026-09-07",
+      "jobs_completed": 0,
+      "output_minutes": 0.0
+    },
+    {
+      "date": "2026-09-08",
+      "jobs_completed": 0,
+      "output_minutes": 0.0
+    },
+    {
+      "date": "2026-09-09",
+      "jobs_completed": 0,
+      "output_minutes": 0.0
+    },
+    {
+      "date": "2026-09-10",
+      "jobs_completed": 0,
+      "output_minutes": 0.0
+    },
+    {
+      "date": "2026-09-11",
+      "jobs_completed": 0,
+      "output_minutes": 0.0
+    },
+    {
+      "date": "2026-09-12",
+      "jobs_completed": 0,
+      "output_minutes": 0.0
+    },
+    {
+      "date": "2026-09-13",
+      "jobs_completed": 0,
+      "output_minutes": 0.0
+    },
+    {
+      "date": "2026-09-14",
+      "jobs_completed": 0,
+      "output_minutes": 0.0
+    },
+    {
+      "date": "2026-09-15",
+      "jobs_completed": 0,
+      "output_minutes": 0.0
+    },
+    {
+      "date": "2026-09-16",
+      "jobs_completed": 0,
+      "output_minutes": 0.0
+    },
+    {
+      "date": "2026-09-17",
+      "jobs_completed": 0,
+      "output_minutes": 0.0
+    },
+    {
+      "date": "2026-09-18",
+      "jobs_completed": 0,
+      "output_minutes": 0.0
+    },
+    {
+      "date": "2026-09-19",
+      "jobs_completed": 0,
+      "output_minutes": 0.0
+    },
+    {
+      "date": "2026-09-20",
+      "jobs_completed": 0,
+      "output_minutes": 0.0
+    },
+    {
+      "date": "2026-09-21",
+      "jobs_completed": 0,
+      "output_minutes": 0.0
+    },
+    {
+      "date": "2026-09-22",
+      "jobs_completed": 0,
+      "output_minutes": 0.0
+    },
+    {
+      "date": "2026-09-23",
+      "jobs_completed": 0,
+      "output_minutes": 0.0
+    },
+    {
+      "date": "2026-09-24",
+      "jobs_completed": 0,
+      "output_minutes": 0.0
+    },
+    {
+      "date": "2026-09-25",
+      "jobs_completed": 0,
+      "output_minutes": 0.0
+    },
+    {
+      "date": "2026-09-26",
+      "jobs_completed": 15,
+      "output_minutes": 256.17
+    },
+    {
+      "date": "2026-09-27",
+      "jobs_completed": 20,
+      "output_minutes": 29.7
+    }
+  ],
+  "last_24h": {
+    "jobs_completed": 35,
+    "output_minutes": 285.87
+  },
+  "last_30d": {
+    "active_customers": 2
+  },
+  "object": "stats",
+  "since": "2026-09-26T08:51:37.183962Z",
+  "totals": {
+    "bytes_delivered": 7855589286,
+    "customers": 3,
+    "jobs_completed": 35,
+    "output_minutes": 285.87,
+    "renditions_delivered": 94,
+    "source_minutes": 67.57
+  },
+  "updated_at": "2026-09-27T06:47:07.476374013Z"
+}

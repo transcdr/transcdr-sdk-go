@@ -1,0 +1,107 @@
+{
+  "data": [
+    {
+      "amount_usd": -0.002789,
+      "bucket": "mixed",
+      "created_at": "2026-09-27T05:48:36.369211Z",
+      "description": "Job job_zTyZl9x2xJzbyp8ScuyQRm",
+      "id": "ctx_qafOnOZ9r8sxTLY7W0ZKns",
+      "job_id": "job_zTyZl9x2xJzbyp8ScuyQRm",
+      "kind": "usage",
+      "object": "credit_transaction"
+    },
+    {
+      "amount_usd": -0.007334,
+      "bucket": "mixed",
+      "created_at": "2026-09-27T05:17:53.932490Z",
+      "description": "Job job_lei0nJycWUDlTSTU0xp1EJ",
+      "id": "ctx_2X3vR4JtgcDu6gIRXBh35e",
+      "job_id": "job_lei0nJycWUDlTSTU0xp1EJ",
+      "kind": "usage",
+      "object": "credit_transaction"
+    },
+    {
+      "amount_usd": 0.04602,
+      "bucket": "purchased",
+      "created_at": "2026-09-27T01:44:35.950845Z",
+      "description": "Service credit: Audio missing from camera recordings (3 jobs, 3\u00d7 their cost)",
+      "id": "ctx_WFvI3FSSPsepqJUO9Xim97",
+      "job_id": null,
+      "kind": "service_credit",
+      "object": "credit_transaction"
+    },
+    {
+      "amount_usd": -0.002789,
+      "bucket": "mixed",
+      "created_at": "2026-09-27T01:43:48.435746Z",
+      "description": "Job job_Zlwif1p7nBycseUQmhneoE",
+      "id": "ctx_MjKf3ngz9dyoAjTKPgVehW",
+      "job_id": "job_Zlwif1p7nBycseUQmhneoE",
+      "kind": "usage",
+      "object": "credit_transaction"
+    },
+    {
+      "amount_usd": -0.002789,
+      "bucket": "mixed",
+      "created_at": "2026-09-27T01:42:59.523096Z",
+      "description": "Job job_lSH62nfJglQdipuqdOkZUP",
+      "id": "ctx_XCbUEuwDASm21yMCGpwS9m",
+      "job_id": "job_lSH62nfJglQdipuqdOkZUP",
+      "kind": "usage",
+      "object": "credit_transaction"
+    },
+    {
+      "amount_usd": -0.046714,
+      "bucket": "mixed",
+      "created_at": "2026-09-27T01:29:12.161307Z",
+      "description": "Job job_obPu7B4XGKTXyeoEgXoAGC",
+      "id": "ctx_EGh2L05C8sd9e8YiJod5OF",
+      "job_id": "job_obPu7B4XGKTXyeoEgXoAGC",
+      "kind": "usage",
+      "object": "credit_transaction"
+    },
+    {
+      "amount_usd": -0.002789,
+      "bucket": "mixed",
+      "created_at": "2026-09-27T00:57:56.314853Z",
+      "description": "Job job_AHlGPCqMJE81comXxfcYmz",
+      "id": "ctx_6XST1cYQn0k011TND2cE6R",
+      "job_id": "job_AHlGPCqMJE81comXxfcYmz",
+      "kind": "usage",
+      "object": "credit_transaction"
+    },
+    {
+      "amount_usd": -0.0015,
+      "bucket": "mixed",
+      "created_at": "2026-09-27T00:52:26.222025Z",
+      "description": "Job job_ZIbNKfl151quJhWYUV1Bnt",
+      "id": "ctx_mUhb6zauzxl2ngNfEw2Ddq",
+      "job_id": "job_ZIbNKfl151quJhWYUV1Bnt",
+      "kind": "usage",
+      "object": "credit_transaction"
+    },
+    {
+      "amount_usd": -0.009762,
+      "bucket": "mixed",
+      "created_at": "2026-09-27T00:52:26.062943Z",
+      "description": "Job job_RTfgosfhU0eawWJLuYgdx7",
+      "id": "ctx_zQV0CsFAhILHP6OualqmFF",
+      "job_id": "job_RTfgosfhU0eawWJLuYgdx7",
+      "kind": "usage",
+      "object": "credit_transaction"
+    },
+    {
+      "amount_usd": -0.000834,
+      "bucket": "mixed",
+      "created_at": "2026-09-26T18:09:34.796270Z",
+      "description": "Job job_r5hLuvRfHEI4AUB6kIQKbJ",
+      "id": "ctx_IVhi0DoVlnizYVbnlVB3QG",
+      "job_id": "job_r5hLuvRfHEI4AUB6kIQKbJ",
+      "kind": "usage",
+      "object": "credit_transaction"
+    }
+  ],
+  "has_more": false,
+  "next_cursor": null,
+  "object": "list"
+}

@@ -1,0 +1,80 @@
+{
+  "data": [
+    {
+      "created_at": "2026-09-27T05:46:10.314950Z",
+      "data": {
+        "kind": "transcode",
+        "livemode": true
+      },
+      "message": "Job created",
+      "object": "job_event",
+      "type": "created"
+    },
+    {
+      "created_at": "2026-09-27T05:46:11.950797Z",
+      "data": {
+        "attempt": 1
+      },
+      "message": "Queued for processing (attempt 1)",
+      "object": "job_event",
+      "type": "scheduled"
+    },
+    {
+      "created_at": "2026-09-27T05:48:30.947323Z",
+      "data": {
+        "attempt": 1
+      },
+      "message": "Processing started",
+      "object": "job_event",
+      "type": "started"
+    },
+    {
+      "created_at": "2026-09-27T05:48:31.486862Z",
+      "data": {
+        "audio": [
+          {
+            "channels": 1,
+            "codec": "aac",
+            "language": null,
+            "sample_rate": 48000
+          }
+        ],
+        "bit_depth": 8,
+        "container": "mp4",
+        "duration": 16.733333000000002,
+        "frame_rate": 30.00000059760957,
+        "hdr": false,
+        "height": 1200,
+        "pixel_format": "Yuv420p",
+        "rotation": 0,
+        "size_bytes": 1853328,
+        "subtitles": [],
+        "video_codec": "h264",
+        "width": 1600
+      },
+      "message": "Analyzed input: h264 1600x1200, 16.7 s",
+      "object": "job_event",
+      "type": "probed"
+    },
+    {
+      "created_at": "2026-09-27T05:48:35.897939Z",
+      "data": {},
+      "message": "Finalizing outputs",
+      "object": "job_event",
+      "type": "uploading"
+    },
+    {
+      "created_at": "2026-09-27T05:48:36.390038Z",
+      "data": {
+        "elapsed_ms": 5382,
+        "outputs": 1
+      },
+      "message": "Completed in 5.4s: 1 output(s), 0.28 billable minutes",
+      "object": "job_event",
+      "type": "completed"
+    }
+  ],
+  "has_more": false,
+  "next_cursor": null,
+  "object": "list"
+}

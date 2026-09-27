@@ -1,0 +1,33 @@
+{
+  "data": [
+    {
+      "currency": "usd",
+      "id": "inv_U1d2iZUToe4s2TCdZmqta0",
+      "lines": [
+        {
+          "credit_usd": 0.04602,
+          "date": "2026-09-27T01:44:35.950845Z",
+          "description": "Service credit: Audio missing from camera recordings (3 jobs, 3\u00d7 their cost)",
+          "kind": "service_credit"
+        },
+        {
+          "credit_usd": -0.0773,
+          "description": "Transcoding drawn from credit",
+          "kind": "usage",
+          "quantity": 263.84,
+          "unit": "output_minute"
+        }
+      ],
+      "object": "statement",
+      "period": "2026-09",
+      "period_end": "2026-10-01T00:00:00Z",
+      "period_start": "2026-09-01T00:00:00Z",
+      "status": "open",
+      "usage_cents": 8,
+      "usage_minutes": 263.84
+    }
+  ],
+  "has_more": false,
+  "next_cursor": null,
+  "object": "list"
+}

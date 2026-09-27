@@ -1,0 +1,236 @@
+{
+  "by_codec": {
+    "av1": 113.84,
+    "h264": 75.0,
+    "h265": 75.0
+  },
+  "by_tier": {
+    "hd": 111.61,
+    "sd": 151.94,
+    "uhd": 0.29
+  },
+  "from": "2026-08-29",
+  "granularity": "day",
+  "object": "usage",
+  "series": [
+    {
+      "amount_cents": 0,
+      "amount_usd": 0.0,
+      "billable_minutes": 0.0,
+      "date": "2026-08-29",
+      "jobs": 0
+    },
+    {
+      "amount_cents": 0,
+      "amount_usd": 0.0,
+      "billable_minutes": 0.0,
+      "date": "2026-08-30",
+      "jobs": 0
+    },
+    {
+      "amount_cents": 0,
+      "amount_usd": 0.0,
+      "billable_minutes": 0.0,
+      "date": "2026-08-31",
+      "jobs": 0
+    },
+    {
+      "amount_cents": 0,
+      "amount_usd": 0.0,
+      "billable_minutes": 0.0,
+      "date": "2026-09-01",
+      "jobs": 0
+    },
+    {
+      "amount_cents": 0,
+      "amount_usd": 0.0,
+      "billable_minutes": 0.0,
+      "date": "2026-09-02",
+      "jobs": 0
+    },
+    {
+      "amount_cents": 0,
+      "amount_usd": 0.0,
+      "billable_minutes": 0.0,
+      "date": "2026-09-03",
+      "jobs": 0
+    },
+    {
+      "amount_cents": 0,
+      "amount_usd": 0.0,
+      "billable_minutes": 0.0,
+      "date": "2026-09-04",
+      "jobs": 0
+    },
+    {
+      "amount_cents": 0,
+      "amount_usd": 0.0,
+      "billable_minutes": 0.0,
+      "date": "2026-09-05",
+      "jobs": 0
+    },
+    {
+      "amount_cents": 0,
+      "amount_usd": 0.0,
+      "billable_minutes": 0.0,
+      "date": "2026-09-06",
+      "jobs": 0
+    },
+    {
+      "amount_cents": 0,
+      "amount_usd": 0.0,
+      "billable_minutes": 0.0,
+      "date": "2026-09-07",
+      "jobs": 0
+    },
+    {
+      "amount_cents": 0,
+      "amount_usd": 0.0,
+      "billable_minutes": 0.0,
+      "date": "2026-09-08",
+      "jobs": 0
+    },
+    {
+      "amount_cents": 0,
+      "amount_usd": 0.0,
+      "billable_minutes": 0.0,
+      "date": "2026-09-09",
+      "jobs": 0
+    },
+    {
+      "amount_cents": 0,
+      "amount_usd": 0.0,
+      "billable_minutes": 0.0,
+      "date": "2026-09-10",
+      "jobs": 0
+    },
+    {
+      "amount_cents": 0,
+      "amount_usd": 0.0,
+      "billable_minutes": 0.0,
+      "date": "2026-09-11",
+      "jobs": 0
+    },
+    {
+      "amount_cents": 0,
+      "amount_usd": 0.0,
+      "billable_minutes": 0.0,
+      "date": "2026-09-12",
+      "jobs": 0
+    },
+    {
+      "amount_cents": 0,
+      "amount_usd": 0.0,
+      "billable_minutes": 0.0,
+      "date": "2026-09-13",
+      "jobs": 0
+    },
+    {
+      "amount_cents": 0,
+      "amount_usd": 0.0,
+      "billable_minutes": 0.0,
+      "date": "2026-09-14",
+      "jobs": 0
+    },
+    {
+      "amount_cents": 0,
+      "amount_usd": 0.0,
+      "billable_minutes": 0.0,
+      "date": "2026-09-15",
+      "jobs": 0
+    },
+    {
+      "amount_cents": 0,
+      "amount_usd": 0.0,
+      "billable_minutes": 0.0,
+      "date": "2026-09-16",
+      "jobs": 0
+    },
+    {
+      "amount_cents": 0,
+      "amount_usd": 0.0,
+      "billable_minutes": 0.0,
+      "date": "2026-09-17",
+      "jobs": 0
+    },
+    {
+      "amount_cents": 0,
+      "amount_usd": 0.0,
+      "billable_minutes": 0.0,
+      "date": "2026-09-18",
+      "jobs": 0
+    },
+    {
+      "amount_cents": 0,
+      "amount_usd": 0.0,
+      "billable_minutes": 0.0,
+      "date": "2026-09-19",
+      "jobs": 0
+    },
+    {
+      "amount_cents": 0,
+      "amount_usd": 0.0,
+      "billable_minutes": 0.0,
+      "date": "2026-09-20",
+      "jobs": 0
+    },
+    {
+      "amount_cents": 0,
+      "amount_usd": 0.0,
+      "billable_minutes": 0.0,
+      "date": "2026-09-21",
+      "jobs": 0
+    },
+    {
+      "amount_cents": 0,
+      "amount_usd": 0.0,
+      "billable_minutes": 0.0,
+      "date": "2026-09-22",
+      "jobs": 0
+    },
+    {
+      "amount_cents": 0,
+      "amount_usd": 0.0,
+      "billable_minutes": 0.0,
+      "date": "2026-09-23",
+      "jobs": 0
+    },
+    {
+      "amount_cents": 0,
+      "amount_usd": 0.0,
+      "billable_minutes": 0.0,
+      "date": "2026-09-24",
+      "jobs": 0
+    },
+    {
+      "amount_cents": 0,
+      "amount_usd": 0.0,
+      "billable_minutes": 0.0,
+      "date": "2026-09-25",
+      "jobs": 0
+    },
+    {
+      "amount_cents": 1,
+      "amount_usd": 0.000834,
+      "billable_minutes": 256.17,
+      "date": "2026-09-26",
+      "jobs": 25
+    },
+    {
+      "amount_cents": 8,
+      "amount_usd": 0.076466,
+      "billable_minutes": 7.67,
+      "date": "2026-09-27",
+      "jobs": 8
+    }
+  ],
+  "to": "2026-09-27",
+  "totals": {
+    "amount_cents": 8,
+    "amount_usd": 0.0773,
+    "billable_minutes": 263.84,
+    "input_minutes": 62.12,
+    "jobs": 33,
+    "output_bytes": 7228248668
+  }
+}

@@ -1,0 +1,371 @@
+{
+  "data": [
+    {
+      "created_at": null,
+      "description": "One faststart MP4, AV1 + Opus at 1080p. Plays in every modern browser.",
+      "id": "web-av1-1080p",
+      "metadata": {},
+      "name": "Web AV1 1080p",
+      "object": "preset",
+      "output": {
+        "audio": {
+          "mode": "auto"
+        },
+        "bit_depth": "auto",
+        "codec": "av1",
+        "color": "sdr",
+        "filters": null,
+        "gop": null,
+        "ladder": null,
+        "max_fps": null,
+        "mode": "single",
+        "quality": {
+          "target": "standard"
+        },
+        "renditions": [
+          {
+            "height": 1080,
+            "width": 1920
+          }
+        ],
+        "segment_seconds": null,
+        "subtitles": null,
+        "trim": null
+      },
+      "slug": "web-av1-1080p",
+      "system": true,
+      "updated_at": null
+    },
+    {
+      "created_at": null,
+      "description": "One faststart MP4, AV1 + Opus at 720p \u2014 small files for previews and feeds.",
+      "id": "web-av1-720p",
+      "metadata": {},
+      "name": "Web AV1 720p",
+      "object": "preset",
+      "output": {
+        "audio": {
+          "mode": "auto"
+        },
+        "bit_depth": "auto",
+        "codec": "av1",
+        "color": "sdr",
+        "filters": null,
+        "gop": null,
+        "ladder": null,
+        "max_fps": null,
+        "mode": "single",
+        "quality": {
+          "target": "standard"
+        },
+        "renditions": [
+          {
+            "height": 720,
+            "width": 1280
+          }
+        ],
+        "segment_seconds": null,
+        "subtitles": null,
+        "trim": null
+      },
+      "slug": "web-av1-720p",
+      "system": true,
+      "updated_at": null
+    },
+    {
+      "created_at": null,
+      "description": "A CMAF/HLS package with an automatic ABR ladder up to 1080p, 4-second segments.",
+      "id": "hls-av1-abr",
+      "metadata": {},
+      "name": "HLS AV1 adaptive ladder",
+      "object": "preset",
+      "output": {
+        "audio": {
+          "mode": "auto"
+        },
+        "bit_depth": "auto",
+        "codec": "av1",
+        "color": "sdr",
+        "filters": null,
+        "gop": null,
+        "ladder": {
+          "max_short_side": 1080
+        },
+        "max_fps": null,
+        "mode": "hls",
+        "quality": {
+          "target": "standard"
+        },
+        "renditions": [],
+        "segment_seconds": 4.0,
+        "subtitles": null,
+        "trim": null
+      },
+      "slug": "hls-av1-abr",
+      "system": true,
+      "updated_at": null
+    },
+    {
+      "created_at": null,
+      "description": "Maximum device reach: H.264 HLS at 1080p, 720p, 480p and 360p.",
+      "id": "hls-h264-abr",
+      "metadata": {},
+      "name": "HLS H.264 adaptive ladder",
+      "object": "preset",
+      "output": {
+        "audio": {
+          "mode": "auto"
+        },
+        "bit_depth": "auto",
+        "codec": "h264",
+        "color": "sdr",
+        "filters": null,
+        "gop": null,
+        "ladder": null,
+        "max_fps": null,
+        "mode": "hls",
+        "quality": {
+          "target": "standard"
+        },
+        "renditions": [
+          {
+            "height": 1080,
+            "width": 1920
+          },
+          {
+            "height": 720,
+            "width": 1280
+          },
+          {
+            "height": 480,
+            "width": 854
+          },
+          {
+            "height": 360,
+            "width": 640
+          }
+        ],
+        "segment_seconds": 6.0,
+        "subtitles": null,
+        "trim": null
+      },
+      "slug": "hls-h264-abr",
+      "system": true,
+      "updated_at": null
+    },
+    {
+      "created_at": null,
+      "description": "H.264 in MP4 for legacy players, set-top boxes and editing tools.",
+      "id": "mp4-h264-compat-1080p",
+      "metadata": {},
+      "name": "MP4 H.264 compatibility 1080p",
+      "object": "preset",
+      "output": {
+        "audio": {
+          "mode": "auto"
+        },
+        "bit_depth": "8bit",
+        "codec": "h264",
+        "color": "sdr",
+        "filters": null,
+        "gop": null,
+        "ladder": null,
+        "max_fps": null,
+        "mode": "single",
+        "quality": {
+          "target": "high"
+        },
+        "renditions": [
+          {
+            "height": 1080,
+            "width": 1920
+          }
+        ],
+        "segment_seconds": null,
+        "subtitles": null,
+        "trim": null
+      },
+      "slug": "mp4-h264-compat-1080p",
+      "system": true,
+      "updated_at": null
+    },
+    {
+      "created_at": null,
+      "description": "HEVC in MP4 for Apple ecosystems and smart TVs.",
+      "id": "mp4-h265-1080p",
+      "metadata": {},
+      "name": "MP4 H.265 1080p",
+      "object": "preset",
+      "output": {
+        "audio": {
+          "mode": "auto"
+        },
+        "bit_depth": "auto",
+        "codec": "h265",
+        "color": "sdr",
+        "filters": null,
+        "gop": null,
+        "ladder": null,
+        "max_fps": null,
+        "mode": "single",
+        "quality": {
+          "target": "high"
+        },
+        "renditions": [
+          {
+            "height": 1080,
+            "width": 1920
+          }
+        ],
+        "segment_seconds": null,
+        "subtitles": null,
+        "trim": null
+      },
+      "slug": "mp4-h265-1080p",
+      "system": true,
+      "updated_at": null
+    },
+    {
+      "created_at": null,
+      "description": "Keep HDR: AV1 10-bit BT.2020 PQ at 2160p. Needs a paid plan.",
+      "id": "hdr10-av1-2160p",
+      "metadata": {},
+      "name": "HDR10 AV1 4K",
+      "object": "preset",
+      "output": {
+        "audio": {
+          "mode": "auto"
+        },
+        "bit_depth": "10bit",
+        "codec": "av1",
+        "color": "hdr10",
+        "filters": null,
+        "gop": null,
+        "ladder": null,
+        "max_fps": null,
+        "mode": "single",
+        "quality": {
+          "target": "high"
+        },
+        "renditions": [
+          {
+            "height": 2160,
+            "width": 3840
+          }
+        ],
+        "segment_seconds": null,
+        "subtitles": null,
+        "trim": null
+      },
+      "slug": "hdr10-av1-2160p",
+      "system": true,
+      "updated_at": null
+    },
+    {
+      "created_at": null,
+      "description": "Portrait 9:16 for shorts, reels and stories, capped at 30 fps.",
+      "id": "social-vertical-1080x1920",
+      "metadata": {},
+      "name": "Social vertical 1080\u00d71920",
+      "object": "preset",
+      "output": {
+        "audio": {
+          "mode": "auto"
+        },
+        "bit_depth": "auto",
+        "codec": "h264",
+        "color": "sdr",
+        "filters": null,
+        "gop": null,
+        "ladder": null,
+        "max_fps": 30.0,
+        "mode": "single",
+        "quality": {
+          "target": "high"
+        },
+        "renditions": [
+          {
+            "height": 1920,
+            "width": 1080
+          }
+        ],
+        "segment_seconds": null,
+        "subtitles": null,
+        "trim": null
+      },
+      "slug": "social-vertical-1080x1920",
+      "system": true,
+      "updated_at": null
+    },
+    {
+      "created_at": null,
+      "description": "Video only \u2014 the audio track is dropped. For backgrounds and loops.",
+      "id": "audio-strip-av1-720p",
+      "metadata": {},
+      "name": "Silent AV1 720p",
+      "object": "preset",
+      "output": {
+        "audio": {
+          "mode": "drop"
+        },
+        "bit_depth": "auto",
+        "codec": "av1",
+        "color": "sdr",
+        "filters": null,
+        "gop": null,
+        "ladder": null,
+        "max_fps": null,
+        "mode": "single",
+        "quality": {
+          "target": "standard"
+        },
+        "renditions": [
+          {
+            "height": 720,
+            "width": 1280
+          }
+        ],
+        "segment_seconds": null,
+        "subtitles": null,
+        "trim": null
+      },
+      "slug": "audio-strip-av1-720p",
+      "system": true,
+      "updated_at": null
+    },
+    {
+      "created_at": null,
+      "description": "Source resolution, visually lossless AV1 \u2014 shrink a library without visible loss.",
+      "id": "archive-av1-high",
+      "metadata": {},
+      "name": "Archive AV1 (visually lossless)",
+      "object": "preset",
+      "output": {
+        "audio": {
+          "mode": "auto"
+        },
+        "bit_depth": "auto",
+        "codec": "av1",
+        "color": "sdr",
+        "filters": null,
+        "gop": null,
+        "ladder": null,
+        "max_fps": null,
+        "mode": "single",
+        "quality": {
+          "target": "visually_lossless"
+        },
+        "renditions": [],
+        "segment_seconds": null,
+        "subtitles": null,
+        "trim": null
+      },
+      "slug": "archive-av1-high",
+      "system": true,
+      "updated_at": null
+    }
+  ],
+  "has_more": false,
+  "next_cursor": null,
+  "object": "list"
+}

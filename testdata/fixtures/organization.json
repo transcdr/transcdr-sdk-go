@@ -1,0 +1,61 @@
+{
+  "billing_email": "person@example.com",
+  "created_at": "2026-09-26T08:51:37.183962Z",
+  "id": "org_e5WdNUXG8BaUD3HJ11ZNGV",
+  "job_webhook_secret": "redacted_job_webhook_secret",
+  "name": "Transcdr",
+  "object": "organization",
+  "plan": "enterprise",
+  "plan_details": {
+    "credit_value_ratio": null,
+    "currency": "usd",
+    "features": [
+      "api",
+      "hls",
+      "av1",
+      "h264",
+      "h265",
+      "test_mode",
+      "webhooks",
+      "presets",
+      "integrations",
+      "hdr",
+      "auto_recharge",
+      "priority_queue",
+      "team",
+      "sso",
+      "dedicated_capacity",
+      "sla",
+      "invoicing"
+    ],
+    "id": "enterprise",
+    "max_concurrent_jobs": 50,
+    "max_input_bytes": 214748364800,
+    "max_resolution": 4320,
+    "monthly_credit_cents": 0,
+    "name": "Enterprise",
+    "object": "plan",
+    "price_cents": null,
+    "priority": true,
+    "rates": {
+      "currency": "usd",
+      "hd": 0.01,
+      "sd": 0.005,
+      "tiers": {
+        "hd": "577p to 1440p",
+        "sd": "up to 576p",
+        "uhd": "above 1440p"
+      },
+      "uhd": 0.025,
+      "unit": "output_minute"
+    },
+    "requests_per_minute": 6000,
+    "retention_days": 90,
+    "subscription": false,
+    "tagline": "Committed volume, dedicated capacity, invoicing and an SLA.",
+    "trial_credit_cents": 0,
+    "trial_days": 0
+  },
+  "slug": "transcdr",
+  "suspended": false
+}

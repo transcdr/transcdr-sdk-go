@@ -1,0 +1,16 @@
+{
+  "data": [
+    {
+      "created_at": "2026-09-27T02:52:43.136803800Z",
+      "error": null,
+      "job_id": "job_hdHSxv0XVtbwdfEHlPqDSW",
+      "object": "automation_item",
+      "path": "fanout/b.mp4",
+      "size_bytes": 788493,
+      "status": "job_created"
+    }
+  ],
+  "has_more": false,
+  "next_cursor": null,
+  "object": "list"
+}

@@ -1,0 +1,199 @@
+{
+  "data": [
+    {
+      "capabilities": {
+        "destination": false,
+        "events": true,
+        "source": false,
+        "trigger": true,
+        "watch": false
+      },
+      "class": "messaging",
+      "config": {
+        "queue_url": "http://localhost:4566/000000000000/fanout-23391",
+        "region": "us-east-1"
+      },
+      "created_at": "2026-09-27T02:52:37.564879200Z",
+      "disabled_at": null,
+      "disabled_reason": null,
+      "enabled": true,
+      "failure_count": 0,
+      "id": "con_tPnA0CKgVVoSDXJiK5eMIC",
+      "kind": "sqs",
+      "last_checked_at": "2026-09-27T02:52:49.344593500Z",
+      "last_error": null,
+      "name": "fanout-23391",
+      "object": "connection",
+      "secrets_set": [
+        "access_key_id",
+        "secret_access_key"
+      ],
+      "status": "ok",
+      "updated_at": "2026-09-27T02:52:49.344596200Z"
+    },
+    {
+      "capabilities": {
+        "destination": false,
+        "events": true,
+        "source": false,
+        "trigger": true,
+        "watch": false
+      },
+      "class": "messaging",
+      "config": {
+        "queue_url": "http://localhost:4566/000000000000/direct-23391",
+        "region": "us-east-1"
+      },
+      "created_at": "2026-09-27T02:52:37.223606Z",
+      "disabled_at": null,
+      "disabled_reason": null,
+      "enabled": true,
+      "failure_count": 0,
+      "id": "con_2RlBD3f8eIBJpASg3Cixy8",
+      "kind": "sqs",
+      "last_checked_at": "2026-09-27T02:52:49.612347800Z",
+      "last_error": null,
+      "name": "direct-23391",
+      "object": "connection",
+      "secrets_set": [
+        "access_key_id",
+        "secret_access_key"
+      ],
+      "status": "ok",
+      "updated_at": "2026-09-27T02:52:49.612350Z"
+    },
+    {
+      "capabilities": {
+        "destination": true,
+        "events": false,
+        "source": true,
+        "trigger": false,
+        "watch": true
+      },
+      "class": "storage",
+      "config": {
+        "bucket": "media-23391",
+        "endpoint": "http://localhost:4566",
+        "kind": "s3",
+        "path_style": true,
+        "region": "us-east-1"
+      },
+      "created_at": "2026-09-27T02:52:36.877771200Z",
+      "disabled_at": null,
+      "disabled_reason": null,
+      "enabled": true,
+      "failure_count": 0,
+      "id": "con_4BQlcYLzMwxsWC1oUofAj2",
+      "kind": "s3",
+      "last_checked_at": "2026-09-27T02:52:36.889140400Z",
+      "last_error": null,
+      "name": "media-23391",
+      "object": "connection",
+      "secrets_set": [
+        "access_key_id",
+        "secret_access_key"
+      ],
+      "status": "ok",
+      "updated_at": "2026-09-27T02:52:36.877771200Z"
+    },
+    {
+      "capabilities": {
+        "destination": false,
+        "events": true,
+        "source": false,
+        "trigger": true,
+        "watch": false
+      },
+      "class": "messaging",
+      "config": {
+        "queue_url": "http://localhost:4566/000000000000/fanout-15743",
+        "region": "us-east-1"
+      },
+      "created_at": "2026-09-27T02:51:24.338274800Z",
+      "disabled_at": null,
+      "disabled_reason": null,
+      "enabled": true,
+      "failure_count": 0,
+      "id": "con_LBsc3RRWG0Bt29zshSQeiF",
+      "kind": "sqs",
+      "last_checked_at": "2026-09-27T02:51:35.805891100Z",
+      "last_error": null,
+      "name": "fanout-15743",
+      "object": "connection",
+      "secrets_set": [
+        "access_key_id",
+        "secret_access_key"
+      ],
+      "status": "ok",
+      "updated_at": "2026-09-27T02:51:35.805894800Z"
+    },
+    {
+      "capabilities": {
+        "destination": false,
+        "events": true,
+        "source": false,
+        "trigger": true,
+        "watch": false
+      },
+      "class": "messaging",
+      "config": {
+        "queue_url": "http://localhost:4566/000000000000/direct-15743",
+        "region": "us-east-1"
+      },
+      "created_at": "2026-09-27T02:51:23.995724200Z",
+      "disabled_at": null,
+      "disabled_reason": null,
+      "enabled": true,
+      "failure_count": 0,
+      "id": "con_OzHr2uKTaOTt7L6TlN6VvR",
+      "kind": "sqs",
+      "last_checked_at": "2026-09-27T02:51:36.070503800Z",
+      "last_error": null,
+      "name": "direct-15743",
+      "object": "connection",
+      "secrets_set": [
+        "access_key_id",
+        "secret_access_key"
+      ],
+      "status": "ok",
+      "updated_at": "2026-09-27T02:51:36.070505700Z"
+    },
+    {
+      "capabilities": {
+        "destination": true,
+        "events": false,
+        "source": true,
+        "trigger": false,
+        "watch": true
+      },
+      "class": "storage",
+      "config": {
+        "bucket": "media-15743",
+        "endpoint": "http://localhost:4566",
+        "kind": "s3",
+        "path_style": true,
+        "region": "us-east-1"
+      },
+      "created_at": "2026-09-27T02:51:23.650501700Z",
+      "disabled_at": null,
+      "disabled_reason": null,
+      "enabled": true,
+      "failure_count": 0,
+      "id": "con_yK5dfZQe5S2QlwFY4g4mch",
+      "kind": "s3",
+      "last_checked_at": "2026-09-27T02:51:23.655939600Z",
+      "last_error": null,
+      "name": "media-15743",
+      "object": "connection",
+      "secrets_set": [
+        "access_key_id",
+        "secret_access_key"
+      ],
+      "status": "ok",
+      "updated_at": "2026-09-27T02:51:23.650501700Z"
+    }
+  ],
+  "has_more": false,
+  "next_cursor": null,
+  "object": "list"
+}

@@ -1,0 +1,101 @@
+{
+  "account": {
+    "auto_recharge": {
+      "amount_cents": 0,
+      "enabled": false,
+      "last_error": null,
+      "monthly_cap_cents": null,
+      "pending": false,
+      "threshold_cents": 0
+    },
+    "available_usd": 0.04602,
+    "balance_usd": 0.04602,
+    "credit": {
+      "plan_expires_at": null,
+      "plan_usd": 0.0,
+      "promo_expires_at": null,
+      "promo_usd": 0.0,
+      "purchased_usd": 0.04602
+    },
+    "mode": "invoiced",
+    "monthly_limit_cents": null,
+    "payment_method": null,
+    "reserved_usd": 0.0,
+    "subscription": null,
+    "this_month": {
+      "auto_recharged_usd": 0.0,
+      "period": "2026-09",
+      "spent_usd": 0.0773
+    }
+  },
+  "currency": "usd",
+  "object": "billing",
+  "payments_enabled": true,
+  "period": "2026-09",
+  "period_end": "2026-10-01T00:00:00Z",
+  "period_start": "2026-09-01T00:00:00Z",
+  "plan": {
+    "credit_value_ratio": null,
+    "currency": "usd",
+    "features": [
+      "api",
+      "hls",
+      "av1",
+      "h264",
+      "h265",
+      "test_mode",
+      "webhooks",
+      "presets",
+      "integrations",
+      "hdr",
+      "auto_recharge",
+      "priority_queue",
+      "team",
+      "sso",
+      "dedicated_capacity",
+      "sla",
+      "invoicing"
+    ],
+    "id": "enterprise",
+    "max_concurrent_jobs": 50,
+    "max_input_bytes": 214748364800,
+    "max_resolution": 4320,
+    "monthly_credit_cents": 0,
+    "name": "Enterprise",
+    "object": "plan",
+    "price_cents": null,
+    "priority": true,
+    "rates": {
+      "currency": "usd",
+      "hd": 0.01,
+      "sd": 0.005,
+      "tiers": {
+        "hd": "577p to 1440p",
+        "sd": "up to 576p",
+        "uhd": "above 1440p"
+      },
+      "uhd": 0.025,
+      "unit": "output_minute"
+    },
+    "requests_per_minute": 6000,
+    "retention_days": 90,
+    "subscription": false,
+    "tagline": "Committed volume, dedicated capacity, invoicing and an SLA.",
+    "trial_credit_cents": 0,
+    "trial_days": 0
+  },
+  "rates": {
+    "currency": "usd",
+    "hd": 0.01,
+    "sd": 0.005,
+    "tiers": {
+      "hd": "577p to 1440p",
+      "sd": "up to 576p",
+      "uhd": "above 1440p"
+    },
+    "uhd": 0.025,
+    "unit": "output_minute"
+  },
+  "usage_minutes": 263.84,
+  "usage_usd": 0.0773
+}

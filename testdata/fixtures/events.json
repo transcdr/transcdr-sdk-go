@@ -1,0 +1,719 @@
+{
+  "data": [
+    {
+      "created_at": "2026-09-27T05:48:36.395286Z",
+      "data": {
+        "object": {
+          "attempts": 1,
+          "billing": {
+            "amount_cents": 1,
+            "amount_usd": 0.002789,
+            "billable_minutes": 0.28,
+            "output_duration": 16.733333000000002,
+            "tier": "hd"
+          },
+          "completed_at": "2026-09-27T05:48:36.348584Z",
+          "created_at": "2026-09-27T05:46:10.286006Z",
+          "error": null,
+          "id": "job_zTyZl9x2xJzbyp8ScuyQRm",
+          "input": {
+            "asset_id": "ast_mS8WEuP2joqZkCGyVc2DYZ",
+            "type": "asset"
+          },
+          "input_info": {
+            "audio": [
+              {
+                "channels": 1,
+                "codec": "aac",
+                "language": null,
+                "sample_rate": 48000
+              }
+            ],
+            "bit_depth": 8,
+            "container": "mp4",
+            "duration": 16.733333000000002,
+            "frame_rate": 30.00000059760957,
+            "hdr": false,
+            "height": 1200,
+            "pixel_format": "Yuv420p",
+            "rotation": 0,
+            "size_bytes": 1853328,
+            "subtitles": [],
+            "video_codec": "h264",
+            "width": 1600
+          },
+          "kind": "transcode",
+          "livemode": true,
+          "max_attempts": 3,
+          "metadata": {},
+          "object": "job",
+          "output": {
+            "audio": {
+              "mode": "auto"
+            },
+            "bit_depth": "auto",
+            "codec": "av1",
+            "color": "sdr",
+            "filters": null,
+            "gop": null,
+            "ladder": null,
+            "max_fps": null,
+            "mode": "single",
+            "quality": {
+              "target": "visually_lossless"
+            },
+            "renditions": [],
+            "segment_seconds": null,
+            "subtitles": null,
+            "trim": null
+          },
+          "outputs": [
+            {
+              "bytes": 1292566,
+              "content_type": "video/mp4",
+              "frames": 502,
+              "height": 1200,
+              "label": "1200p",
+              "path": "1200p.mp4",
+              "url": "https://api.transcdr.com/v1/jobs/job_zTyZl9x2xJzbyp8ScuyQRm/outputs/1200p",
+              "width": 1600
+            }
+          ],
+          "playlist_url": null,
+          "preset_id": "archive-av1-high",
+          "priority": "normal",
+          "progress": {
+            "percent": 100.0,
+            "renditions": [
+              {
+                "bytes_out": 1292566,
+                "frames_done": 502,
+                "frames_total": 502,
+                "height": 1200,
+                "index": 0,
+                "label": "1200p",
+                "percent": 100.0,
+                "segments_written": 0,
+                "status": "completed",
+                "width": 1600
+              }
+            ],
+            "stage": "done"
+          },
+          "scheduled_at": "2026-09-27T05:46:11.945866Z",
+          "started_at": "2026-09-27T05:48:30.940841Z",
+          "status": "completed",
+          "updated_at": "2026-09-27T05:48:36.348586Z",
+          "webhook_url": null
+        }
+      },
+      "id": "evt_Fae2PdyrEU4LTs8Kq83eIK",
+      "livemode": true,
+      "object": "event",
+      "type": "job.completed"
+    },
+    {
+      "created_at": "2026-09-27T05:48:30.955431Z",
+      "data": {
+        "object": {
+          "attempts": 1,
+          "billing": {
+            "amount_cents": 0,
+            "amount_usd": 0.0,
+            "billable_minutes": 0.0,
+            "output_duration": null,
+            "tier": null
+          },
+          "completed_at": null,
+          "created_at": "2026-09-27T05:46:10.286006Z",
+          "error": null,
+          "id": "job_zTyZl9x2xJzbyp8ScuyQRm",
+          "input": {
+            "asset_id": "ast_mS8WEuP2joqZkCGyVc2DYZ",
+            "type": "asset"
+          },
+          "input_info": null,
+          "kind": "transcode",
+          "livemode": true,
+          "max_attempts": 3,
+          "metadata": {},
+          "object": "job",
+          "output": {
+            "audio": {
+              "mode": "auto"
+            },
+            "bit_depth": "auto",
+            "codec": "av1",
+            "color": "sdr",
+            "filters": null,
+            "gop": null,
+            "ladder": null,
+            "max_fps": null,
+            "mode": "single",
+            "quality": {
+              "target": "visually_lossless"
+            },
+            "renditions": [],
+            "segment_seconds": null,
+            "subtitles": null,
+            "trim": null
+          },
+          "outputs": [],
+          "playlist_url": null,
+          "preset_id": "archive-av1-high",
+          "priority": "normal",
+          "progress": {
+            "percent": 0.0,
+            "renditions": [],
+            "stage": "fetching"
+          },
+          "scheduled_at": "2026-09-27T05:46:11.945866Z",
+          "started_at": "2026-09-27T05:48:30.940841Z",
+          "status": "running",
+          "updated_at": "2026-09-27T05:48:30.940914Z",
+          "webhook_url": null
+        }
+      },
+      "id": "evt_fLnKCuL25KXLwYCiA3QNhn",
+      "livemode": true,
+      "object": "event",
+      "type": "job.started"
+    },
+    {
+      "created_at": "2026-09-27T05:46:11.958179Z",
+      "data": {
+        "object": {
+          "attempts": 1,
+          "billing": {
+            "amount_cents": 0,
+            "amount_usd": 0.0,
+            "billable_minutes": 0.0,
+            "output_duration": null,
+            "tier": null
+          },
+          "completed_at": null,
+          "created_at": "2026-09-27T05:46:10.286006Z",
+          "error": null,
+          "id": "job_zTyZl9x2xJzbyp8ScuyQRm",
+          "input": {
+            "asset_id": "ast_mS8WEuP2joqZkCGyVc2DYZ",
+            "type": "asset"
+          },
+          "input_info": null,
+          "kind": "transcode",
+          "livemode": true,
+          "max_attempts": 3,
+          "metadata": {},
+          "object": "job",
+          "output": {
+            "audio": {
+              "mode": "auto"
+            },
+            "bit_depth": "auto",
+            "codec": "av1",
+            "color": "sdr",
+            "filters": null,
+            "gop": null,
+            "ladder": null,
+            "max_fps": null,
+            "mode": "single",
+            "quality": {
+              "target": "visually_lossless"
+            },
+            "renditions": [],
+            "segment_seconds": null,
+            "subtitles": null,
+            "trim": null
+          },
+          "outputs": [],
+          "playlist_url": null,
+          "preset_id": "archive-av1-high",
+          "priority": "normal",
+          "progress": {
+            "percent": 0.0,
+            "renditions": [],
+            "stage": "waiting"
+          },
+          "scheduled_at": "2026-09-27T05:46:11.945866Z",
+          "started_at": null,
+          "status": "scheduled",
+          "updated_at": "2026-09-27T05:46:11.945867Z",
+          "webhook_url": null
+        }
+      },
+      "id": "evt_EQdlmiuMI7SJpSF67bNXvy",
+      "livemode": true,
+      "object": "event",
+      "type": "job.scheduled"
+    },
+    {
+      "created_at": "2026-09-27T05:46:10.321667Z",
+      "data": {
+        "object": {
+          "attempts": 0,
+          "billing": {
+            "amount_cents": 0,
+            "amount_usd": 0.0,
+            "billable_minutes": 0.0,
+            "output_duration": null,
+            "tier": null
+          },
+          "completed_at": null,
+          "created_at": "2026-09-27T05:46:10.286006Z",
+          "error": null,
+          "id": "job_zTyZl9x2xJzbyp8ScuyQRm",
+          "input": {
+            "asset_id": "ast_mS8WEuP2joqZkCGyVc2DYZ",
+            "type": "asset"
+          },
+          "input_info": null,
+          "kind": "transcode",
+          "livemode": true,
+          "max_attempts": 3,
+          "metadata": {},
+          "object": "job",
+          "output": {
+            "audio": {
+              "mode": "auto"
+            },
+            "bit_depth": "auto",
+            "codec": "av1",
+            "color": "sdr",
+            "filters": null,
+            "gop": null,
+            "ladder": null,
+            "max_fps": null,
+            "mode": "single",
+            "quality": {
+              "target": "visually_lossless"
+            },
+            "renditions": [],
+            "segment_seconds": null,
+            "subtitles": null,
+            "trim": null
+          },
+          "outputs": [],
+          "playlist_url": null,
+          "preset_id": "archive-av1-high",
+          "priority": "normal",
+          "progress": {
+            "percent": 0.0,
+            "renditions": [],
+            "stage": "waiting"
+          },
+          "scheduled_at": null,
+          "started_at": null,
+          "status": "queued",
+          "updated_at": "2026-09-27T05:46:10.286006Z",
+          "webhook_url": null
+        }
+      },
+      "id": "evt_UAjDeTOJKGHPDTVBa6nZ2m",
+      "livemode": true,
+      "object": "event",
+      "type": "job.created"
+    },
+    {
+      "created_at": "2026-09-27T05:46:05.643286Z",
+      "data": {
+        "object": {
+          "checksum_sha256": null,
+          "content_type": "video/mp4",
+          "created_at": "2026-09-27T05:46:04.793330Z",
+          "download_url": "https://api.transcdr.com/v1/assets/ast_mS8WEuP2joqZkCGyVc2DYZ/content",
+          "filename": "sample-camera.mp4",
+          "id": "ast_mS8WEuP2joqZkCGyVc2DYZ",
+          "input_info": null,
+          "livemode": true,
+          "metadata": {},
+          "object": "asset",
+          "size_bytes": 1853328,
+          "source_url": null,
+          "status": "ready",
+          "updated_at": "2026-09-27T05:46:05.631667021Z"
+        }
+      },
+      "id": "evt_ZpbsD8flDsA5ITws3omh2K",
+      "livemode": true,
+      "object": "event",
+      "type": "asset.ready"
+    },
+    {
+      "created_at": "2026-09-27T05:17:53.962886Z",
+      "data": {
+        "object": {
+          "attempts": 1,
+          "billing": {
+            "amount_cents": 1,
+            "amount_usd": 0.007334,
+            "billable_minutes": 0.29,
+            "output_duration": 17.6,
+            "tier": "uhd"
+          },
+          "completed_at": "2026-09-27T05:17:53.912667Z",
+          "created_at": "2026-09-27T05:15:16.105807Z",
+          "error": null,
+          "id": "job_lei0nJycWUDlTSTU0xp1EJ",
+          "input": {
+            "asset_id": "ast_ZcKoMDJHzdJkSL8bVOeJFy",
+            "type": "asset"
+          },
+          "input_info": {
+            "audio": [
+              {
+                "channels": 2,
+                "codec": "aac",
+                "language": null,
+                "sample_rate": 48000
+              }
+            ],
+            "bit_depth": 8,
+            "container": "mp4",
+            "duration": 17.493333,
+            "frame_rate": 58.59375,
+            "hdr": false,
+            "height": 1080,
+            "pixel_format": "Yuv420p",
+            "rotation": 0,
+            "size_bytes": 9823634,
+            "subtitles": [],
+            "video_codec": "h265",
+            "width": 1920
+          },
+          "kind": "transcode",
+          "livemode": true,
+          "max_attempts": 3,
+          "metadata": {
+            "purpose": "frame-rate cap fix check"
+          },
+          "object": "job",
+          "output": {
+            "audio": {
+              "mode": "auto"
+            },
+            "bit_depth": "10bit",
+            "codec": "av1",
+            "color": "hdr10",
+            "filters": "hflip",
+            "gop": null,
+            "ladder": {
+              "max_short_side": 720
+            },
+            "max_fps": 5.0,
+            "mode": "single",
+            "quality": {
+              "target": "standard"
+            },
+            "renditions": [
+              {
+                "height": 2160,
+                "width": 3840
+              }
+            ],
+            "segment_seconds": null,
+            "subtitles": null,
+            "trim": null
+          },
+          "outputs": [
+            {
+              "bytes": 2344801,
+              "content_type": "video/mp4",
+              "frames": 88,
+              "height": 2160,
+              "label": "2160p",
+              "path": "2160p.mp4",
+              "url": "https://api.transcdr.com/v1/jobs/job_lei0nJycWUDlTSTU0xp1EJ/outputs/2160p",
+              "width": 3840
+            }
+          ],
+          "playlist_url": null,
+          "preset_id": "hdr10-av1-2160p",
+          "priority": "normal",
+          "progress": {
+            "percent": 100.0,
+            "renditions": [
+              {
+                "bytes_out": 2344801,
+                "frames_done": 88,
+                "frames_total": 88,
+                "height": 2160,
+                "index": 0,
+                "label": "2160p",
+                "percent": 100.0,
+                "segments_written": 0,
+                "status": "completed",
+                "width": 3840
+              }
+            ],
+            "stage": "done"
+          },
+          "scheduled_at": "2026-09-27T05:15:17.945586Z",
+          "started_at": "2026-09-27T05:17:36.169717Z",
+          "status": "completed",
+          "updated_at": "2026-09-27T05:17:53.912668Z",
+          "webhook_url": null
+        }
+      },
+      "id": "evt_O5bJI2g4EGlaF0Fg0PubIu",
+      "livemode": true,
+      "object": "event",
+      "type": "job.completed"
+    },
+    {
+      "created_at": "2026-09-27T05:17:36.183150Z",
+      "data": {
+        "object": {
+          "attempts": 1,
+          "billing": {
+            "amount_cents": 0,
+            "amount_usd": 0.0,
+            "billable_minutes": 0.0,
+            "output_duration": null,
+            "tier": null
+          },
+          "completed_at": null,
+          "created_at": "2026-09-27T05:15:16.105807Z",
+          "error": null,
+          "id": "job_lei0nJycWUDlTSTU0xp1EJ",
+          "input": {
+            "asset_id": "ast_ZcKoMDJHzdJkSL8bVOeJFy",
+            "type": "asset"
+          },
+          "input_info": null,
+          "kind": "transcode",
+          "livemode": true,
+          "max_attempts": 3,
+          "metadata": {
+            "purpose": "frame-rate cap fix check"
+          },
+          "object": "job",
+          "output": {
+            "audio": {
+              "mode": "auto"
+            },
+            "bit_depth": "10bit",
+            "codec": "av1",
+            "color": "hdr10",
+            "filters": "hflip",
+            "gop": null,
+            "ladder": {
+              "max_short_side": 720
+            },
+            "max_fps": 5.0,
+            "mode": "single",
+            "quality": {
+              "target": "standard"
+            },
+            "renditions": [
+              {
+                "height": 2160,
+                "width": 3840
+              }
+            ],
+            "segment_seconds": null,
+            "subtitles": null,
+            "trim": null
+          },
+          "outputs": [],
+          "playlist_url": null,
+          "preset_id": "hdr10-av1-2160p",
+          "priority": "normal",
+          "progress": {
+            "percent": 0.0,
+            "renditions": [],
+            "stage": "fetching"
+          },
+          "scheduled_at": "2026-09-27T05:15:17.945586Z",
+          "started_at": "2026-09-27T05:17:36.169717Z",
+          "status": "running",
+          "updated_at": "2026-09-27T05:17:36.169739Z",
+          "webhook_url": null
+        }
+      },
+      "id": "evt_Fu8qUG8BXVfunwiqcXxwwI",
+      "livemode": true,
+      "object": "event",
+      "type": "job.started"
+    },
+    {
+      "created_at": "2026-09-27T05:15:17.961428Z",
+      "data": {
+        "object": {
+          "attempts": 1,
+          "billing": {
+            "amount_cents": 0,
+            "amount_usd": 0.0,
+            "billable_minutes": 0.0,
+            "output_duration": null,
+            "tier": null
+          },
+          "completed_at": null,
+          "created_at": "2026-09-27T05:15:16.105807Z",
+          "error": null,
+          "id": "job_lei0nJycWUDlTSTU0xp1EJ",
+          "input": {
+            "asset_id": "ast_ZcKoMDJHzdJkSL8bVOeJFy",
+            "type": "asset"
+          },
+          "input_info": null,
+          "kind": "transcode",
+          "livemode": true,
+          "max_attempts": 3,
+          "metadata": {
+            "purpose": "frame-rate cap fix check"
+          },
+          "object": "job",
+          "output": {
+            "audio": {
+              "mode": "auto"
+            },
+            "bit_depth": "10bit",
+            "codec": "av1",
+            "color": "hdr10",
+            "filters": "hflip",
+            "gop": null,
+            "ladder": {
+              "max_short_side": 720
+            },
+            "max_fps": 5.0,
+            "mode": "single",
+            "quality": {
+              "target": "standard"
+            },
+            "renditions": [
+              {
+                "height": 2160,
+                "width": 3840
+              }
+            ],
+            "segment_seconds": null,
+            "subtitles": null,
+            "trim": null
+          },
+          "outputs": [],
+          "playlist_url": null,
+          "preset_id": "hdr10-av1-2160p",
+          "priority": "normal",
+          "progress": {
+            "percent": 0.0,
+            "renditions": [],
+            "stage": "waiting"
+          },
+          "scheduled_at": "2026-09-27T05:15:17.945586Z",
+          "started_at": null,
+          "status": "scheduled",
+          "updated_at": "2026-09-27T05:15:17.945594Z",
+          "webhook_url": null
+        }
+      },
+      "id": "evt_lFiqft9J0d0uekvaDqO5qL",
+      "livemode": true,
+      "object": "event",
+      "type": "job.scheduled"
+    },
+    {
+      "created_at": "2026-09-27T05:15:16.142752Z",
+      "data": {
+        "object": {
+          "attempts": 0,
+          "billing": {
+            "amount_cents": 0,
+            "amount_usd": 0.0,
+            "billable_minutes": 0.0,
+            "output_duration": null,
+            "tier": null
+          },
+          "completed_at": null,
+          "created_at": "2026-09-27T05:15:16.105807Z",
+          "error": null,
+          "id": "job_lei0nJycWUDlTSTU0xp1EJ",
+          "input": {
+            "asset_id": "ast_ZcKoMDJHzdJkSL8bVOeJFy",
+            "type": "asset"
+          },
+          "input_info": null,
+          "kind": "transcode",
+          "livemode": true,
+          "max_attempts": 3,
+          "metadata": {
+            "purpose": "frame-rate cap fix check"
+          },
+          "object": "job",
+          "output": {
+            "audio": {
+              "mode": "auto"
+            },
+            "bit_depth": "10bit",
+            "codec": "av1",
+            "color": "hdr10",
+            "filters": "hflip",
+            "gop": null,
+            "ladder": {
+              "max_short_side": 720
+            },
+            "max_fps": 5.0,
+            "mode": "single",
+            "quality": {
+              "target": "standard"
+            },
+            "renditions": [
+              {
+                "height": 2160,
+                "width": 3840
+              }
+            ],
+            "segment_seconds": null,
+            "subtitles": null,
+            "trim": null
+          },
+          "outputs": [],
+          "playlist_url": null,
+          "preset_id": "hdr10-av1-2160p",
+          "priority": "normal",
+          "progress": {
+            "percent": 0.0,
+            "renditions": [],
+            "stage": "waiting"
+          },
+          "scheduled_at": null,
+          "started_at": null,
+          "status": "queued",
+          "updated_at": "2026-09-27T05:15:16.105807Z",
+          "webhook_url": null
+        }
+      },
+      "id": "evt_vyvf6vzFRzckmkMegXX7Ki",
+      "livemode": true,
+      "object": "event",
+      "type": "job.created"
+    },
+    {
+      "created_at": "2026-09-27T05:15:15.904879Z",
+      "data": {
+        "object": {
+          "checksum_sha256": null,
+          "content_type": "video/mp4",
+          "created_at": "2026-09-27T05:15:13.120818Z",
+          "download_url": "https://api.transcdr.com/v1/assets/ast_ZcKoMDJHzdJkSL8bVOeJFy/content",
+          "filename": "fps-cap-check.mp4",
+          "id": "ast_ZcKoMDJHzdJkSL8bVOeJFy",
+          "input_info": null,
+          "livemode": true,
+          "metadata": {},
+          "object": "asset",
+          "size_bytes": 9823634,
+          "source_url": null,
+          "status": "ready",
+          "updated_at": "2026-09-27T05:15:15.890680260Z"
+        }
+      },
+      "id": "evt_mAxlxfraG8lz64n0JFIL9k",
+      "livemode": true,
+      "object": "event",
+      "type": "asset.ready"
+    }
+  ],
+  "has_more": true,
+  "next_cursor": "evt_mAxlxfraG8lz64n0JFIL9k",
+  "object": "list"
+}

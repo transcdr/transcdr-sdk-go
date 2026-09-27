@@ -1,0 +1,52 @@
+{
+  "data": [
+    {
+      "aws": {
+        "access_key_id": "",
+        "endpoint": null,
+        "message_group_id": null,
+        "region": "",
+        "secret_access_key_set": false
+      },
+      "connection_id": "con_tPnA0CKgVVoSDXJiK5eMIC",
+      "created_at": "2026-09-27T06:47:29.364022200Z",
+      "description": "via queue",
+      "enabled": true,
+      "events": [
+        "*"
+      ],
+      "failure_count": 0,
+      "id": "whk_IU3Gzfu0tau7hMKGRF1MV0",
+      "last_delivery_at": null,
+      "object": "webhook_endpoint",
+      "queue_url": "http://localhost:4566/000000000000/fanout-23391",
+      "topic_arn": null,
+      "type": "sqs",
+      "updated_at": "2026-09-27T06:47:29.364022200Z",
+      "url": "http://localhost:4566/000000000000/fanout-23391"
+    },
+    {
+      "aws": null,
+      "connection_id": null,
+      "created_at": "2026-09-27T06:47:29.084448700Z",
+      "description": "fixture",
+      "enabled": true,
+      "events": [
+        "job.completed",
+        "job.failed"
+      ],
+      "failure_count": 0,
+      "id": "whk_OLjlPO4aFD6nKIr0U3Ms2U",
+      "last_delivery_at": null,
+      "object": "webhook_endpoint",
+      "queue_url": null,
+      "topic_arn": null,
+      "type": "https",
+      "updated_at": "2026-09-27T06:47:29.084448700Z",
+      "url": "https://example.com/transcdr-hooks"
+    }
+  ],
+  "has_more": false,
+  "next_cursor": null,
+  "object": "list"
+}

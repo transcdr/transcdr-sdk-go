@@ -1,0 +1,1254 @@
+{
+  "data": [
+    {
+      "attempts": 1,
+      "billing": {
+        "amount_cents": 1,
+        "amount_usd": 0.002789,
+        "billable_minutes": 0.28,
+        "output_duration": 16.733333000000002,
+        "tier": "hd"
+      },
+      "completed_at": "2026-09-27T05:48:36.348584Z",
+      "created_at": "2026-09-27T05:46:10.286006Z",
+      "error": null,
+      "id": "job_zTyZl9x2xJzbyp8ScuyQRm",
+      "input": {
+        "asset_id": "ast_mS8WEuP2joqZkCGyVc2DYZ",
+        "type": "asset"
+      },
+      "input_info": {
+        "audio": [
+          {
+            "channels": 1,
+            "codec": "aac",
+            "language": null,
+            "sample_rate": 48000
+          }
+        ],
+        "bit_depth": 8,
+        "container": "mp4",
+        "duration": 16.733333000000002,
+        "frame_rate": 30.00000059760957,
+        "hdr": false,
+        "height": 1200,
+        "pixel_format": "Yuv420p",
+        "rotation": 0,
+        "size_bytes": 1853328,
+        "subtitles": [],
+        "video_codec": "h264",
+        "width": 1600
+      },
+      "kind": "transcode",
+      "livemode": true,
+      "max_attempts": 3,
+      "metadata": {},
+      "object": "job",
+      "output": {
+        "audio": {
+          "mode": "auto"
+        },
+        "bit_depth": "auto",
+        "codec": "av1",
+        "color": "sdr",
+        "filters": null,
+        "gop": null,
+        "ladder": null,
+        "max_fps": null,
+        "mode": "single",
+        "quality": {
+          "target": "visually_lossless"
+        },
+        "renditions": [],
+        "segment_seconds": null,
+        "subtitles": null,
+        "trim": null
+      },
+      "outputs": [
+        {
+          "bytes": 1292566,
+          "content_type": "video/mp4",
+          "frames": 502,
+          "height": 1200,
+          "label": "1200p",
+          "path": "1200p.mp4",
+          "url": "https://api.transcdr.com/v1/jobs/job_zTyZl9x2xJzbyp8ScuyQRm/outputs/1200p",
+          "width": 1600
+        }
+      ],
+      "playback_url": "https://api.transcdr.com/play/REDACTED/1200p.mp4",
+      "playlist_url": null,
+      "preset_id": "archive-av1-high",
+      "priority": "normal",
+      "progress": {
+        "percent": 100.0,
+        "renditions": [
+          {
+            "bytes_out": 1292566,
+            "frames_done": 502,
+            "frames_total": 502,
+            "height": 1200,
+            "index": 0,
+            "label": "1200p",
+            "percent": 100.0,
+            "segments_written": 0,
+            "status": "completed",
+            "width": 1600
+          }
+        ],
+        "stage": "done"
+      },
+      "scheduled_at": "2026-09-27T05:46:11.945866Z",
+      "started_at": "2026-09-27T05:48:30.940841Z",
+      "status": "completed",
+      "updated_at": "2026-09-27T05:48:36.348586Z",
+      "webhook_url": null
+    },
+    {
+      "attempts": 1,
+      "billing": {
+        "amount_cents": 1,
+        "amount_usd": 0.007334,
+        "billable_minutes": 0.29,
+        "output_duration": 17.6,
+        "tier": "uhd"
+      },
+      "completed_at": "2026-09-27T05:17:53.912667Z",
+      "created_at": "2026-09-27T05:15:16.105807Z",
+      "error": null,
+      "id": "job_lei0nJycWUDlTSTU0xp1EJ",
+      "input": {
+        "asset_id": "ast_ZcKoMDJHzdJkSL8bVOeJFy",
+        "type": "asset"
+      },
+      "input_info": {
+        "audio": [
+          {
+            "channels": 2,
+            "codec": "aac",
+            "language": null,
+            "sample_rate": 48000
+          }
+        ],
+        "bit_depth": 8,
+        "container": "mp4",
+        "duration": 17.493333,
+        "frame_rate": 58.59375,
+        "hdr": false,
+        "height": 1080,
+        "pixel_format": "Yuv420p",
+        "rotation": 0,
+        "size_bytes": 9823634,
+        "subtitles": [],
+        "video_codec": "h265",
+        "width": 1920
+      },
+      "kind": "transcode",
+      "livemode": true,
+      "max_attempts": 3,
+      "metadata": {
+        "purpose": "frame-rate cap fix check"
+      },
+      "object": "job",
+      "output": {
+        "audio": {
+          "mode": "auto"
+        },
+        "bit_depth": "10bit",
+        "codec": "av1",
+        "color": "hdr10",
+        "filters": "hflip",
+        "gop": null,
+        "ladder": {
+          "max_short_side": 720
+        },
+        "max_fps": 5.0,
+        "mode": "single",
+        "quality": {
+          "target": "standard"
+        },
+        "renditions": [
+          {
+            "height": 2160,
+            "width": 3840
+          }
+        ],
+        "segment_seconds": null,
+        "subtitles": null,
+        "trim": null
+      },
+      "outputs": [
+        {
+          "bytes": 2344801,
+          "content_type": "video/mp4",
+          "frames": 88,
+          "height": 2160,
+          "label": "2160p",
+          "path": "2160p.mp4",
+          "url": "https://api.transcdr.com/v1/jobs/job_lei0nJycWUDlTSTU0xp1EJ/outputs/2160p",
+          "width": 3840
+        }
+      ],
+      "playback_url": "https://api.transcdr.com/play/REDACTED/2160p.mp4",
+      "playlist_url": null,
+      "preset_id": "hdr10-av1-2160p",
+      "priority": "normal",
+      "progress": {
+        "percent": 100.0,
+        "renditions": [
+          {
+            "bytes_out": 2344801,
+            "frames_done": 88,
+            "frames_total": 88,
+            "height": 2160,
+            "index": 0,
+            "label": "2160p",
+            "percent": 100.0,
+            "segments_written": 0,
+            "status": "completed",
+            "width": 3840
+          }
+        ],
+        "stage": "done"
+      },
+      "scheduled_at": "2026-09-27T05:15:17.945586Z",
+      "started_at": "2026-09-27T05:17:36.169717Z",
+      "status": "completed",
+      "updated_at": "2026-09-27T05:17:53.912668Z",
+      "webhook_url": null
+    },
+    {
+      "attempts": 1,
+      "billing": {
+        "amount_cents": 1,
+        "amount_usd": 0.002789,
+        "billable_minutes": 0.28,
+        "output_duration": 16.733333000000002,
+        "tier": "hd"
+      },
+      "completed_at": "2026-09-27T01:43:48.421739Z",
+      "created_at": "2026-09-27T01:43:38.378174Z",
+      "error": null,
+      "id": "job_Zlwif1p7nBycseUQmhneoE",
+      "input": {
+        "asset_id": "ast_M2mKD3uxaPokHigNOxaPR4",
+        "type": "asset"
+      },
+      "input_info": {
+        "audio": [
+          {
+            "channels": 1,
+            "codec": "aac",
+            "language": null,
+            "sample_rate": 48000
+          }
+        ],
+        "bit_depth": 8,
+        "container": "mp4",
+        "duration": 16.733333000000002,
+        "frame_rate": 30.00000059760957,
+        "hdr": false,
+        "height": 1200,
+        "pixel_format": "Yuv420p",
+        "rotation": 0,
+        "size_bytes": 1853328,
+        "subtitles": [],
+        "video_codec": "h264",
+        "width": 1600
+      },
+      "kind": "transcode",
+      "livemode": true,
+      "max_attempts": 3,
+      "metadata": {},
+      "object": "job",
+      "output": {
+        "audio": {
+          "mode": "opus"
+        },
+        "bit_depth": "auto",
+        "codec": "av1",
+        "color": "sdr",
+        "filters": null,
+        "gop": null,
+        "ladder": null,
+        "max_fps": null,
+        "mode": "single",
+        "quality": {},
+        "renditions": [
+          {
+            "height": 1080,
+            "width": 1920
+          }
+        ],
+        "segment_seconds": null,
+        "subtitles": null,
+        "trim": null
+      },
+      "outputs": [
+        {
+          "bytes": 2320138,
+          "content_type": "video/mp4",
+          "frames": 502,
+          "height": 1080,
+          "label": "1080p",
+          "path": "1080p.mp4",
+          "url": "https://api.transcdr.com/v1/jobs/job_Zlwif1p7nBycseUQmhneoE/outputs/1080p",
+          "width": 1920
+        }
+      ],
+      "playback_url": "https://api.transcdr.com/play/REDACTED/1080p.mp4",
+      "playlist_url": null,
+      "preset_id": null,
+      "priority": "normal",
+      "progress": {
+        "percent": 100.0,
+        "renditions": [
+          {
+            "bytes_out": 2320138,
+            "frames_done": 502,
+            "frames_total": 502,
+            "height": 1080,
+            "index": 0,
+            "label": "1080p",
+            "percent": 100.0,
+            "segments_written": 0,
+            "status": "completed",
+            "width": 1920
+          }
+        ],
+        "stage": "done"
+      },
+      "scheduled_at": "2026-09-27T01:43:40.254610Z",
+      "started_at": "2026-09-27T01:43:42.960724Z",
+      "status": "completed",
+      "updated_at": "2026-09-27T01:43:48.421740Z",
+      "webhook_url": null
+    },
+    {
+      "attempts": 1,
+      "billing": {
+        "amount_cents": 1,
+        "amount_usd": 0.002789,
+        "billable_minutes": 0.28,
+        "output_duration": 16.733333000000002,
+        "tier": "hd"
+      },
+      "completed_at": "2026-09-27T01:42:59.497748Z",
+      "created_at": "2026-09-27T01:40:35.866177Z",
+      "error": null,
+      "id": "job_lSH62nfJglQdipuqdOkZUP",
+      "input": {
+        "asset_id": "ast_M2mKD3uxaPokHigNOxaPR4",
+        "type": "asset"
+      },
+      "input_info": {
+        "audio": [],
+        "bit_depth": 8,
+        "container": "mp4",
+        "duration": 16.733333000000002,
+        "frame_rate": 30.00000059760957,
+        "hdr": false,
+        "height": 1200,
+        "pixel_format": "Yuv420p",
+        "rotation": 0,
+        "size_bytes": 1853328,
+        "subtitles": [],
+        "video_codec": "h264",
+        "width": 1600
+      },
+      "kind": "transcode",
+      "livemode": true,
+      "max_attempts": 3,
+      "metadata": {},
+      "object": "job",
+      "output": {
+        "audio": {
+          "mode": "opus"
+        },
+        "bit_depth": "auto",
+        "codec": "av1",
+        "color": "sdr",
+        "filters": null,
+        "gop": null,
+        "ladder": null,
+        "max_fps": null,
+        "mode": "single",
+        "quality": {},
+        "renditions": [
+          {
+            "height": 1080,
+            "width": 1920
+          }
+        ],
+        "segment_seconds": null,
+        "subtitles": null,
+        "trim": null
+      },
+      "outputs": [
+        {
+          "bytes": 2189014,
+          "content_type": "video/mp4",
+          "frames": 502,
+          "height": 1080,
+          "label": "1080p",
+          "path": "1080p.mp4",
+          "url": "https://api.transcdr.com/v1/jobs/job_lSH62nfJglQdipuqdOkZUP/outputs/1080p",
+          "width": 1920
+        }
+      ],
+      "playback_url": "https://api.transcdr.com/play/REDACTED/1080p.mp4",
+      "playlist_url": null,
+      "preset_id": null,
+      "priority": "normal",
+      "progress": {
+        "percent": 100.0,
+        "renditions": [
+          {
+            "bytes_out": 2189014,
+            "frames_done": 502,
+            "frames_total": 502,
+            "height": 1080,
+            "index": 0,
+            "label": "1080p",
+            "percent": 100.0,
+            "segments_written": 0,
+            "status": "completed",
+            "width": 1920
+          }
+        ],
+        "stage": "done"
+      },
+      "scheduled_at": "2026-09-27T01:40:36.806830Z",
+      "started_at": "2026-09-27T01:42:54.305457Z",
+      "status": "completed",
+      "updated_at": "2026-09-27T01:42:59.497750Z",
+      "webhook_url": null
+    },
+    {
+      "attempts": 1,
+      "billing": {
+        "amount_cents": 5,
+        "amount_usd": 0.046714,
+        "billable_minutes": 4.67,
+        "output_duration": 280.28,
+        "tier": "hd"
+      },
+      "completed_at": "2026-09-27T01:29:12.145016Z",
+      "created_at": "2026-09-27T01:26:16.886060Z",
+      "error": null,
+      "id": "job_obPu7B4XGKTXyeoEgXoAGC",
+      "input": {
+        "asset_id": "ast_PRKL8EPVdrUVsPhQvhIQn2",
+        "type": "asset"
+      },
+      "input_info": {
+        "audio": [
+          {
+            "channels": 2,
+            "codec": "aac",
+            "language": null,
+            "sample_rate": 44100
+          }
+        ],
+        "bit_depth": 8,
+        "container": "mp4",
+        "duration": 280.28,
+        "frame_rate": 23.976023976023978,
+        "hdr": false,
+        "height": 640,
+        "pixel_format": "Yuv420p",
+        "rotation": 0,
+        "size_bytes": 25673851,
+        "subtitles": [],
+        "video_codec": "h264",
+        "width": 1280
+      },
+      "kind": "transcode",
+      "livemode": true,
+      "max_attempts": 3,
+      "metadata": {},
+      "object": "job",
+      "output": {
+        "audio": {
+          "mode": "auto"
+        },
+        "bit_depth": "auto",
+        "codec": "av1",
+        "color": "sdr",
+        "filters": null,
+        "gop": null,
+        "ladder": null,
+        "max_fps": null,
+        "mode": "single",
+        "quality": {
+          "target": "visually_lossless"
+        },
+        "renditions": [],
+        "segment_seconds": null,
+        "subtitles": null,
+        "trim": null
+      },
+      "outputs": [
+        {
+          "bytes": 45240824,
+          "content_type": "video/mp4",
+          "frames": 6720,
+          "height": 640,
+          "label": "640p",
+          "path": "640p.mp4",
+          "url": "https://api.transcdr.com/v1/jobs/job_obPu7B4XGKTXyeoEgXoAGC/outputs/640p",
+          "width": 1280
+        }
+      ],
+      "playback_url": "https://api.transcdr.com/play/REDACTED/640p.mp4",
+      "playlist_url": null,
+      "preset_id": "archive-av1-high",
+      "priority": "normal",
+      "progress": {
+        "percent": 100.0,
+        "renditions": [
+          {
+            "bytes_out": 45240824,
+            "frames_done": 6720,
+            "frames_total": 6720,
+            "height": 640,
+            "index": 0,
+            "label": "640p",
+            "percent": 100.0,
+            "segments_written": 0,
+            "status": "completed",
+            "width": 1280
+          }
+        ],
+        "stage": "done"
+      },
+      "scheduled_at": "2026-09-27T01:26:18.806822Z",
+      "started_at": "2026-09-27T01:28:40.164202Z",
+      "status": "completed",
+      "updated_at": "2026-09-27T01:29:12.145024Z",
+      "webhook_url": null
+    },
+    {
+      "attempts": 1,
+      "billing": {
+        "amount_cents": 1,
+        "amount_usd": 0.002789,
+        "billable_minutes": 0.28,
+        "output_duration": 16.733333000000002,
+        "tier": "hd"
+      },
+      "completed_at": "2026-09-27T00:57:56.298488Z",
+      "created_at": "2026-09-27T00:55:24.332211Z",
+      "error": null,
+      "id": "job_AHlGPCqMJE81comXxfcYmz",
+      "input": {
+        "asset_id": "ast_M2mKD3uxaPokHigNOxaPR4",
+        "type": "asset"
+      },
+      "input_info": {
+        "audio": [],
+        "bit_depth": 8,
+        "container": "mp4",
+        "duration": 16.733333000000002,
+        "frame_rate": 30.00000059760957,
+        "hdr": false,
+        "height": 1200,
+        "pixel_format": "Yuv420p",
+        "rotation": 0,
+        "size_bytes": 1853328,
+        "subtitles": [],
+        "video_codec": "h264",
+        "width": 1600
+      },
+      "kind": "transcode",
+      "livemode": true,
+      "max_attempts": 3,
+      "metadata": {},
+      "object": "job",
+      "output": {
+        "audio": {
+          "mode": "opus"
+        },
+        "bit_depth": "auto",
+        "codec": "av1",
+        "color": "sdr",
+        "filters": null,
+        "gop": null,
+        "ladder": null,
+        "max_fps": null,
+        "mode": "single",
+        "quality": {
+          "target": "standard"
+        },
+        "renditions": [
+          {
+            "height": 1080,
+            "width": 1920
+          }
+        ],
+        "segment_seconds": null,
+        "subtitles": null,
+        "trim": null
+      },
+      "outputs": [
+        {
+          "bytes": 2189014,
+          "content_type": "video/mp4",
+          "frames": 502,
+          "height": 1080,
+          "label": "1080p",
+          "path": "1080p.mp4",
+          "url": "https://api.transcdr.com/v1/jobs/job_AHlGPCqMJE81comXxfcYmz/outputs/1080p",
+          "width": 1920
+        }
+      ],
+      "playback_url": "https://api.transcdr.com/play/REDACTED/1080p.mp4",
+      "playlist_url": null,
+      "preset_id": "web-av1-1080p",
+      "priority": "high",
+      "progress": {
+        "percent": 100.0,
+        "renditions": [
+          {
+            "bytes_out": 2189014,
+            "frames_done": 502,
+            "frames_total": 502,
+            "height": 1080,
+            "index": 0,
+            "label": "1080p",
+            "percent": 100.0,
+            "segments_written": 0,
+            "status": "completed",
+            "width": 1920
+          }
+        ],
+        "stage": "done"
+      },
+      "scheduled_at": "2026-09-27T00:55:24.805469Z",
+      "started_at": "2026-09-27T00:57:50.910040Z",
+      "status": "completed",
+      "updated_at": "2026-09-27T00:57:56.298490Z",
+      "webhook_url": null
+    },
+    {
+      "attempts": 1,
+      "billing": {
+        "amount_cents": 1,
+        "amount_usd": 0.009762,
+        "billable_minutes": 1.39,
+        "output_duration": 16.733333000000002,
+        "tier": "sd"
+      },
+      "completed_at": "2026-09-27T00:52:26.037601Z",
+      "created_at": "2026-09-27T00:51:52.115679Z",
+      "error": null,
+      "id": "job_RTfgosfhU0eawWJLuYgdx7",
+      "input": {
+        "asset_id": "ast_M2mKD3uxaPokHigNOxaPR4",
+        "type": "asset"
+      },
+      "input_info": {
+        "audio": [],
+        "bit_depth": 8,
+        "container": "mp4",
+        "duration": 16.733333000000002,
+        "frame_rate": 30.00000059760957,
+        "hdr": false,
+        "height": 1200,
+        "pixel_format": "Yuv420p",
+        "rotation": 0,
+        "size_bytes": 1853328,
+        "subtitles": [],
+        "video_codec": "h264",
+        "width": 1600
+      },
+      "kind": "transcode",
+      "livemode": true,
+      "max_attempts": 3,
+      "metadata": {},
+      "object": "job",
+      "output": {
+        "audio": {
+          "mode": "auto"
+        },
+        "bit_depth": "auto",
+        "codec": "av1",
+        "color": "sdr",
+        "filters": null,
+        "gop": null,
+        "ladder": {
+          "max_short_side": 2160
+        },
+        "max_fps": null,
+        "mode": "single",
+        "quality": {
+          "target": "vmaf=90"
+        },
+        "renditions": [],
+        "segment_seconds": null,
+        "subtitles": null,
+        "trim": null
+      },
+      "outputs": [
+        {
+          "bytes": 711071,
+          "content_type": "video/mp4",
+          "frames": 502,
+          "height": 1200,
+          "label": "1200p",
+          "path": "1200p.mp4",
+          "url": "https://api.transcdr.com/v1/jobs/job_RTfgosfhU0eawWJLuYgdx7/outputs/1200p",
+          "width": 1600
+        },
+        {
+          "bytes": 298043,
+          "content_type": "video/mp4",
+          "frames": 502,
+          "height": 720,
+          "label": "720p",
+          "path": "720p.mp4",
+          "url": "https://api.transcdr.com/v1/jobs/job_RTfgosfhU0eawWJLuYgdx7/outputs/720p",
+          "width": 960
+        },
+        {
+          "bytes": 172038,
+          "content_type": "video/mp4",
+          "frames": 502,
+          "height": 480,
+          "label": "480p",
+          "path": "480p.mp4",
+          "url": "https://api.transcdr.com/v1/jobs/job_RTfgosfhU0eawWJLuYgdx7/outputs/480p",
+          "width": 640
+        },
+        {
+          "bytes": 126367,
+          "content_type": "video/mp4",
+          "frames": 502,
+          "height": 360,
+          "label": "360p",
+          "path": "360p.mp4",
+          "url": "https://api.transcdr.com/v1/jobs/job_RTfgosfhU0eawWJLuYgdx7/outputs/360p",
+          "width": 480
+        },
+        {
+          "bytes": 80950,
+          "content_type": "video/mp4",
+          "frames": 502,
+          "height": 240,
+          "label": "240p",
+          "path": "240p.mp4",
+          "url": "https://api.transcdr.com/v1/jobs/job_RTfgosfhU0eawWJLuYgdx7/outputs/240p",
+          "width": 320
+        }
+      ],
+      "playback_url": "https://api.transcdr.com/play/REDACTED/1200p.mp4",
+      "playlist_url": null,
+      "preset_id": "web-av1-1080p",
+      "priority": "normal",
+      "progress": {
+        "percent": 100.0,
+        "renditions": [
+          {
+            "bytes_out": 711071,
+            "frames_done": 502,
+            "frames_total": 502,
+            "height": 1200,
+            "index": 0,
+            "label": "1200p",
+            "percent": 100.0,
+            "segments_written": 0,
+            "status": "completed",
+            "width": 1600
+          },
+          {
+            "bytes_out": 298043,
+            "frames_done": 502,
+            "frames_total": 502,
+            "height": 720,
+            "index": 1,
+            "label": "720p",
+            "percent": 100.0,
+            "segments_written": 0,
+            "status": "completed",
+            "width": 960
+          },
+          {
+            "bytes_out": 172038,
+            "frames_done": 502,
+            "frames_total": 502,
+            "height": 480,
+            "index": 2,
+            "label": "480p",
+            "percent": 100.0,
+            "segments_written": 0,
+            "status": "completed",
+            "width": 640
+          },
+          {
+            "bytes_out": 126367,
+            "frames_done": 502,
+            "frames_total": 502,
+            "height": 360,
+            "index": 3,
+            "label": "360p",
+            "percent": 100.0,
+            "segments_written": 0,
+            "status": "completed",
+            "width": 480
+          },
+          {
+            "bytes_out": 80950,
+            "frames_done": 502,
+            "frames_total": 502,
+            "height": 240,
+            "index": 4,
+            "label": "240p",
+            "percent": 100.0,
+            "segments_written": 0,
+            "status": "completed",
+            "width": 320
+          }
+        ],
+        "stage": "done"
+      },
+      "scheduled_at": "2026-09-27T00:51:52.818108Z",
+      "started_at": "2026-09-27T00:52:22.992531Z",
+      "status": "completed",
+      "updated_at": "2026-09-27T00:52:26.037604Z",
+      "webhook_url": null
+    },
+    {
+      "attempts": 1,
+      "billing": {
+        "amount_cents": 1,
+        "amount_usd": 0.0015,
+        "billable_minutes": 0.2,
+        "output_duration": 6.0,
+        "tier": "hd"
+      },
+      "completed_at": "2026-09-27T00:52:26.200420Z",
+      "created_at": "2026-09-27T00:50:50.583382Z",
+      "error": null,
+      "id": "job_ZIbNKfl151quJhWYUV1Bnt",
+      "input": {
+        "asset_id": "ast_u6ghRChmrxtYtPuPLkL86R",
+        "type": "asset"
+      },
+      "input_info": {
+        "audio": [
+          {
+            "channels": 1,
+            "codec": "aac",
+            "language": null,
+            "sample_rate": 44100
+          }
+        ],
+        "bit_depth": 8,
+        "container": "mp4",
+        "duration": 6.033333,
+        "frame_rate": 30.0,
+        "hdr": false,
+        "height": 720,
+        "pixel_format": "Yuv420p",
+        "rotation": 0,
+        "size_bytes": 2377442,
+        "subtitles": [],
+        "video_codec": "h264",
+        "width": 1280
+      },
+      "kind": "transcode",
+      "livemode": true,
+      "max_attempts": 3,
+      "metadata": {},
+      "object": "job",
+      "output": {
+        "audio": {
+          "mode": "auto"
+        },
+        "bit_depth": "auto",
+        "codec": "av1",
+        "color": "sdr",
+        "filters": null,
+        "gop": null,
+        "ladder": null,
+        "max_fps": null,
+        "mode": "hls",
+        "quality": {},
+        "renditions": [
+          {
+            "height": 720,
+            "width": 1280
+          },
+          {
+            "height": 360,
+            "width": 640
+          }
+        ],
+        "segment_seconds": null,
+        "subtitles": null,
+        "trim": null
+      },
+      "outputs": [
+        {
+          "bytes": 3459725,
+          "content_type": "application/vnd.apple.mpegurl",
+          "frames": 180,
+          "height": 720,
+          "label": "720p",
+          "path": "video/720p/playlist.m3u8",
+          "url": "https://api.transcdr.com/v1/jobs/job_ZIbNKfl151quJhWYUV1Bnt/outputs/720p",
+          "width": 1280
+        },
+        {
+          "bytes": 1332039,
+          "content_type": "application/vnd.apple.mpegurl",
+          "frames": 180,
+          "height": 360,
+          "label": "360p",
+          "path": "video/360p/playlist.m3u8",
+          "url": "https://api.transcdr.com/v1/jobs/job_ZIbNKfl151quJhWYUV1Bnt/outputs/360p",
+          "width": 640
+        }
+      ],
+      "playback_url": "https://api.transcdr.com/play/REDACTED/master.m3u8",
+      "playlist_url": "https://api.transcdr.com/v1/jobs/job_ZIbNKfl151quJhWYUV1Bnt/files/master.m3u8",
+      "preset_id": null,
+      "priority": "normal",
+      "progress": {
+        "percent": 100.0,
+        "renditions": [
+          {
+            "bytes_out": 3458858,
+            "frames_done": 180,
+            "frames_total": 180,
+            "height": 720,
+            "index": 0,
+            "label": "720p",
+            "percent": 100.0,
+            "segments_written": 2,
+            "status": "completed",
+            "width": 1280
+          },
+          {
+            "bytes_out": 1331172,
+            "frames_done": 180,
+            "frames_total": 180,
+            "height": 360,
+            "index": 1,
+            "label": "360p",
+            "percent": 100.0,
+            "segments_written": 2,
+            "status": "completed",
+            "width": 640
+          }
+        ],
+        "stage": "done"
+      },
+      "scheduled_at": "2026-09-27T00:50:52.819552Z",
+      "started_at": "2026-09-27T00:52:22.998274Z",
+      "status": "completed",
+      "updated_at": "2026-09-27T00:52:26.200423Z",
+      "webhook_url": null
+    },
+    {
+      "attempts": 1,
+      "billing": {
+        "amount_cents": 1,
+        "amount_usd": 0.000834,
+        "billable_minutes": 0.17,
+        "output_duration": 10.0,
+        "tier": "sd"
+      },
+      "completed_at": "2026-09-26T18:09:34.767168Z",
+      "created_at": "2026-09-26T18:07:05.029232Z",
+      "error": null,
+      "id": "job_r5hLuvRfHEI4AUB6kIQKbJ",
+      "input": {
+        "asset_id": "ast_HYeaxcu1Xbc1ajRstje09O",
+        "type": "asset"
+      },
+      "input_info": {
+        "audio": [
+          {
+            "channels": 2,
+            "codec": "aac",
+            "language": null,
+            "sample_rate": 48000
+          }
+        ],
+        "bit_depth": 8,
+        "container": "mp4",
+        "duration": 10.0,
+        "frame_rate": 25.0,
+        "hdr": false,
+        "height": 176,
+        "pixel_format": "Yuv420p",
+        "rotation": 0,
+        "size_bytes": 788493,
+        "subtitles": [],
+        "video_codec": "h264",
+        "width": 320
+      },
+      "kind": "transcode",
+      "livemode": true,
+      "max_attempts": 3,
+      "metadata": {},
+      "object": "job",
+      "output": {
+        "audio": {
+          "mode": "auto"
+        },
+        "bit_depth": "auto",
+        "codec": "av1",
+        "color": "sdr",
+        "filters": null,
+        "gop": null,
+        "ladder": null,
+        "max_fps": null,
+        "mode": "hls",
+        "quality": {},
+        "renditions": [
+          {
+            "height": 360,
+            "width": 640
+          }
+        ],
+        "segment_seconds": null,
+        "subtitles": null,
+        "trim": null
+      },
+      "outputs": [
+        {
+          "bytes": 694630,
+          "content_type": "application/vnd.apple.mpegurl",
+          "frames": 250,
+          "height": 360,
+          "label": "360p",
+          "path": "video/360p/playlist.m3u8",
+          "url": "https://api.transcdr.com/v1/jobs/job_r5hLuvRfHEI4AUB6kIQKbJ/outputs/360p",
+          "width": 640
+        }
+      ],
+      "playback_url": "https://api.transcdr.com/play/REDACTED/master.m3u8",
+      "playlist_url": "https://api.transcdr.com/v1/jobs/job_r5hLuvRfHEI4AUB6kIQKbJ/files/master.m3u8",
+      "preset_id": null,
+      "priority": "normal",
+      "progress": {
+        "percent": 100.0,
+        "renditions": [
+          {
+            "bytes_out": 693731,
+            "frames_done": 250,
+            "frames_total": 250,
+            "height": 360,
+            "index": 0,
+            "label": "360p",
+            "percent": 100.0,
+            "segments_written": 3,
+            "status": "completed",
+            "width": 640
+          }
+        ],
+        "stage": "done"
+      },
+      "scheduled_at": "2026-09-26T18:07:05.160131Z",
+      "started_at": "2026-09-26T18:09:33.553533Z",
+      "status": "completed",
+      "updated_at": "2026-09-26T18:09:34.767170Z",
+      "webhook_url": null
+    },
+    {
+      "attempts": 1,
+      "billing": {
+        "amount_cents": 0,
+        "amount_usd": 0.0,
+        "billable_minutes": 25.0,
+        "output_duration": 300.0,
+        "tier": "sd"
+      },
+      "completed_at": "2026-09-26T17:59:32.592640Z",
+      "created_at": "2026-09-26T17:53:12.853174Z",
+      "error": null,
+      "id": "job_CVp3d4wxKgSEEj4oAuBJj8",
+      "input": {
+        "asset_id": "ast_f2ZOFl9l2nc13eb5V5pjCl",
+        "type": "asset"
+      },
+      "input_info": {
+        "audio": [
+          {
+            "channels": 1,
+            "codec": "aac",
+            "language": null,
+            "sample_rate": 48000
+          }
+        ],
+        "bit_depth": 8,
+        "container": "mp4",
+        "duration": 300.0,
+        "frame_rate": 30.0,
+        "hdr": false,
+        "height": 1080,
+        "pixel_format": "Yuv420p",
+        "rotation": 0,
+        "size_bytes": 305412742,
+        "subtitles": [],
+        "video_codec": "h264",
+        "width": 1920
+      },
+      "kind": "transcode",
+      "livemode": true,
+      "max_attempts": 3,
+      "metadata": {},
+      "object": "job",
+      "output": {
+        "audio": {
+          "mode": "auto"
+        },
+        "bit_depth": "auto",
+        "codec": "h264",
+        "color": "sdr",
+        "filters": null,
+        "gop": null,
+        "ladder": {},
+        "max_fps": null,
+        "mode": "hls",
+        "quality": {},
+        "renditions": [],
+        "segment_seconds": null,
+        "subtitles": null,
+        "trim": null
+      },
+      "outputs": [
+        {
+          "bytes": 424243025,
+          "content_type": "application/vnd.apple.mpegurl",
+          "frames": 9000,
+          "height": 1080,
+          "label": "1080p",
+          "path": "video/1080p/playlist.m3u8",
+          "url": "https://api.transcdr.com/v1/jobs/job_CVp3d4wxKgSEEj4oAuBJj8/outputs/1080p",
+          "width": 1920
+        },
+        {
+          "bytes": 177896266,
+          "content_type": "application/vnd.apple.mpegurl",
+          "frames": 9000,
+          "height": 720,
+          "label": "720p",
+          "path": "video/720p/playlist.m3u8",
+          "url": "https://api.transcdr.com/v1/jobs/job_CVp3d4wxKgSEEj4oAuBJj8/outputs/720p",
+          "width": 1280
+        },
+        {
+          "bytes": 86293053,
+          "content_type": "application/vnd.apple.mpegurl",
+          "frames": 9000,
+          "height": 480,
+          "label": "480p",
+          "path": "video/480p/playlist.m3u8",
+          "url": "https://api.transcdr.com/v1/jobs/job_CVp3d4wxKgSEEj4oAuBJj8/outputs/480p",
+          "width": 852
+        },
+        {
+          "bytes": 71703943,
+          "content_type": "application/vnd.apple.mpegurl",
+          "frames": 9000,
+          "height": 360,
+          "label": "360p",
+          "path": "video/360p/playlist.m3u8",
+          "url": "https://api.transcdr.com/v1/jobs/job_CVp3d4wxKgSEEj4oAuBJj8/outputs/360p",
+          "width": 640
+        },
+        {
+          "bytes": 29842013,
+          "content_type": "application/vnd.apple.mpegurl",
+          "frames": 9000,
+          "height": 240,
+          "label": "240p",
+          "path": "video/240p/playlist.m3u8",
+          "url": "https://api.transcdr.com/v1/jobs/job_CVp3d4wxKgSEEj4oAuBJj8/outputs/240p",
+          "width": 426
+        }
+      ],
+      "playback_url": "https://api.transcdr.com/play/REDACTED/master.m3u8",
+      "playlist_url": "https://api.transcdr.com/v1/jobs/job_CVp3d4wxKgSEEj4oAuBJj8/files/master.m3u8",
+      "preset_id": null,
+      "priority": "normal",
+      "progress": {
+        "percent": 100.0,
+        "renditions": [
+          {
+            "bytes_out": 424239794,
+            "frames_done": 9000,
+            "frames_total": 9000,
+            "height": 1080,
+            "index": 0,
+            "label": "1080p",
+            "percent": 100.0,
+            "segments_written": 75,
+            "status": "completed",
+            "width": 1920
+          },
+          {
+            "bytes_out": 177893036,
+            "frames_done": 9000,
+            "frames_total": 9000,
+            "height": 720,
+            "index": 1,
+            "label": "720p",
+            "percent": 100.0,
+            "segments_written": 75,
+            "status": "completed",
+            "width": 1280
+          },
+          {
+            "bytes_out": 86289823,
+            "frames_done": 9000,
+            "frames_total": 9000,
+            "height": 480,
+            "index": 2,
+            "label": "480p",
+            "percent": 100.0,
+            "segments_written": 75,
+            "status": "completed",
+            "width": 852
+          },
+          {
+            "bytes_out": 71700713,
+            "frames_done": 9000,
+            "frames_total": 9000,
+            "height": 360,
+            "index": 3,
+            "label": "360p",
+            "percent": 100.0,
+            "segments_written": 75,
+            "status": "completed",
+            "width": 640
+          },
+          {
+            "bytes_out": 29838783,
+            "frames_done": 9000,
+            "frames_total": 9000,
+            "height": 240,
+            "index": 4,
+            "label": "240p",
+            "percent": 100.0,
+            "segments_written": 75,
+            "status": "completed",
+            "width": 426
+          }
+        ],
+        "stage": "done"
+      },
+      "scheduled_at": "2026-09-26T17:53:14.680796Z",
+      "started_at": "2026-09-26T17:55:24.567001Z",
+      "status": "completed",
+      "updated_at": "2026-09-26T17:59:32.592651Z",
+      "webhook_url": null
+    }
+  ],
+  "has_more": true,
+  "next_cursor": "job_CVp3d4wxKgSEEj4oAuBJj8",
+  "object": "list"
+}

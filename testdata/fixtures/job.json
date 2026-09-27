@@ -1,0 +1,104 @@
+{
+  "attempts": 1,
+  "billing": {
+    "amount_cents": 1,
+    "amount_usd": 0.002789,
+    "billable_minutes": 0.28,
+    "output_duration": 16.733333000000002,
+    "tier": "hd"
+  },
+  "completed_at": "2026-09-27T05:48:36.348584Z",
+  "created_at": "2026-09-27T05:46:10.286006Z",
+  "error": null,
+  "id": "job_zTyZl9x2xJzbyp8ScuyQRm",
+  "input": {
+    "asset_id": "ast_mS8WEuP2joqZkCGyVc2DYZ",
+    "type": "asset"
+  },
+  "input_info": {
+    "audio": [
+      {
+        "channels": 1,
+        "codec": "aac",
+        "language": null,
+        "sample_rate": 48000
+      }
+    ],
+    "bit_depth": 8,
+    "container": "mp4",
+    "duration": 16.733333000000002,
+    "frame_rate": 30.00000059760957,
+    "hdr": false,
+    "height": 1200,
+    "pixel_format": "Yuv420p",
+    "rotation": 0,
+    "size_bytes": 1853328,
+    "subtitles": [],
+    "video_codec": "h264",
+    "width": 1600
+  },
+  "kind": "transcode",
+  "livemode": true,
+  "max_attempts": 3,
+  "metadata": {},
+  "object": "job",
+  "output": {
+    "audio": {
+      "mode": "auto"
+    },
+    "bit_depth": "auto",
+    "codec": "av1",
+    "color": "sdr",
+    "filters": null,
+    "gop": null,
+    "ladder": null,
+    "max_fps": null,
+    "mode": "single",
+    "quality": {
+      "target": "visually_lossless"
+    },
+    "renditions": [],
+    "segment_seconds": null,
+    "subtitles": null,
+    "trim": null
+  },
+  "outputs": [
+    {
+      "bytes": 1292566,
+      "content_type": "video/mp4",
+      "frames": 502,
+      "height": 1200,
+      "label": "1200p",
+      "path": "1200p.mp4",
+      "url": "https://api.transcdr.com/v1/jobs/job_zTyZl9x2xJzbyp8ScuyQRm/outputs/1200p",
+      "width": 1600
+    }
+  ],
+  "playback_url": "https://api.transcdr.com/play/REDACTED/1200p.mp4",
+  "playlist_url": null,
+  "preset_id": "archive-av1-high",
+  "priority": "normal",
+  "progress": {
+    "percent": 100.0,
+    "renditions": [
+      {
+        "bytes_out": 1292566,
+        "frames_done": 502,
+        "frames_total": 502,
+        "height": 1200,
+        "index": 0,
+        "label": "1200p",
+        "percent": 100.0,
+        "segments_written": 0,
+        "status": "completed",
+        "width": 1600
+      }
+    ],
+    "stage": "done"
+  },
+  "scheduled_at": "2026-09-27T05:46:11.945866Z",
+  "started_at": "2026-09-27T05:48:30.940841Z",
+  "status": "completed",
+  "updated_at": "2026-09-27T05:48:36.348586Z",
+  "webhook_url": null
+}

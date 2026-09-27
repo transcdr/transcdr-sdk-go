@@ -1,0 +1,185 @@
+{
+  "data": [
+    {
+      "checksum_sha256": null,
+      "content_type": "video/mp4",
+      "created_at": "2026-09-27T05:46:04.793330Z",
+      "download_url": "https://api.transcdr.com/v1/assets/ast_mS8WEuP2joqZkCGyVc2DYZ/content",
+      "filename": "sample-camera.mp4",
+      "id": "ast_mS8WEuP2joqZkCGyVc2DYZ",
+      "input_info": {
+        "audio": [
+          {
+            "channels": 1,
+            "codec": "aac",
+            "language": null,
+            "sample_rate": 48000
+          }
+        ],
+        "bit_depth": 8,
+        "container": "mp4",
+        "duration": 16.733333000000002,
+        "frame_rate": 30.00000059760957,
+        "hdr": false,
+        "height": 1200,
+        "pixel_format": "Yuv420p",
+        "rotation": 0,
+        "size_bytes": 1853328,
+        "subtitles": [],
+        "video_codec": "h264",
+        "width": 1600
+      },
+      "livemode": true,
+      "metadata": {},
+      "object": "asset",
+      "size_bytes": 1853328,
+      "source_url": null,
+      "status": "ready",
+      "updated_at": "2026-09-27T05:46:05.631667Z"
+    },
+    {
+      "checksum_sha256": null,
+      "content_type": "video/mp4",
+      "created_at": "2026-09-27T05:15:13.120818Z",
+      "download_url": "https://api.transcdr.com/v1/assets/ast_ZcKoMDJHzdJkSL8bVOeJFy/content",
+      "filename": "fps-cap-check.mp4",
+      "id": "ast_ZcKoMDJHzdJkSL8bVOeJFy",
+      "input_info": {
+        "audio": [
+          {
+            "channels": 2,
+            "codec": "aac",
+            "language": null,
+            "sample_rate": 48000
+          }
+        ],
+        "bit_depth": 8,
+        "container": "mp4",
+        "duration": 17.493333,
+        "frame_rate": 58.59375,
+        "hdr": false,
+        "height": 1080,
+        "pixel_format": "Yuv420p",
+        "rotation": 0,
+        "size_bytes": 9823634,
+        "subtitles": [],
+        "video_codec": "h265",
+        "width": 1920
+      },
+      "livemode": true,
+      "metadata": {},
+      "object": "asset",
+      "size_bytes": 9823634,
+      "source_url": null,
+      "status": "ready",
+      "updated_at": "2026-09-27T05:15:15.890680Z"
+    },
+    {
+      "checksum_sha256": null,
+      "content_type": "video/mp4",
+      "created_at": "2026-09-27T01:26:10.721733Z",
+      "download_url": "https://api.transcdr.com/v1/assets/ast_PRKL8EPVdrUVsPhQvhIQn2/content",
+      "filename": "sample-music-video.mp4",
+      "id": "ast_PRKL8EPVdrUVsPhQvhIQn2",
+      "input_info": {
+        "audio": [
+          {
+            "channels": 2,
+            "codec": "aac",
+            "language": null,
+            "sample_rate": 44100
+          }
+        ],
+        "bit_depth": 8,
+        "container": "mp4",
+        "duration": 280.28,
+        "frame_rate": 23.976023976023978,
+        "hdr": false,
+        "height": 640,
+        "pixel_format": "Yuv420p",
+        "rotation": 0,
+        "size_bytes": 25673851,
+        "subtitles": [],
+        "video_codec": "h264",
+        "width": 1280
+      },
+      "livemode": true,
+      "metadata": {},
+      "object": "asset",
+      "size_bytes": 25673851,
+      "source_url": null,
+      "status": "ready",
+      "updated_at": "2026-09-27T01:26:14.615355Z"
+    },
+    {
+      "checksum_sha256": null,
+      "content_type": "video/mp4",
+      "created_at": "2026-09-27T00:50:48.737060Z",
+      "download_url": "https://api.transcdr.com/v1/assets/ast_u6ghRChmrxtYtPuPLkL86R/content",
+      "filename": "r2-probe.mp4",
+      "id": "ast_u6ghRChmrxtYtPuPLkL86R",
+      "input_info": {
+        "audio": [
+          {
+            "channels": 1,
+            "codec": "aac",
+            "language": null,
+            "sample_rate": 44100
+          }
+        ],
+        "bit_depth": 8,
+        "container": "mp4",
+        "duration": 6.033333,
+        "frame_rate": 30.0,
+        "hdr": false,
+        "height": 720,
+        "pixel_format": "Yuv420p",
+        "rotation": 0,
+        "size_bytes": 2377442,
+        "subtitles": [],
+        "video_codec": "h264",
+        "width": 1280
+      },
+      "livemode": true,
+      "metadata": {},
+      "object": "asset",
+      "size_bytes": 2377442,
+      "source_url": null,
+      "status": "ready",
+      "updated_at": "2026-09-27T00:50:50.388527Z"
+    },
+    {
+      "checksum_sha256": null,
+      "content_type": "video/mp4",
+      "created_at": "2026-09-27T00:50:46.438353Z",
+      "download_url": "https://api.transcdr.com/v1/assets/ast_M2mKD3uxaPokHigNOxaPR4/content",
+      "filename": "sample-camera.mp4",
+      "id": "ast_M2mKD3uxaPokHigNOxaPR4",
+      "input_info": {
+        "audio": [],
+        "bit_depth": 8,
+        "container": "mp4",
+        "duration": 16.733333000000002,
+        "frame_rate": 30.00000059760957,
+        "hdr": false,
+        "height": 1200,
+        "pixel_format": "Yuv420p",
+        "rotation": 0,
+        "size_bytes": 1853328,
+        "subtitles": [],
+        "video_codec": "h264",
+        "width": 1600
+      },
+      "livemode": true,
+      "metadata": {},
+      "object": "asset",
+      "size_bytes": 1853328,
+      "source_url": null,
+      "status": "ready",
+      "updated_at": "2026-09-27T00:50:47.248499Z"
+    }
+  ],
+  "has_more": true,
+  "next_cursor": "ast_M2mKD3uxaPokHigNOxaPR4",
+  "object": "list"
+}
