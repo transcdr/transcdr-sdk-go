@@ -2,6 +2,8 @@ package transcdr
 
 import (
 	"encoding/json"
+	"net/url"
+	"strings"
 	"time"
 )
 
@@ -245,16 +247,64 @@ type UploadCreateParams struct {
 // Preset is a named output specification: a system one (its ID is its slug)
 // or the organization's own.
 type Preset struct {
-	ID          string     `json:"id"`
-	Slug        string     `json:"slug"`
-	Name        string     `json:"name"`
-	Description string     `json:"description"`
-	System      bool       `json:"system"`
-	Output      OutputSpec `json:"output"`
-	Metadata    Metadata   `json:"metadata"`
-	CreatedAt   *time.Time `json:"created_at"`
-	UpdatedAt   *time.Time `json:"updated_at"`
+	ID          string `json:"id"`
+	Slug        string `json:"slug"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	System      bool   `json:"system"`
+	// Category is the group the preset is shown in.
+	Category PresetCategory `json:"category"`
+	// Compatibility lists the platforms the output plays on.
+	Compatibility []Platform `json:"compatibility"`
+	// CompatibilityNotes gives each platform in Compatibility its minimum
+	// versions and conditions, such as audio that depends on the source.
+	CompatibilityNotes map[Platform]string `json:"compatibility_notes"`
+	Output             OutputSpec          `json:"output"`
+	Metadata           Metadata            `json:"metadata"`
+	CreatedAt          *time.Time          `json:"created_at"`
+	UpdatedAt          *time.Time          `json:"updated_at"`
 }
+
+// PresetCategory is the group a preset is shown in. More may be added, so
+// treat an unknown one as uncategorised.
+type PresetCategory string
+
+// Preset categories.
+const (
+	// CategoryWeb is a single MP4 for browsers.
+	CategoryWeb PresetCategory = "web"
+	// CategoryMobile is a single file for native iOS and Android playback.
+	CategoryMobile PresetCategory = "mobile"
+	// CategoryStreaming is adaptive HLS.
+	CategoryStreaming PresetCategory = "streaming"
+	// CategoryTV is smart TVs, set-top boxes and constant bit rate.
+	CategoryTV PresetCategory = "tv"
+	// CategorySocial is portrait video for social apps.
+	CategorySocial PresetCategory = "social"
+	// CategoryAudio is audio-only output.
+	CategoryAudio PresetCategory = "audio"
+	// CategoryArchive is preservation and mastering: visually lossless, HDR.
+	CategoryArchive PresetCategory = "archive"
+)
+
+// Platform is where an output plays. More may be added.
+type Platform string
+
+// Platforms.
+const (
+	// PlatformWeb is current Chrome, Edge, Firefox and Safari.
+	PlatformWeb Platform = "web"
+	// PlatformIOS is iPhone and iPad.
+	PlatformIOS Platform = "ios"
+	// PlatformAndroid is Android phones and tablets.
+	PlatformAndroid Platform = "android"
+	// PlatformSmartTV is smart TVs and streaming sticks.
+	PlatformSmartTV Platform = "smart_tv"
+	// PlatformLegacy is old browsers and devices, and set-top boxes.
+	PlatformLegacy Platform = "legacy"
+	// PlatformEditing is editing applications.
+	PlatformEditing Platform = "editing"
+)
 
 // PresetCreateParams create a preset.
 type PresetCreateParams struct {
@@ -263,28 +313,95 @@ type PresetCreateParams struct {
 	Description *string          `json:"description,omitempty"`
 	Output      *OutputSpecInput `json:"output"`
 	Metadata    Metadata         `json:"metadata,omitempty"`
+	// Category, Compatibility and CompatibilityNotes left out are derived
+	// from Output. A non-nil empty Compatibility claims no platform; notes
+	// are only for platforms the preset claims.
+	Category           PresetCategory      `json:"category,omitempty"`
+	Compatibility      []Platform          `json:"compatibility,omitzero"`
+	CompatibilityNotes map[Platform]string `json:"compatibility_notes,omitzero"`
 }
 
 // PresetUpdateParams change a preset (PATCH): a field left out is
-// unchanged, Null clears Description or Metadata, and Output is merged into
-// the stored spec. To set the whole preset, use [PresetsService.Replace].
+// unchanged, Null clears Description or Metadata and derives Category,
+// Compatibility or CompatibilityNotes from the spec again, and Output is
+// merged into the stored spec. To set the whole preset, use
+// [PresetsService.Replace].
 type PresetUpdateParams struct {
 	Name        *string            `json:"name,omitempty"`
 	Slug        *string            `json:"slug,omitempty"`
 	Description Nullable[string]   `json:"description,omitzero"`
 	Output      *OutputSpecInput   `json:"output,omitempty"`
 	Metadata    Nullable[Metadata] `json:"metadata,omitzero"`
+
+	Category           Nullable[PresetCategory]      `json:"category,omitzero"`
+	Compatibility      Nullable[[]Platform]          `json:"compatibility,omitzero"`
+	CompatibilityNotes Nullable[map[Platform]string] `json:"compatibility_notes,omitzero"`
 }
 
 // PresetReplaceParams replace a preset (PUT). Output is the whole spec: a
 // field left out of it takes its default, as on create. Description and
-// Metadata left out are emptied; Slug left out is kept.
+// Metadata left out are emptied; Category, Compatibility and
+// CompatibilityNotes left out are derived again; Slug left out is kept.
 type PresetReplaceParams struct {
-	Name        string           `json:"name"`
-	Output      *OutputSpecInput `json:"output"`
-	Slug        *string          `json:"slug,omitempty"`
-	Description string           `json:"description,omitempty"`
-	Metadata    Metadata         `json:"metadata,omitempty"`
+	Name               string              `json:"name"`
+	Output             *OutputSpecInput    `json:"output"`
+	Slug               *string             `json:"slug,omitempty"`
+	Description        string              `json:"description,omitempty"`
+	Metadata           Metadata            `json:"metadata,omitempty"`
+	Category           PresetCategory      `json:"category,omitempty"`
+	Compatibility      []Platform          `json:"compatibility,omitzero"`
+	CompatibilityNotes map[Platform]string `json:"compatibility_notes,omitzero"`
+}
+
+// PresetListParams filter presets. [PresetsService.List] and
+// [PresetsService.All] also take a plain *ListParams.
+type PresetListParams struct {
+	ListParams
+	// Category keeps presets in any of these categories.
+	Category []PresetCategory
+	// CompatibleWith keeps presets that play on every one of these.
+	CompatibleWith []Platform
+	// ExcludeSystem leaves the system presets out.
+	ExcludeSystem bool
+}
+
+// PresetListQuery is a *ListParams or a *PresetListParams.
+type PresetListQuery interface {
+	presetQuery() url.Values
+}
+
+func (p *ListParams) presetQuery() url.Values { return p.values(nil) }
+
+func (p *PresetListParams) presetQuery() url.Values {
+	if p == nil {
+		return url.Values{}
+	}
+	q := p.ListParams.values(nil)
+	if len(p.Category) > 0 {
+		names := make([]string, len(p.Category))
+		for i, c := range p.Category {
+			names[i] = string(c)
+		}
+		q.Set("category", strings.Join(names, ","))
+	}
+	if len(p.CompatibleWith) > 0 {
+		names := make([]string, len(p.CompatibleWith))
+		for i, c := range p.CompatibleWith {
+			names[i] = string(c)
+		}
+		q.Set("compatible_with", strings.Join(names, ","))
+	}
+	if p.ExcludeSystem {
+		q.Set("system", "false")
+	}
+	return q
+}
+
+func presetQuery(params PresetListQuery) url.Values {
+	if params == nil {
+		return url.Values{}
+	}
+	return params.presetQuery()
 }
 
 // Delivery is a job's outputs delivered to a connection.

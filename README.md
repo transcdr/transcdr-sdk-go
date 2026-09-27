@@ -130,7 +130,7 @@ On update, `null` clears:
 - an automation's `Destination`, `Preset`, `Output`, `Metadata`, `WebhookURL` and `TriggerConnectionID`
 - an event destination's `Description`, `AWS.Endpoint` and `AWS.MessageGroupID`
 - a connection's `Config` fields
-- a preset's `Description` and `Metadata`
+- a preset's `Description` and `Metadata`; for `Category`, `Compatibility` and `CompatibilityNotes`, `null` means derive it from the output again
 - the organization's `BillingEmail`
 
 ### Replacing a preset
@@ -141,6 +141,30 @@ On update, `null` clears:
 client.Presets.Replace(ctx, id, &transcdr.PresetReplaceParams{
 	Name:   "Web H.264",
 	Output: transcdr.RawOutputSpec([]byte(`{"mode":"hls","codec":"h264"}`)),
+})
+```
+
+### Where a preset plays
+
+Every preset has a `Category`, the group it is shown in: `CategoryWeb`, `CategoryMobile`, `CategoryStreaming`, `CategoryTV`, `CategorySocial`, `CategoryAudio` or `CategoryArchive`. It also has `Compatibility`, the platforms its output plays on: `PlatformWeb`, `PlatformIOS`, `PlatformAndroid`, `PlatformSmartTV`, `PlatformLegacy` and `PlatformEditing`. `CompatibilityNotes` gives each listed platform its minimum versions and conditions, such as sound that needs AAC source audio. The API derives all three from the output specification, and more values may be added over time.
+
+```go
+// Presets that play on both iOS and Android, in the web or mobile groups.
+page, err := client.Presets.List(ctx, &transcdr.PresetListParams{
+	Category:       []transcdr.PresetCategory{transcdr.CategoryWeb, transcdr.CategoryMobile},
+	CompatibleWith: []transcdr.Platform{transcdr.PlatformIOS, transcdr.PlatformAndroid},
+})
+```
+
+`Category` matches any of the values you pass. `CompatibleWith` requires every one of them. `List` and `All` still accept a plain `*transcdr.ListParams`.
+
+Your own presets can set their own values. Leave a field out and the API derives it. On update, `transcdr.Null` derives it again:
+
+```go
+client.Presets.Update(ctx, id, &transcdr.PresetUpdateParams{
+	Category:           transcdr.Value(transcdr.CategoryStreaming),
+	Compatibility:      transcdr.Value([]transcdr.Platform{transcdr.PlatformSmartTV}),
+	CompatibilityNotes: transcdr.Null[map[transcdr.Platform]string](),
 })
 ```
 

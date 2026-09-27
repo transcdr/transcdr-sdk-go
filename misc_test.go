@@ -2,6 +2,7 @@ package transcdr
 
 import (
 	"encoding/json"
+	"net/url"
 	"strings"
 	"testing"
 )
@@ -97,6 +98,99 @@ func TestPresets(t *testing.T) {
 	f.reply(204, "")
 	must(t, c.Presets.Delete(fxCtx, "pre_1"))
 	f.expect("DELETE", "/v1/presets/pre_1")
+}
+
+func TestPresetCategoriesAndCompatibility(t *testing.T) {
+	f := newFakeAPI(t)
+	c := f.client()
+
+	// System presets say where they are grouped and where they play.
+	f.reply(200, fixture(t, "presets.json"))
+	page, err := c.Presets.List(fxCtx, nil)
+	must(t, err)
+	var compat *Preset
+	for i := range page.Data {
+		if page.Data[i].Slug == "mp4-h264-compat-1080p" {
+			compat = &page.Data[i]
+		}
+	}
+	if compat == nil || compat.Category != CategoryTV || len(compat.Compatibility) != 6 || compat.Compatibility[1] != PlatformIOS {
+		t.Fatalf("compat = %+v", compat)
+	}
+	if !strings.Contains(compat.CompatibilityNotes[PlatformIOS], "iOS 17") {
+		t.Fatalf("notes = %v", compat.CompatibilityNotes)
+	}
+
+	// Unknown categories and platforms decode as they are.
+	f.reply(200, `{"id":"x","category":"podcast","compatibility":["web","vr"],"compatibility_notes":{"vr":"Headsets."}}`)
+	p, err := c.Presets.Get(fxCtx, "x")
+	must(t, err)
+	if p.Category != "podcast" || p.Compatibility[1] != "vr" || p.CompatibilityNotes["vr"] != "Headsets." {
+		t.Fatalf("preset = %+v", p)
+	}
+
+	// Filters: categories are any-of, platforms all-of, both comma-joined.
+	f.reply(200, `{"object":"list","data":[],"has_more":false,"next_cursor":null}`)
+	_, err = c.Presets.List(fxCtx, &PresetListParams{
+		ListParams:     ListParams{Limit: 10},
+		Category:       []PresetCategory{CategoryWeb, CategoryMobile},
+		CompatibleWith: []Platform{PlatformIOS, PlatformAndroid},
+		ExcludeSystem:  true,
+	})
+	must(t, err)
+	q := url.Values(f.expect("GET", "/v1/presets").Query)
+	if q.Get("category") != "web,mobile" || q.Get("compatible_with") != "ios,android" || q.Get("system") != "false" || q.Get("limit") != "10" {
+		t.Fatalf("query = %v", q)
+	}
+	f.reply(200, `{"object":"list","data":[],"has_more":false,"next_cursor":null}`)
+	_, err = Collect(c.Presets.All(fxCtx, &PresetListParams{CompatibleWith: []Platform{PlatformLegacy}}), 0)
+	must(t, err)
+	if q := url.Values(f.last().Query); q.Get("compatible_with") != "legacy" || q.Has("category") || q.Has("system") {
+		t.Fatalf("query = %v", q)
+	}
+	var none *PresetListParams
+	f.reply(200, `{"object":"list","data":[],"has_more":false,"next_cursor":null}`)
+	_, err = c.Presets.List(fxCtx, none)
+	must(t, err)
+	if len(f.last().Query) != 0 {
+		t.Fatalf("query = %v", f.last().Query)
+	}
+
+	// Create: set them, or leave them out to derive them.
+	f.reply(201, presetBody)
+	_, err = c.Presets.Create(fxCtx, &PresetCreateParams{
+		Name: "Phones", Output: &OutputSpecInput{Codec: "h265"},
+		Category:           CategoryMobile,
+		Compatibility:      []Platform{PlatformIOS},
+		CompatibilityNotes: map[Platform]string{PlatformIOS: "Our app only."},
+	})
+	must(t, err)
+	fxBody(t, f.expect("POST", "/v1/presets"), map[string]any{
+		"name": "Phones", "output": map[string]any{"codec": "h265"}, "category": "mobile",
+		"compatibility": []any{"ios"}, "compatibility_notes": map[string]any{"ios": "Our app only."},
+	})
+	f.reply(201, presetBody)
+	_, err = c.Presets.Create(fxCtx, &PresetCreateParams{Name: "x", Output: &OutputSpecInput{}, Compatibility: []Platform{}})
+	must(t, err)
+	fxBody(t, f.last(), map[string]any{"name": "x", "output": map[string]any{}, "compatibility": []any{}})
+
+	// Update: Value sets, Null derives again, left out is kept.
+	f.reply(200, presetBody)
+	_, err = c.Presets.Update(fxCtx, "pre_1", &PresetUpdateParams{
+		Category:           Value(CategoryStreaming),
+		Compatibility:      Value([]Platform{PlatformSmartTV}),
+		CompatibilityNotes: Null[map[Platform]string](),
+	})
+	must(t, err)
+	fxBody(t, f.expect("PATCH", "/v1/presets/pre_1"), map[string]any{
+		"category": "streaming", "compatibility": []any{"smart_tv"}, "compatibility_notes": nil,
+	})
+
+	// Replace: left out is not sent (the API derives them).
+	f.reply(200, presetBody)
+	_, err = c.Presets.Replace(fxCtx, "pre_1", &PresetReplaceParams{Name: "n", Output: &OutputSpecInput{}, Category: CategoryArchive})
+	must(t, err)
+	fxBody(t, f.expect("PUT", "/v1/presets/pre_1"), map[string]any{"name": "n", "output": map[string]any{}, "category": "archive"})
 }
 
 func TestEvents(t *testing.T) {

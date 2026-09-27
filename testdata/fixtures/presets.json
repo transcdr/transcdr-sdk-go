@@ -1,8 +1,19 @@
 {
   "data": [
     {
+      "category": "web",
+      "compatibility": [
+        "web",
+        "android",
+        "smart_tv"
+      ],
+      "compatibility_notes": {
+        "android": "Android 10+ (a software decoder where the device has no AV1 hardware). Opus audio: Android 5.0+.",
+        "smart_tv": "TVs with AV1 decode: many 2020 and later models, and Android TV devices launched since March 2021. AAC source audio plays on any TV; other audio becomes Opus, which not every TV decodes.",
+        "web": "Chrome 70+, Firefox 67+ and Edge 121+; Safari 17+ only on devices with AV1 hardware decode (iPhone 15 Pro, M3 Macs and later). AAC source audio passes through; other audio becomes Opus, which Safari plays from Safari 17 (macOS Sonoma, iOS 17)."
+      },
       "created_at": null,
-      "description": "One faststart MP4, AV1 + Opus at 1080p. Plays in every modern browser.",
+      "description": "One faststart MP4, AV1 at 1080p. Plays in Chrome, Edge and Firefox, and in Safari on devices with AV1 hardware decode.",
       "id": "web-av1-1080p",
       "metadata": {},
       "name": "Web AV1 1080p",
@@ -37,8 +48,19 @@
       "updated_at": null
     },
     {
+      "category": "web",
+      "compatibility": [
+        "web",
+        "android",
+        "smart_tv"
+      ],
+      "compatibility_notes": {
+        "android": "Android 10+ (a software decoder where the device has no AV1 hardware). Opus audio: Android 5.0+.",
+        "smart_tv": "TVs with AV1 decode: many 2020 and later models, and Android TV devices launched since March 2021. AAC source audio plays on any TV; other audio becomes Opus, which not every TV decodes.",
+        "web": "Chrome 70+, Firefox 67+ and Edge 121+; Safari 17+ only on devices with AV1 hardware decode (iPhone 15 Pro, M3 Macs and later). AAC source audio passes through; other audio becomes Opus, which Safari plays from Safari 17 (macOS Sonoma, iOS 17)."
+      },
       "created_at": null,
-      "description": "One faststart MP4, AV1 + Opus at 720p \u2014 small files for previews and feeds.",
+      "description": "One faststart MP4, AV1 at 720p — small files for previews and feeds.",
       "id": "web-av1-720p",
       "metadata": {},
       "name": "Web AV1 720p",
@@ -73,6 +95,15 @@
       "updated_at": null
     },
     {
+      "category": "streaming",
+      "compatibility": [
+        "web",
+        "android"
+      ],
+      "compatibility_notes": {
+        "android": "Android 10+ (a software decoder where the device has no AV1 hardware). HLS through Media3/ExoPlayer. Opus audio: Android 5.0+.",
+        "web": "Chrome 70+, Firefox 67+ and Edge 121+; Safari 17+ only on devices with AV1 hardware decode (iPhone 15 Pro, M3 Macs and later). HLS: native in Safari; Chrome, Edge and Firefox need an MSE player such as hls.js. AAC source audio passes through; other audio becomes Opus, which Safari plays from Safari 17 (macOS Sonoma, iOS 17)."
+      },
       "created_at": null,
       "description": "A CMAF/HLS package with an automatic ABR ladder up to 1080p, 4-second segments.",
       "id": "hls-av1-abr",
@@ -106,6 +137,21 @@
       "updated_at": null
     },
     {
+      "category": "streaming",
+      "compatibility": [
+        "web",
+        "ios",
+        "android",
+        "smart_tv",
+        "legacy"
+      ],
+      "compatibility_notes": {
+        "android": "Every Android device. HLS through Media3/ExoPlayer. Opus audio: Android 5.0+.",
+        "ios": "Every iPhone and iPad. iOS 17+ unless the source audio is AAC: other audio becomes Opus, which iOS plays from iOS 17.",
+        "legacy": "H.264 at 1080p or less plays on old browsers, set-top boxes and players. Segments are fMP4 (CMAF, HLS version 7, iOS 10+); players limited to MPEG-TS segments cannot play them. Sound only with AAC source audio: other audio becomes Opus, which older players cannot decode.",
+        "smart_tv": "Every smart TV. AAC source audio plays on any TV; other audio becomes Opus, which not every TV decodes.",
+        "web": "Every current browser. HLS: native in Safari; Chrome, Edge and Firefox need an MSE player such as hls.js. AAC source audio passes through; other audio becomes Opus, which Safari plays from Safari 17 (macOS Sonoma, iOS 17)."
+      },
       "created_at": null,
       "description": "Maximum device reach: H.264 HLS at 1080p, 720p, 480p and 360p.",
       "id": "hls-h264-abr",
@@ -154,6 +200,90 @@
       "updated_at": null
     },
     {
+      "category": "tv",
+      "compatibility": [
+        "web",
+        "ios",
+        "android",
+        "smart_tv",
+        "legacy"
+      ],
+      "compatibility_notes": {
+        "android": "Every Android device. HLS through Media3/ExoPlayer. Opus audio: Android 5.0+.",
+        "ios": "Every iPhone and iPad. iOS 17+ unless the source audio is AAC: other audio becomes Opus, which iOS plays from iOS 17.",
+        "legacy": "H.264 at 1080p or less plays on old browsers, set-top boxes and players. Segments are fMP4 (CMAF, HLS version 7, iOS 10+); players limited to MPEG-TS segments cannot play them. Sound only with AAC source audio: other audio becomes Opus, which older players cannot decode.",
+        "smart_tv": "Every smart TV. AAC source audio plays on any TV; other audio becomes Opus, which not every TV decodes.",
+        "web": "Every current browser. HLS: native in Safari; Chrome, Edge and Firefox need an MSE player such as hls.js. AAC source audio passes through; other audio becomes Opus, which Safari plays from Safari 17 (macOS Sonoma, iOS 17)."
+      },
+      "created_at": null,
+      "description": "H.264 HLS at a constant bit rate per rung (5, 3, 1.2 and 0.8 Mb/s): predictable bandwidth for broadcast, set-top boxes and capped networks.",
+      "id": "hls-h264-cbr",
+      "metadata": {},
+      "name": "HLS H.264 constant bitrate",
+      "object": "preset",
+      "output": {
+        "audio": {
+          "mode": "auto"
+        },
+        "bit_depth": "8bit",
+        "codec": "h264",
+        "color": "sdr",
+        "filters": null,
+        "gop": null,
+        "ladder": null,
+        "max_fps": null,
+        "mode": "hls",
+        "quality": {
+          "target": "cbr"
+        },
+        "renditions": [
+          {
+            "bitrate": "5M",
+            "height": 1080,
+            "width": 1920
+          },
+          {
+            "bitrate": "3M",
+            "height": 720,
+            "width": 1280
+          },
+          {
+            "bitrate": "1200k",
+            "height": 480,
+            "width": 854
+          },
+          {
+            "bitrate": "800k",
+            "height": 360,
+            "width": 640
+          }
+        ],
+        "segment_seconds": 6.0,
+        "subtitles": null,
+        "trim": null
+      },
+      "slug": "hls-h264-cbr",
+      "system": true,
+      "updated_at": null
+    },
+    {
+      "category": "tv",
+      "compatibility": [
+        "web",
+        "ios",
+        "android",
+        "smart_tv",
+        "legacy",
+        "editing"
+      ],
+      "compatibility_notes": {
+        "android": "Every Android device. Opus audio: Android 5.0+.",
+        "editing": "Imports into Premiere Pro, Final Cut Pro and DaVinci Resolve (Resolve on Linux needs the Studio edition). Sound only with AAC source audio: other audio becomes Opus, which editors commonly do not import.",
+        "ios": "Every iPhone and iPad. iOS 17+ unless the source audio is AAC: other audio becomes Opus, which iOS plays from iOS 17.",
+        "legacy": "H.264 at 1080p or less plays on old browsers, set-top boxes and players. Sound only with AAC source audio: other audio becomes Opus, which older players cannot decode.",
+        "smart_tv": "Every smart TV. AAC source audio plays on any TV; other audio becomes Opus, which not every TV decodes.",
+        "web": "Every current browser. AAC source audio passes through; other audio becomes Opus, which Safari plays from Safari 17 (macOS Sonoma, iOS 17)."
+      },
       "created_at": null,
       "description": "H.264 in MP4 for legacy players, set-top boxes and editing tools.",
       "id": "mp4-h264-compat-1080p",
@@ -190,6 +320,17 @@
       "updated_at": null
     },
     {
+      "category": "mobile",
+      "compatibility": [
+        "ios",
+        "android",
+        "smart_tv"
+      ],
+      "compatibility_notes": {
+        "android": "Android 5.0+ guarantees 8-bit HEVC only: a 10-bit source gives 10-bit output, which needs a device with Main 10 decode. Opus audio: Android 5.0+.",
+        "ios": "iOS 11+. iOS 17+ unless the source audio is AAC: other audio becomes Opus, which iOS plays from iOS 17.",
+        "smart_tv": "TVs with HEVC decode (standard on 4K models). AAC source audio plays on any TV; other audio becomes Opus, which not every TV decodes."
+      },
       "created_at": null,
       "description": "HEVC in MP4 for Apple ecosystems and smart TVs.",
       "id": "mp4-h265-1080p",
@@ -226,6 +367,13 @@
       "updated_at": null
     },
     {
+      "category": "archive",
+      "compatibility": [
+        "smart_tv"
+      ],
+      "compatibility_notes": {
+        "smart_tv": "HDR TVs with AV1 decode: many 2020 and later models, and Android TV devices launched since March 2021. AAC source audio plays on any TV; other audio becomes Opus, which not every TV decodes."
+      },
       "created_at": null,
       "description": "Keep HDR: AV1 10-bit BT.2020 PQ at 2160p. Needs a paid plan.",
       "id": "hdr10-av1-2160p",
@@ -262,11 +410,28 @@
       "updated_at": null
     },
     {
+      "category": "social",
+      "compatibility": [
+        "web",
+        "ios",
+        "android",
+        "smart_tv",
+        "legacy",
+        "editing"
+      ],
+      "compatibility_notes": {
+        "android": "Every Android device. Opus audio: Android 5.0+.",
+        "editing": "Imports into Premiere Pro, Final Cut Pro and DaVinci Resolve (Resolve on Linux needs the Studio edition). Sound only with AAC source audio: other audio becomes Opus, which editors commonly do not import.",
+        "ios": "Every iPhone and iPad. iOS 17+ unless the source audio is AAC: other audio becomes Opus, which iOS plays from iOS 17.",
+        "legacy": "H.264 at 1080p or less plays on old browsers, set-top boxes and players. Sound only with AAC source audio: other audio becomes Opus, which older players cannot decode.",
+        "smart_tv": "Every smart TV. AAC source audio plays on any TV; other audio becomes Opus, which not every TV decodes.",
+        "web": "Every current browser. AAC source audio passes through; other audio becomes Opus, which Safari plays from Safari 17 (macOS Sonoma, iOS 17)."
+      },
       "created_at": null,
       "description": "Portrait 9:16 for shorts, reels and stories, capped at 30 fps.",
       "id": "social-vertical-1080x1920",
       "metadata": {},
-      "name": "Social vertical 1080\u00d71920",
+      "name": "Social vertical 1080×1920",
       "object": "preset",
       "output": {
         "audio": {
@@ -298,8 +463,19 @@
       "updated_at": null
     },
     {
+      "category": "web",
+      "compatibility": [
+        "web",
+        "android",
+        "smart_tv"
+      ],
+      "compatibility_notes": {
+        "android": "Android 10+ (a software decoder where the device has no AV1 hardware).",
+        "smart_tv": "TVs with AV1 decode: many 2020 and later models, and Android TV devices launched since March 2021.",
+        "web": "Chrome 70+, Firefox 67+ and Edge 121+; Safari 17+ only on devices with AV1 hardware decode (iPhone 15 Pro, M3 Macs and later)."
+      },
       "created_at": null,
-      "description": "Video only \u2014 the audio track is dropped. For backgrounds and loops.",
+      "description": "Video only — the audio track is dropped. For backgrounds and loops.",
       "id": "audio-strip-av1-720p",
       "metadata": {},
       "name": "Silent AV1 720p",
@@ -334,8 +510,19 @@
       "updated_at": null
     },
     {
+      "category": "archive",
+      "compatibility": [
+        "web",
+        "android",
+        "smart_tv"
+      ],
+      "compatibility_notes": {
+        "android": "Android 10+ (a software decoder where the device has no AV1 hardware; above 1080p that may not keep up). Opus audio: Android 5.0+.",
+        "smart_tv": "TVs with AV1 decode: many 2020 and later models, and Android TV devices launched since March 2021. AAC source audio plays on any TV; other audio becomes Opus, which not every TV decodes.",
+        "web": "Chrome 70+, Firefox 67+ and Edge 121+; Safari 17+ only on devices with AV1 hardware decode (iPhone 15 Pro, M3 Macs and later). AAC source audio passes through; other audio becomes Opus, which Safari plays from Safari 17 (macOS Sonoma, iOS 17)."
+      },
       "created_at": null,
-      "description": "Source resolution, visually lossless AV1 \u2014 shrink a library without visible loss.",
+      "description": "Source resolution, visually lossless AV1 — shrink a library without visible loss.",
       "id": "archive-av1-high",
       "metadata": {},
       "name": "Archive AV1 (visually lossless)",

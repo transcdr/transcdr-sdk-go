@@ -13,13 +13,13 @@ import (
 type PresetsService struct{ client *Client }
 
 // List returns one page of presets: the organization's, then the system ones.
-func (s *PresetsService) List(ctx context.Context, params *ListParams, opts ...RequestOption) (*Page[Preset], error) {
-	return getPage[Preset](ctx, s.client, "/v1/presets", params.values(nil), opts)
+func (s *PresetsService) List(ctx context.Context, params PresetListQuery, opts ...RequestOption) (*Page[Preset], error) {
+	return getPage[Preset](ctx, s.client, "/v1/presets", presetQuery(params), opts)
 }
 
 // All iterates over every preset.
-func (s *PresetsService) All(ctx context.Context, params *ListParams, opts ...RequestOption) iter.Seq2[Preset, error] {
-	return iterate[Preset](ctx, s.client, "/v1/presets", params.values(nil), opts)
+func (s *PresetsService) All(ctx context.Context, params PresetListQuery, opts ...RequestOption) iter.Seq2[Preset, error] {
+	return iterate[Preset](ctx, s.client, "/v1/presets", presetQuery(params), opts)
 }
 
 // Create creates a preset; its output is merged over the defaults.
