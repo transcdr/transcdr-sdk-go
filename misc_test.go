@@ -64,9 +64,30 @@ func TestPresets(t *testing.T) {
 	f.expect("GET", "/v1/presets/hls-av1-abr")
 
 	f.reply(200, presetBody)
-	_, err = c.Presets.Update(fxCtx, "pre_1", &PresetUpdateParams{Description: String("new"), Metadata: Metadata{}})
+	_, err = c.Presets.Update(fxCtx, "pre_1", &PresetUpdateParams{Description: Value("new"), Metadata: Value(Metadata{})})
 	must(t, err)
 	fxBody(t, f.expect("PATCH", "/v1/presets/pre_1"), map[string]any{"description": "new", "metadata": map[string]any{}})
+
+	f.reply(200, presetBody)
+	_, err = c.Presets.Update(fxCtx, "pre_1", &PresetUpdateParams{Description: Null[string](), Metadata: Null[Metadata]()})
+	must(t, err)
+	fxBody(t, f.last(), map[string]any{"description": nil, "metadata": nil})
+
+	// Replace: PUT with the whole preset; description and metadata left out
+	// are not sent (the API empties them).
+	f.reply(200, presetBody)
+	_, err = c.Presets.Replace(fxCtx, "pre_1", &PresetReplaceParams{Name: "Broadcast CBR", Output: RawOutputSpec(json.RawMessage(`{"codec":"h264"}`))})
+	must(t, err)
+	fxBody(t, f.expect("PUT", "/v1/presets/pre_1"), map[string]any{"name": "Broadcast CBR", "output": map[string]any{"codec": "h264"}})
+	f.reply(200, presetBody)
+	_, err = c.Presets.Replace(fxCtx, "pre_1", &PresetReplaceParams{
+		Name: "n", Slug: String("s"), Description: "d", Metadata: Metadata{"k": "v"}, Output: &OutputSpecInput{Mode: "hls"},
+	})
+	must(t, err)
+	fxBody(t, f.last(), map[string]any{"name": "n", "slug": "s", "description": "d", "metadata": map[string]any{"k": "v"}, "output": map[string]any{"mode": "hls"}})
+	if f.last().Header.Get("Idempotency-Key") != "" {
+		t.Error("PUT needs no idempotency key")
+	}
 
 	f.reply(200, presetBody)
 	_, err = c.Presets.Update(fxCtx, "pre_1", &PresetUpdateParams{Name: String("n")})

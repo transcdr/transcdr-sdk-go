@@ -11,20 +11,11 @@ import (
 // JobsService submits and follows jobs.
 type JobsService struct{ client *Client }
 
-// withAutoIdempotency makes a create safe to retry: a fresh Idempotency-Key
-// comes first, so one passed by the caller wins.
-func (c *Client) withAutoIdempotency(opts []RequestOption) []RequestOption {
-	if c.maxRetries == 0 {
-		return opts
-	}
-	return append([]RequestOption{WithIdempotencyKey(NewIdempotencyKey())}, opts...)
-}
-
 // Create submits a job. An Idempotency-Key is generated automatically, so a
 // retried request never creates a duplicate job.
 func (s *JobsService) Create(ctx context.Context, params *JobCreateParams, opts ...RequestOption) (*Job, error) {
 	var job Job
-	if err := s.client.do(ctx, "POST", "/v1/jobs", nil, params, &job, s.client.withAutoIdempotency(opts)); err != nil {
+	if err := s.client.do(ctx, "POST", "/v1/jobs", nil, params, &job, withAutoIdempotency(opts)); err != nil {
 		return nil, err
 	}
 	return &job, nil
@@ -175,7 +166,7 @@ func (s *ProbeService) Create(ctx context.Context, params *ProbeParams, opts ...
 		opts = append([]RequestOption{WithRequestTimeout(90 * time.Second)}, opts...)
 	}
 	var job Job
-	if err := s.client.do(ctx, "POST", "/v1/probe", q, params, &job, opts); err != nil {
+	if err := s.client.do(ctx, "POST", "/v1/probe", q, params, &job, withAutoIdempotency(opts)); err != nil {
 		return nil, err
 	}
 	return &job, nil

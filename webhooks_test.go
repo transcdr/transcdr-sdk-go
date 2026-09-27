@@ -47,8 +47,8 @@ func TestWebhooksCreateBodies(t *testing.T) {
 	ixJSONEq(t, f.last().Body, `{"type":"sqs","queue_url":"https://sqs.eu-west-1.amazonaws.com/123456789012/events.fifo",
 		"aws":{"access_key_id":"AKIAEXAMPLE","secret_access_key":"secret-example","region":"eu-west-1",
 		"endpoint":"https://queue.example.com","message_group_id":"transcdr"}}`)
-	if f.last().Header.Get("Idempotency-Key") != "" {
-		t.Error("webhook creation carries no idempotency key")
+	if !uuidShape(f.last().Header.Get("Idempotency-Key")) {
+		t.Errorf("Idempotency-Key = %q", f.last().Header.Get("Idempotency-Key"))
 	}
 }
 
@@ -73,15 +73,21 @@ func TestWebhooksReadUpdateDelete(t *testing.T) {
 	must(t, err)
 	f.expect("GET", "/v1/webhooks/whk_1")
 
-	// Update AWS settings without resending the secret; clear the endpoint.
+	// Update AWS settings without resending the secret; clear the endpoint,
+	// the message group and the description.
 	_, err = c.Webhooks.Update(ixCtx, "whk_1", &WebhookUpdateParams{
-		AWS:     &WebhookAWSParams{AccessKeyID: String("AKIANEW"), Endpoint: Null[string](), MessageGroupID: Null[string]()},
-		Enabled: Bool(false),
-		Events:  []string{"*"},
+		AWS:         &WebhookAWSParams{AccessKeyID: String("AKIANEW"), Endpoint: Null[string](), MessageGroupID: Null[string]()},
+		Enabled:     Bool(false),
+		Events:      []string{"*"},
+		Description: Null[string](),
 	})
 	must(t, err)
 	ixJSONEq(t, f.expect("PATCH", "/v1/webhooks/whk_1").Body,
-		`{"aws":{"access_key_id":"AKIANEW","endpoint":null,"message_group_id":null},"events":["*"],"enabled":false}`)
+		`{"aws":{"access_key_id":"AKIANEW","endpoint":null,"message_group_id":null},"events":["*"],"description":null,"enabled":false}`)
+
+	_, err = c.Webhooks.Update(ixCtx, "whk_1", &WebhookUpdateParams{Description: Value("Jobs")})
+	must(t, err)
+	ixJSONEq(t, f.last().Body, `{"description":"Jobs"}`)
 
 	must(t, c.Webhooks.Delete(ixCtx, "whk_1"))
 	f.expect("DELETE", "/v1/webhooks/whk_1")

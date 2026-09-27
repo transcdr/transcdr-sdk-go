@@ -21,7 +21,7 @@ import (
 )
 
 // Version is this SDK's version, sent in the User-Agent header.
-const Version = "0.2.0"
+const Version = "0.3.0"
 
 // DefaultBaseURL is the production API.
 const DefaultBaseURL = "https://api.transcdr.com"
@@ -84,8 +84,9 @@ func WithBaseURL(u string) Option { return func(c *Client) { c.baseURL = strings
 func WithHTTPClient(h *http.Client) Option { return func(c *Client) { c.httpClient = h } }
 
 // WithMaxRetries sets how many times a failed request that is safe to repeat
-// is retried: GET, PUT and DELETE (and PATCH) requests, and POSTs carrying an
-// idempotency key, after a 429, a 5xx or a network error. Default 2.
+// is retried: GET, PUT and DELETE requests, and POSTs carrying an
+// Idempotency-Key (every create sends one), after a 429, a 5xx or a network
+// error. Default 2.
 func WithMaxRetries(n int) Option { return func(c *Client) { c.maxRetries = max(0, n) } }
 
 // WithRetryDelay sets the base backoff delay; it doubles each attempt, with

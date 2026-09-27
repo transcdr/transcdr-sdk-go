@@ -24,7 +24,7 @@ func (s *PresetsService) All(ctx context.Context, params *ListParams, opts ...Re
 
 // Create creates a preset; its output is merged over the defaults.
 func (s *PresetsService) Create(ctx context.Context, params *PresetCreateParams, opts ...RequestOption) (*Preset, error) {
-	return doJSONBody[Preset](ctx, s.client, "POST", "/v1/presets", params, opts)
+	return create[Preset](ctx, s.client, "/v1/presets", params, opts)
 }
 
 // Get retrieves a preset by pre_… id or by slug (system or custom).
@@ -32,9 +32,18 @@ func (s *PresetsService) Get(ctx context.Context, idOrSlug string, opts ...Reque
 	return doJSON[Preset](ctx, s.client, "GET", "/v1/presets/"+seg(idOrSlug), nil, opts)
 }
 
-// Update changes a preset; output is merged into the stored spec.
+// Update changes the fields set in params (PATCH); output is merged into
+// the stored spec, so a field left out of it keeps its value.
 func (s *PresetsService) Update(ctx context.Context, id string, params *PresetUpdateParams, opts ...RequestOption) (*Preset, error) {
 	return doJSONBody[Preset](ctx, s.client, "PATCH", "/v1/presets/"+seg(id), params, opts)
+}
+
+// Replace sets the whole preset (PUT): output is merged over the defaults,
+// not the stored spec, so a field left out of it goes back to its default.
+// Description and metadata left out are emptied; the slug is kept unless
+// set. PUT is safe to retry.
+func (s *PresetsService) Replace(ctx context.Context, id string, params *PresetReplaceParams, opts ...RequestOption) (*Preset, error) {
+	return doJSONBody[Preset](ctx, s.client, "PUT", "/v1/presets/"+seg(id), params, opts)
 }
 
 // Delete deletes a preset.

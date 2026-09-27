@@ -62,7 +62,8 @@ type ConnectionConfig struct {
 }
 
 // ConnectionSecrets are write-only credentials. On update an omitted secret
-// is kept and "" clears it.
+// is kept and "" clears it (storage connections). The API never returns
+// them: [Connection.Secrets] says which are set, with a fingerprint.
 type ConnectionSecrets struct {
 	AccessKeyID          *string `json:"access_key_id,omitempty"`
 	SecretAccessKey      *string `json:"secret_access_key,omitempty"`
@@ -95,8 +96,10 @@ type Connection struct {
 	Kind   string           `json:"kind"`
 	Config ConnectionConfig `json:"config"`
 	// SecretsSet names the stored secrets; their values are never returned.
-	SecretsSet   []string               `json:"secrets_set"`
-	Capabilities ConnectionCapabilities `json:"capabilities"`
+	SecretsSet []string `json:"secrets_set"`
+	// Secrets has an entry per stored secret, by name, with its fingerprint.
+	Secrets      map[string]SecretStatus `json:"secrets,omitempty"`
+	Capabilities ConnectionCapabilities  `json:"capabilities"`
 	// Status is untested, ok or error.
 	Status string `json:"status"`
 	// Class is storage or messaging.
@@ -128,6 +131,25 @@ type ConnectionCheckParams struct {
 	Kind    string             `json:"kind"`
 	Config  ConnectionConfig   `json:"config"`
 	Secrets *ConnectionSecrets `json:"secrets,omitempty"`
+}
+
+// SecretStatus describes a write-only secret that is set. The fingerprint
+// is an HMAC keyed with a server secret and bound to the object and the
+// field: it changes when the secret changes, and cannot be computed or
+// checked on the client. Compare it with an earlier read to notice a secret
+// changed elsewhere.
+type SecretStatus struct {
+	Set bool `json:"set"`
+	// Fingerprint is "hmac-sha256:" and 12 hex digits.
+	Fingerprint string `json:"fingerprint"`
+}
+
+// SecretChanged reports whether a secret differs between two reads of the
+// same object: it was set, cleared or replaced in between.
+func SecretChanged(before, after map[string]SecretStatus, name string) bool {
+	b, bok := before[name]
+	a, aok := after[name]
+	return bok != aok || b != a
 }
 
 // ConnectionUpdateParams change a connection.
@@ -216,31 +238,40 @@ type AutomationSourceParams struct {
 }
 
 // AutomationParams create (Name and Source.ConnectionID required) or update
-// an automation. On update only the fields set are changed.
+// an automation. On update a field left out is unchanged, and a Nullable
+// field sent as [Null] is cleared:
+//
+//	client.Automations.Update(ctx, id, &transcdr.AutomationParams{
+//		Destination: transcdr.Null[transcdr.JobDestination](), // keep outputs in Transcdr
+//		WebhookURL:  transcdr.Null[string](),
+//	})
 type AutomationParams struct {
 	Name    string `json:"name,omitempty"`
 	Enabled *bool  `json:"enabled,omitempty"`
 	// Trigger is watch (default), hook or queue.
 	Trigger string `json:"trigger,omitempty"`
-	// TriggerConnectionID is required for queue; "" clears it.
-	TriggerConnectionID *string                 `json:"trigger_connection_id,omitempty"`
+	// TriggerConnectionID is the sqs connection a queue automation consumes
+	// (required for queue).
+	TriggerConnectionID Nullable[string]        `json:"trigger_connection_id,omitzero"`
 	Source              *AutomationSourceParams `json:"source,omitempty"`
 	// PollIntervalSeconds is 60–86400.
 	PollIntervalSeconds *int `json:"poll_interval_seconds,omitempty"`
 	// SettleSeconds is 0–86400.
 	SettleSeconds *int `json:"settle_seconds,omitempty"`
-	// Preset: "" clears it.
-	Preset *string `json:"preset,omitempty"`
-	// Output overrides; an empty RawOutputSpec("{}") clears them.
-	Output      *OutputSpecInput         `json:"output,omitempty"`
+	// Preset is a system preset slug or pre_… id.
+	Preset Nullable[string] `json:"preset,omitzero"`
+	// Output holds spec overrides merged over the preset, e.g.
+	// Value(RawOutputSpec(b)).
+	Output Nullable[*OutputSpecInput] `json:"output,omitzero"`
+	// Destination delivers outputs to a storage connection.
 	Destination Nullable[JobDestination] `json:"destination,omitzero"`
 	// AfterSuccess is keep or delete.
 	AfterSuccess string `json:"after_success,omitempty"`
 	Priority     string `json:"priority,omitempty"`
-	// Metadata: a non-nil empty map clears it.
-	Metadata Metadata `json:"metadata,omitzero"`
-	// WebhookURL: "" clears it.
-	WebhookURL *string `json:"webhook_url,omitempty"`
+	// Metadata is added to every job; on update it replaces the stored map.
+	Metadata Nullable[Metadata] `json:"metadata,omitzero"`
+	// WebhookURL is a per-job webhook for every job created.
+	WebhookURL Nullable[string] `json:"webhook_url,omitzero"`
 }
 
 // AutomationRun is the result of running or triggering an automation.

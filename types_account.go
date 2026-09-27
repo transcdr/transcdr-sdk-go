@@ -2,6 +2,7 @@ package transcdr
 
 import (
 	"encoding/json"
+	"strings"
 	"time"
 )
 
@@ -59,8 +60,9 @@ type Organization struct {
 
 // OrganizationUpdateParams change the organization (owners and admins).
 type OrganizationUpdateParams struct {
-	Name         *string `json:"name,omitempty"`
-	BillingEmail *string `json:"billing_email,omitempty"`
+	Name *string `json:"name,omitempty"`
+	// BillingEmail: Null (or "") clears it.
+	BillingEmail Nullable[string] `json:"billing_email,omitzero"`
 }
 
 // OrganizationCreateParams create an organization owned by the caller.
@@ -147,15 +149,25 @@ type AuthResponse struct {
 
 // Me is the caller.
 type Me struct {
-	// User is nil for API keys.
-	User          *User        `json:"user"`
-	Organization  Organization `json:"organization"`
+	// User is the signed-in user or, for an API key, the user who created
+	// the key.
+	User         *User        `json:"user"`
+	Organization Organization `json:"organization"`
+	// Organizations are a session's memberships (never empty); always empty
+	// for an API key.
 	Organizations []Membership `json:"organizations"`
-	// APIKey is the key in use, for API keys.
+	// APIKey is the token presented: an API key (prefix tdk_live_ or
+	// tdk_test_) or a session (prefix tds_). See [Me.IsSession].
 	APIKey *APIKey  `json:"api_key,omitempty"`
 	Scopes []string `json:"scopes"`
 	// Livemode is false for test-mode keys.
 	Livemode *bool `json:"livemode,omitempty"`
+}
+
+// IsSession reports whether the caller is a session (signed in as the
+// user) rather than an API key.
+func (m *Me) IsSession() bool {
+	return m.APIKey != nil && strings.HasPrefix(m.APIKey.Prefix, "tds_")
 }
 
 // Announcement kinds.

@@ -119,6 +119,39 @@ client.Billing.UpdateSettings(ctx, &transcdr.BillingSettingsParams{MonthlyLimitC
 client.Connections.Update(ctx, id, &transcdr.ConnectionUpdateParams{
 	Config: &transcdr.ConnectionConfig{Root: transcdr.Null[string]()},
 })
+
+// Stop delivering an automation's outputs to a connection.
+client.Automations.Update(ctx, id, &transcdr.AutomationParams{
+	Destination: transcdr.Null[transcdr.JobDestination](),
+})
+```
+
+On update, `null` clears:
+- an automation's `Destination`, `Preset`, `Output`, `Metadata`, `WebhookURL` and `TriggerConnectionID`
+- an event destination's `Description`, `AWS.Endpoint` and `AWS.MessageGroupID`
+- a connection's `Config` fields
+- a preset's `Description` and `Metadata`
+- the organization's `BillingEmail`
+
+### Replacing a preset
+
+`Presets.Update` (PATCH) merges `Output` into the stored specification, so a field you leave out keeps its value. `Presets.Replace` (PUT) sets the whole preset: `Output` is merged over the defaults instead, a description or metadata left out is emptied, and the slug is kept unless you set it.
+
+```go
+client.Presets.Replace(ctx, id, &transcdr.PresetReplaceParams{
+	Name:   "Web H.264",
+	Output: transcdr.RawOutputSpec([]byte(`{"mode":"hls","codec":"h264"}`)),
+})
+```
+
+## Write-only secrets
+
+Connections and event destinations never return their secrets. `Secrets` has an entry for each one that is set, with a fingerprint: an HMAC keyed on the server and bound to the object and the field. It cannot be computed or checked on the client, but it changes whenever the secret does, so comparing it with an earlier read shows a secret replaced elsewhere:
+
+```go
+if transcdr.SecretChanged(saved.Secrets, conn.Secrets, "secret_access_key") {
+	// set, cleared or rotated since `saved` was read
+}
 ```
 
 ## Errors
@@ -150,7 +183,12 @@ A request is retried with jittered exponential backoff after a 429, a 5xx or a n
 - GET, PUT and DELETE requests
 - POSTs carrying an `Idempotency-Key`
 
-`Jobs.Create` and `Uploads.Create` send an `Idempotency-Key` automatically, so a retry never creates a duplicate.
+Every create sends an `Idempotency-Key` automatically:
+- jobs, probes, uploads and assets
+- presets, event destinations, connections and automations
+- API keys, members and organizations
+
+The API remembers the key for 24 hours per organization and replays the first successful response (with `Idempotent-Replayed: true`), so a retried create never makes a duplicate. To make a create safe to repeat across processes or restarts, pass your own key with `transcdr.WithIdempotencyKey`. Reusing a key for a different request is a 409 with code `idempotency_key_reused`.
 
 ## Webhooks
 

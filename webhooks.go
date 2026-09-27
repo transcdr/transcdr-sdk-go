@@ -22,7 +22,7 @@ func (s *WebhooksService) All(ctx context.Context, params *ListParams, opts ...R
 
 // Create creates an endpoint. Its Secret is returned now and on rotation only.
 func (s *WebhooksService) Create(ctx context.Context, params *WebhookCreateParams, opts ...RequestOption) (*WebhookEndpoint, error) {
-	return doJSONBody[WebhookEndpoint](ctx, s.client, "POST", "/v1/webhooks", params, opts)
+	return create[WebhookEndpoint](ctx, s.client, "/v1/webhooks", params, opts)
 }
 
 // Get retrieves an endpoint.

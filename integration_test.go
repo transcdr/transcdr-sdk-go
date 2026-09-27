@@ -53,6 +53,10 @@ func TestIntegration(t *testing.T) {
 	t.Run("account", func(t *testing.T) {
 		me, err := c.Auth.Me(ctx)
 		must(t, err)
+		// An API key: the user is the key's creator, and no memberships.
+		if me.IsSession() || me.User == nil || me.APIKey == nil || len(me.Organizations) != 0 {
+			t.Errorf("me = %+v", me)
+		}
 		org, err := c.Organization.Get(ctx)
 		must(t, err)
 		if me.Organization.ID != org.ID || org.PlanDetails == nil {
@@ -81,14 +85,31 @@ func TestIntegration(t *testing.T) {
 		if key.Secret == nil || !strings.HasPrefix(*key.Secret, "tdk_test_") {
 			t.Fatalf("secret = %v", key.Secret)
 		}
-		found, err := c.APIKeys.Find(ctx, key.ID)
+		found, err := c.APIKeys.Get(ctx, key.ID)
 		must(t, err)
 		if found.Name != key.Name || found.Secret != nil {
 			t.Errorf("found %+v", found)
 		}
 		must(t, c.APIKeys.Revoke(ctx, key.ID))
-		if _, err := c.APIKeys.Find(ctx, key.ID); !IsNotFound(err) {
-			t.Errorf("revoked key still listed: %v", err)
+		if _, err := c.APIKeys.Get(ctx, key.ID); !IsNotFound(err) {
+			t.Errorf("revoked key still found: %v", err)
+		}
+	})
+
+	t.Run("idempotency", func(t *testing.T) {
+		idem := "sdk-go-" + suffix
+		params := &WebhookCreateParams{URL: "https://example.com/idem/" + suffix, Events: []string{EventJobFailed}}
+		first, err := c.Webhooks.Create(ctx, params, WithIdempotencyKey(idem))
+		must(t, err)
+		defer func() { must(t, c.Webhooks.Delete(ctx, first.ID)) }()
+		again, err := c.Webhooks.Create(ctx, params, WithIdempotencyKey(idem))
+		must(t, err)
+		if again.ID != first.ID || again.Secret == nil || *again.Secret != *first.Secret {
+			t.Errorf("replay made %s (first %s)", again.ID, first.ID)
+		}
+		_, err = c.Webhooks.Create(ctx, &WebhookCreateParams{URL: "https://example.com/other/" + suffix}, WithIdempotencyKey(idem))
+		if e, ok := AsError(err); !ok || e.Code != "idempotency_key_reused" {
+			t.Errorf("reused key: %v", err)
 		}
 	})
 
@@ -109,13 +130,28 @@ func TestIntegration(t *testing.T) {
 			t.Errorf("output %s", p.Output.Raw())
 		}
 		updated, err := c.Presets.Update(ctx, p.ID, &PresetUpdateParams{
-			Description: String("updated"),
+			Description: Value("updated"),
 			Output:      &OutputSpecInput{Quality: &Quality{Bitrate: String("5M")}},
-			Metadata:    Metadata{},
+			Metadata:    Value(Metadata{"k": "v"}),
 		})
 		must(t, err)
-		if updated.Description != "updated" || *updated.Output.Quality.Bitrate != "5M" {
+		if updated.Description != "updated" || *updated.Output.Quality.Bitrate != "5M" || updated.Metadata["k"] != "v" {
 			t.Errorf("updated %+v", updated)
+		}
+		cleared, err := c.Presets.Update(ctx, p.ID, &PresetUpdateParams{Description: Null[string](), Metadata: Null[Metadata]()})
+		must(t, err)
+		if cleared.Description != "" || len(cleared.Metadata) != 0 {
+			t.Errorf("cleared %+v", cleared)
+		}
+		// Replace: the output is the whole spec, so the CBR quality and the
+		// renditions go back to their defaults.
+		replaced, err := c.Presets.Replace(ctx, p.ID, &PresetReplaceParams{
+			Name: "sdk-go replaced " + suffix, Output: RawOutputSpec([]byte(`{"mode":"single","codec":"h264"}`)), Description: "whole",
+		})
+		must(t, err)
+		if replaced.Slug != p.Slug || replaced.Description != "whole" || replaced.Output.Mode != "single" ||
+			(replaced.Output.Quality.Target != nil && *replaced.Output.Quality.Target == QualityCBR) {
+			t.Errorf("replaced %s", replaced.Output.Raw())
 		}
 		n := 0
 		for _, err := range c.Presets.All(ctx, &ListParams{Limit: 5}) {
@@ -137,6 +173,35 @@ func TestIntegration(t *testing.T) {
 		if conn.Class != "messaging" || !conn.Capabilities.Events {
 			t.Errorf("connection %+v", conn)
 		}
+		sqs, err := c.Connections.Create(ctx, &ConnectionCreateParams{
+			Name: "sdk-go sqs " + suffix, Kind: KindSQS,
+			Config:  ConnectionConfig{QueueURL: Value("https://sqs.us-east-1.amazonaws.com/000000000000/sdk-go-" + suffix), MessageGroupID: Value("g")},
+			Secrets: &ConnectionSecrets{AccessKeyID: String("AKIAIOSFODNN7EXAMPLE"), SecretAccessKey: String("wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY")},
+		})
+		if err == nil {
+			defer func() { must(t, c.Connections.Delete(ctx, sqs.ID)) }()
+			fp := sqs.Secrets["secret_access_key"]
+			if !fp.Set || !strings.HasPrefix(fp.Fingerprint, "hmac-sha256:") {
+				t.Errorf("secrets %+v", sqs.Secrets)
+			}
+			rotated, err := c.Connections.Update(ctx, sqs.ID, &ConnectionUpdateParams{
+				Secrets: &ConnectionSecrets{SecretAccessKey: String("je7MtGbClwBF/2Zp9Utk/h3yCo8nvbEXAMPLEKEY")},
+				Config:  &ConnectionConfig{MessageGroupID: Null[string]()},
+			})
+			must(t, err)
+			if !SecretChanged(sqs.Secrets, rotated.Secrets, "secret_access_key") || SecretChanged(sqs.Secrets, rotated.Secrets, "access_key_id") {
+				t.Errorf("fingerprints %+v -> %+v", sqs.Secrets, rotated.Secrets)
+			}
+			if _, ok := rotated.Config.MessageGroupID.Get(); ok {
+				t.Errorf("message_group_id not cleared: %+v", rotated.Config)
+			}
+		} else if e, ok := AsError(err); !ok || e.Status != 422 {
+			// A queue the API cannot reach is refused (422); anything else is a failure.
+			t.Errorf("sqs connection: %v", err)
+		} else {
+			t.Logf("sqs connection refused, fingerprints not checked: %v", err)
+		}
+
 		off, err := c.Connections.Disable(ctx, conn.ID)
 		must(t, err)
 		if off.Enabled || off.DisabledReason == nil {
@@ -155,6 +220,16 @@ func TestIntegration(t *testing.T) {
 		must(t, err)
 		if rotated.Secret == nil || *rotated.Secret == *w.Secret {
 			t.Error("the secret did not change")
+		}
+		if !SecretChanged(w.Secrets, rotated.Secrets, "secret") {
+			t.Errorf("fingerprint did not change: %+v -> %+v", w.Secrets, rotated.Secrets)
+		}
+		described, err := c.Webhooks.Update(ctx, w.ID, &WebhookUpdateParams{Description: Value("desc")})
+		must(t, err)
+		undescribed, err := c.Webhooks.Update(ctx, w.ID, &WebhookUpdateParams{Description: Null[string]()})
+		must(t, err)
+		if described.Description != "desc" || undescribed.Description != "" {
+			t.Errorf("description %q then %q", described.Description, undescribed.Description)
 		}
 		via, err := c.Webhooks.Create(ctx, &WebhookCreateParams{ConnectionID: conn.ID})
 		must(t, err)

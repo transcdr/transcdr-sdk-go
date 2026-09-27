@@ -90,6 +90,11 @@ func TestOrganization(t *testing.T) {
 	fxBody(t, f.expect("PATCH", "/v1/organization"), map[string]any{"name": "Acme 2"})
 
 	f.reply(200, fixture(t, "organization.json"))
+	_, err = c.Organization.Update(fxCtx, &OrganizationUpdateParams{BillingEmail: Null[string]()})
+	must(t, err)
+	fxBody(t, f.last(), map[string]any{"billing_email": nil})
+
+	f.reply(200, fixture(t, "organization.json"))
 	_, err = c.Organization.RotateJobWebhookSecret(fxCtx)
 	must(t, err)
 	f.expect("POST", "/v1/organization/rotate-job-webhook-secret")
@@ -127,7 +132,9 @@ func TestMembersLeave(t *testing.T) {
 	f := newFakeAPI(t)
 	c := f.client()
 	f.reply(200, `{"user":{"id":"usr_9","name":"Sample User","email":"person@example.com","role":"member","organization_id":"org_1","created_at":"2026-09-26T08:51:37Z"},
-		"organization":{"id":"org_1","name":"Acme","slug":"acme","plan":"starter","billing_email":null,"created_at":"2026-09-26T08:51:37Z"},"organizations":[],"scopes":["*"]}`)
+		"organization":{"id":"org_1","name":"Acme","slug":"acme","plan":"starter","billing_email":null,"created_at":"2026-09-26T08:51:37Z"},
+		"organizations":[{"organization":{"id":"org_1","name":"Acme","slug":"acme","plan":"starter"},"role":"member"}],
+		"api_key":{"id":"key_s","name":"Session","prefix":"tds_ab12","scopes":["*"],"mode":"live","last_used_at":null,"expires_at":null,"created_at":"2026-09-26T08:51:37Z"},"scopes":["*"]}`)
 	f.reply(204, "")
 	must(t, c.Organization.Members.Leave(fxCtx))
 	reqs := f.all()
@@ -135,9 +142,10 @@ func TestMembersLeave(t *testing.T) {
 		t.Fatalf("requests = %+v", reqs)
 	}
 
-	// An API key has no user: an error, and nothing is deleted.
+	// An API key's /v1/me names the key's creator as the user: an error, and
+	// nothing is deleted.
 	g := newFakeAPI(t)
-	g.reply(200, `{"user":null,"organization":{"id":"org_1","name":"Acme","slug":"acme","plan":"starter","billing_email":null,"created_at":"2026-09-26T08:51:37Z"},
+	g.reply(200, `{"user":{"id":"usr_9","name":"Sample User","email":"person@example.com","role":"owner","organization_id":"org_1","created_at":"2026-09-26T08:51:37Z"},"organization":{"id":"org_1","name":"Acme","slug":"acme","plan":"starter","billing_email":null,"created_at":"2026-09-26T08:51:37Z"},
 		"organizations":[],"api_key":{"id":"key_1","name":"CI","prefix":"tdk_test_ab12","scopes":["*"],"mode":"test","last_used_at":null,"expires_at":null,"created_at":"2026-09-26T08:51:37Z"},"scopes":["*"]}`)
 	if err := g.client().Organization.Members.Leave(fxCtx); err == nil {
 		t.Fatal("Leave with an API key must fail")
@@ -190,8 +198,8 @@ func TestAPIKeys(t *testing.T) {
 	if key.Secret == nil || *key.Secret != "tdk_test_example" || !key.ExpiresAt.Equal(exp) {
 		t.Fatalf("key = %+v", key)
 	}
-	if r := f.last(); r.Header.Get("Idempotency-Key") != "" {
-		t.Fatal("API key creation carries no automatic idempotency key")
+	if r := f.last(); !uuidShape(r.Header.Get("Idempotency-Key")) {
+		t.Fatalf("Idempotency-Key = %q", r.Header.Get("Idempotency-Key"))
 	}
 
 	f.reply(204, "")
@@ -202,7 +210,32 @@ func TestAPIKeys(t *testing.T) {
 	f.expect("DELETE", "/v1/api-keys/key_2")
 }
 
-func TestAPIKeysAllAndFind(t *testing.T) {
+func TestAPIKeysGet(t *testing.T) {
+	f := newFakeAPI(t)
+	f.reply(200, `{"object":"api_key","id":"key_b","name":"b","prefix":"tdk_live_ab12","scopes":["*"],"mode":"live","last_used_at":null,"expires_at":null,"revoked_at":null,"created_at":"2026-09-26T08:51:37Z"}`)
+	key, err := f.client().APIKeys.Get(fxCtx, "key_b")
+	must(t, err)
+	f.expect("GET", "/v1/api-keys/key_b")
+	if key.ID != "key_b" || key.Secret != nil {
+		t.Fatalf("key = %+v", key)
+	}
+
+	// Revoked: 404, not retried.
+	f.reply(404, `{"error":{"type":"invalid_request_error","code":"not_found","message":"No such API key."}}`)
+	if _, err := f.client().APIKeys.Get(fxCtx, "key_r"); !IsNotFound(err) {
+		t.Fatalf("err = %v, want not found", err)
+	}
+
+	// Find is the deprecated name for Get.
+	f.reply(200, `{"id":"key_b"}`)
+	key, err = f.client().APIKeys.Find(fxCtx, "key_b")
+	must(t, err)
+	if key.ID != "key_b" || f.last().Path != "/v1/api-keys/key_b" {
+		t.Fatalf("Find = %+v via %s", key, f.last().Path)
+	}
+}
+
+func TestAPIKeysAll(t *testing.T) {
 	page1 := `{"object":"list","data":[{"id":"key_a","name":"a","prefix":"p","scopes":["*"],"mode":"live","last_used_at":null,"expires_at":null,"created_at":"2026-09-26T08:51:37Z"}],"has_more":true,"next_cursor":"key_a"}`
 	page2 := `{"object":"list","data":[{"id":"key_b","name":"b","prefix":"p","scopes":["*"],"mode":"live","last_used_at":null,"expires_at":null,"created_at":"2026-09-26T08:51:37Z"}],"has_more":false,"next_cursor":null}`
 
@@ -220,20 +253,6 @@ func TestAPIKeysAllAndFind(t *testing.T) {
 		t.Fatalf("second page query = %v", reqs[1].Query)
 	}
 
-	g := newFakeAPI(t)
-	g.reply(200, page1).reply(200, page2)
-	key, err := g.client().APIKeys.Find(fxCtx, "key_b")
-	must(t, err)
-	if key.ID != "key_b" {
-		t.Fatalf("found %s", key.ID)
-	}
-
-	h := newFakeAPI(t)
-	h.reply(200, page2)
-	_, err = h.client().APIKeys.Find(fxCtx, "key_z")
-	if !IsNotFound(err) {
-		t.Fatalf("err = %v, want not found", err)
-	}
 }
 
 func TestAnnouncements(t *testing.T) {

@@ -265,13 +265,26 @@ type PresetCreateParams struct {
 	Metadata    Metadata         `json:"metadata,omitempty"`
 }
 
-// PresetUpdateParams change a preset. Output is merged into the stored spec.
+// PresetUpdateParams change a preset (PATCH): a field left out is
+// unchanged, Null clears Description or Metadata, and Output is merged into
+// the stored spec. To set the whole preset, use [PresetsService.Replace].
 type PresetUpdateParams struct {
-	Name        *string          `json:"name,omitempty"`
+	Name        *string            `json:"name,omitempty"`
+	Slug        *string            `json:"slug,omitempty"`
+	Description Nullable[string]   `json:"description,omitzero"`
+	Output      *OutputSpecInput   `json:"output,omitempty"`
+	Metadata    Nullable[Metadata] `json:"metadata,omitzero"`
+}
+
+// PresetReplaceParams replace a preset (PUT). Output is the whole spec: a
+// field left out of it takes its default, as on create. Description and
+// Metadata left out are emptied; Slug left out is kept.
+type PresetReplaceParams struct {
+	Name        string           `json:"name"`
+	Output      *OutputSpecInput `json:"output"`
 	Slug        *string          `json:"slug,omitempty"`
-	Description *string          `json:"description,omitempty"`
-	Output      *OutputSpecInput `json:"output,omitempty"`
-	Metadata    Metadata         `json:"metadata,omitzero"` // a non-nil empty map clears it
+	Description string           `json:"description,omitempty"`
+	Metadata    Metadata         `json:"metadata,omitempty"`
 }
 
 // Delivery is a job's outputs delivered to a connection.

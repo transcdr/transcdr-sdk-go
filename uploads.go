@@ -20,7 +20,7 @@ type UploadsService struct{ client *Client }
 // automatically, so a retry never opens a second session.
 func (s *UploadsService) Create(ctx context.Context, params *UploadCreateParams, opts ...RequestOption) (*Upload, error) {
 	var u Upload
-	if err := s.client.do(ctx, "POST", "/v1/uploads", nil, params, &u, s.client.withAutoIdempotency(opts)); err != nil {
+	if err := s.client.do(ctx, "POST", "/v1/uploads", nil, params, &u, withAutoIdempotency(opts)); err != nil {
 		return nil, err
 	}
 	return &u, nil
@@ -199,7 +199,7 @@ func (s *AssetsService) All(ctx context.Context, params *ListParams, opts ...Req
 // Create links a remote file by URL. The asset is ready at once; jobs read
 // the URL directly.
 func (s *AssetsService) Create(ctx context.Context, params *AssetImportParams, opts ...RequestOption) (*Asset, error) {
-	return doJSONBody[Asset](ctx, s.client, "POST", "/v1/assets", params, opts)
+	return create[Asset](ctx, s.client, "/v1/assets", params, opts)
 }
 
 // Get retrieves an asset.

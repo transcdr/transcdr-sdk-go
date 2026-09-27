@@ -40,8 +40,9 @@ func (s *AuthService) ChangePassword(ctx context.Context, params *ChangePassword
 	return s.client.do(ctx, "POST", "/v1/auth/password", nil, params, nil, opts)
 }
 
-// Me returns the caller: the user (nil for API keys), organization, the
-// user's organizations and the scopes.
+// Me returns the caller: the user (for an API key, the user who created it),
+// the organization, a session's organizations (empty for an API key), the
+// token presented and its scopes.
 func (s *AuthService) Me(ctx context.Context, opts ...RequestOption) (*Me, error) {
 	return doJSON[Me](ctx, s.client, "GET", "/v1/me", nil, opts)
 }
@@ -78,7 +79,7 @@ func (s *MembersService) List(ctx context.Context, opts ...RequestOption) ([]Use
 
 // Create adds a member (see [MemberCreateParams]).
 func (s *MembersService) Create(ctx context.Context, params *MemberCreateParams, opts ...RequestOption) (*User, error) {
-	return doJSONBody[User](ctx, s.client, "POST", "/v1/organization/members", params, opts)
+	return create[User](ctx, s.client, "/v1/organization/members", params, opts)
 }
 
 // Update changes a member's role.
@@ -98,7 +99,7 @@ func (s *MembersService) Leave(ctx context.Context, opts ...RequestOption) error
 	if err != nil {
 		return err
 	}
-	if me.User == nil {
+	if !me.IsSession() || me.User == nil {
 		return errors.New("transcdr: Members.Leave needs a session token, not an API key")
 	}
 	return s.Delete(ctx, me.User.ID, opts...)
@@ -116,7 +117,7 @@ func (s *OrganizationsService) List(ctx context.Context, opts ...RequestOption) 
 // Create creates an organization owned by the caller and returns a session
 // token in it; the current token keeps working.
 func (s *OrganizationsService) Create(ctx context.Context, params *OrganizationCreateParams, opts ...RequestOption) (*AuthResponse, error) {
-	return doJSONBody[AuthResponse](ctx, s.client, "POST", "/v1/organizations", params, opts)
+	return create[AuthResponse](ctx, s.client, "/v1/organizations", params, opts)
 }
 
 // APIKeysService manages secret API keys.
@@ -134,7 +135,7 @@ func (s *APIKeysService) All(ctx context.Context, params *ListParams, opts ...Re
 
 // Create creates a key; its Secret is shown only now.
 func (s *APIKeysService) Create(ctx context.Context, params *APIKeyCreateParams, opts ...RequestOption) (*APIKey, error) {
-	return doJSONBody[APIKey](ctx, s.client, "POST", "/v1/api-keys", params, opts)
+	return create[APIKey](ctx, s.client, "/v1/api-keys", params, opts)
 }
 
 // Revoke revokes a key immediately.
@@ -147,18 +148,18 @@ func (s *APIKeysService) Delete(ctx context.Context, id string, opts ...RequestO
 	return s.Revoke(ctx, id, opts...)
 }
 
-// Find looks a key up by id, walking the list (the API has no endpoint for
-// one key). It returns an error satisfying [IsNotFound] when there is none.
+// Get retrieves a key (without its secret). A revoked key, or another
+// organization's, is an error satisfying [IsNotFound].
+func (s *APIKeysService) Get(ctx context.Context, id string, opts ...RequestOption) (*APIKey, error) {
+	return doJSON[APIKey](ctx, s.client, "GET", "/v1/api-keys/"+seg(id), nil, opts)
+}
+
+// Find is [APIKeysService.Get].
+//
+// Deprecated: use Get. Find walked the list before the API could return one
+// key.
 func (s *APIKeysService) Find(ctx context.Context, id string, opts ...RequestOption) (*APIKey, error) {
-	for key, err := range s.All(ctx, &ListParams{Limit: 100}, opts...) {
-		if err != nil {
-			return nil, err
-		}
-		if key.ID == id {
-			return &key, nil
-		}
-	}
-	return nil, &Error{Type: ErrorTypeInvalidRequest, Status: 404, Code: "not_found", Message: "No API key " + id + "."}
+	return s.Get(ctx, id, opts...)
 }
 
 // AnnouncementsService lists the changelog and service credits for the

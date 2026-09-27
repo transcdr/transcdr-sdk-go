@@ -36,7 +36,9 @@ type requestConfig struct {
 func withoutAuth() RequestOption { return func(r *requestConfig) { r.noAuth = true } }
 
 // WithIdempotencyKey sends an Idempotency-Key header, which also makes a POST
-// safe to retry. Job and upload creation set one automatically.
+// safe to retry. Every create sets one automatically; pass your own to make
+// a create safe to repeat across processes (the API remembers a key for
+// 24 hours, per organization).
 func WithIdempotencyKey(key string) RequestOption {
 	return func(r *requestConfig) { r.idempotencyKey = key }
 }
@@ -68,6 +70,19 @@ func NewIdempotencyKey() string {
 	_, _ = rand.Read(b[:])
 	h := hex.EncodeToString(b[:])
 	return h[0:8] + "-" + h[8:12] + "-" + h[12:16] + "-" + h[16:20] + "-" + h[20:32]
+}
+
+// withAutoIdempotency makes a create safe to retry: a fresh Idempotency-Key
+// comes first, so one passed by the caller wins. The API replays the first
+// successful response to a retry with the same key and body, so a create
+// whose response was lost is not made twice.
+func withAutoIdempotency(opts []RequestOption) []RequestOption {
+	return append([]RequestOption{WithIdempotencyKey(NewIdempotencyKey())}, opts...)
+}
+
+// create POSTs a create request with an automatic Idempotency-Key.
+func create[T any](ctx context.Context, c *Client, path string, body any, opts []RequestOption) (*T, error) {
+	return doJSONBody[T](ctx, c, "POST", path, body, withAutoIdempotency(opts))
 }
 
 // Do calls any endpoint: an escape hatch for routes newer than the SDK. path

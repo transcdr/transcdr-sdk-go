@@ -127,11 +127,14 @@ type WebhookEndpoint struct {
 	Events  []string `json:"events"`
 	Enabled bool     `json:"enabled"`
 	// Secret signs deliveries; returned only on create and rotate.
-	Secret         *string    `json:"secret,omitempty"`
-	CreatedAt      time.Time  `json:"created_at"`
-	UpdatedAt      *time.Time `json:"updated_at,omitempty"`
-	LastDeliveryAt *time.Time `json:"last_delivery_at"`
-	FailureCount   int        `json:"failure_count"`
+	Secret *string `json:"secret,omitempty"`
+	// Secrets has an entry per write-only secret that is set: "secret" (the
+	// signing secret) and, for sns and sqs, "secret_access_key".
+	Secrets        map[string]SecretStatus `json:"secrets,omitempty"`
+	CreatedAt      time.Time               `json:"created_at"`
+	UpdatedAt      *time.Time              `json:"updated_at,omitempty"`
+	LastDeliveryAt *time.Time              `json:"last_delivery_at"`
+	FailureCount   int                     `json:"failure_count"`
 	// ConnectionID is the messaging connection events go through, if any.
 	ConnectionID *string `json:"connection_id"`
 }
@@ -144,9 +147,10 @@ type WebhookAWSParams struct {
 	SecretAccessKey *string `json:"secret_access_key,omitempty"`
 	// Region is read from the topic ARN or queue URL when omitted.
 	Region *string `json:"region,omitempty"`
-	// Endpoint is an SNS-compatible service endpoint.
+	// Endpoint is an SNS-compatible service endpoint; on update Null clears it.
 	Endpoint Nullable[string] `json:"endpoint,omitzero"`
-	// MessageGroupID is for FIFO targets; the API's default is "transcdr".
+	// MessageGroupID is for FIFO targets; the API's default is "transcdr". On
+	// update Null clears it.
 	MessageGroupID Nullable[string] `json:"message_group_id,omitzero"`
 }
 
@@ -166,13 +170,15 @@ type WebhookCreateParams struct {
 }
 
 // WebhookUpdateParams change an event destination. The type cannot change.
+// A field left out is unchanged; Null clears Description and, in AWS,
+// Endpoint and MessageGroupID.
 type WebhookUpdateParams struct {
 	URL         *string           `json:"url,omitempty"`
 	TopicARN    *string           `json:"topic_arn,omitempty"`
 	QueueURL    *string           `json:"queue_url,omitempty"`
 	AWS         *WebhookAWSParams `json:"aws,omitempty"`
 	Events      []string          `json:"events,omitempty"`
-	Description *string           `json:"description,omitempty"`
+	Description Nullable[string]  `json:"description,omitzero"`
 	Enabled     *bool             `json:"enabled,omitempty"`
 }
 

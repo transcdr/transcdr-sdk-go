@@ -36,7 +36,8 @@ func TestPutAndDeleteRetried(t *testing.T) {
 func TestPostWithoutKeyNotRetried(t *testing.T) {
 	f := newFakeAPI(t)
 	f.reply(500, `{"error":{"type":"api_error","message":"boom"}}`)
-	_, err := f.client().Presets.Create(context.Background(), &PresetCreateParams{Name: "x", Output: &OutputSpecInput{}})
+	// Creates carry a key; an action such as running an automation does not.
+	_, err := f.client().Automations.Run(context.Background(), "aut_1")
 	if !IsAPIError(err) {
 		t.Fatalf("err = %v", err)
 	}

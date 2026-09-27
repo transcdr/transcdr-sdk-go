@@ -79,8 +79,8 @@ func TestConnectionsCreate(t *testing.T) {
 	ixJSONEq(t, r.Body, `{"name":"Ingest","kind":"s3",
 		"config":{"bucket":"media","region":"us-east-1","path_style":true,"endpoint":null},
 		"secrets":{"access_key_id":"AKIAEXAMPLE","secret_access_key":"secret-example"}}`)
-	if r.Header.Get("Idempotency-Key") != "" {
-		t.Error("connection creation carries no idempotency key")
+	if !uuidShape(r.Header.Get("Idempotency-Key")) {
+		t.Errorf("Idempotency-Key = %q", r.Header.Get("Idempotency-Key"))
 	}
 }
 
@@ -198,17 +198,17 @@ func TestAutomationsCRUD(t *testing.T) {
 	a, err := c.Automations.Create(ixCtx, &AutomationParams{
 		Name:                "Ingest",
 		Trigger:             TriggerQueue,
-		TriggerConnectionID: String("con_q"),
+		TriggerConnectionID: Value("con_q"),
 		Source:              &AutomationSourceParams{ConnectionID: "con_s", Prefix: String("incoming/"), Pattern: String("**/*.mp4")},
 		PollIntervalSeconds: Int(120),
 		SettleSeconds:       Int(0),
-		Preset:              String("hls-av1-abr"),
-		Output:              &OutputSpecInput{Codec: "h264"},
+		Preset:              Value("hls-av1-abr"),
+		Output:              Value(&OutputSpecInput{Codec: "h264"}),
 		Destination:         Value(JobDestination{ConnectionID: "con_s", Prefix: "out/{stem}/"}),
 		AfterSuccess:        "delete",
 		Priority:            PriorityHigh,
-		Metadata:            Metadata{"team": "video"},
-		WebhookURL:          String("https://example.com/jobs"),
+		Metadata:            Value(Metadata{"team": "video"}),
+		WebhookURL:          Value("https://example.com/jobs"),
 	})
 	must(t, err)
 	if a.HookURL == nil || a.Trigger != "queue" {
@@ -224,18 +224,27 @@ func TestAutomationsCRUD(t *testing.T) {
 	must(t, err)
 	f.expect("GET", "/v1/automations/aut_1")
 
-	// Clearing: null destination, {} metadata, "" trigger connection, {} output, "" preset.
+	// Clearing: every nullable field sent as null.
 	_, err = c.Automations.Update(ixCtx, "aut_1", &AutomationParams{
-		TriggerConnectionID: String(""),
+		TriggerConnectionID: Null[string](),
 		Destination:         Null[JobDestination](),
-		Metadata:            Metadata{},
-		Output:              RawOutputSpec(json.RawMessage(`{}`)),
-		Preset:              String(""),
+		Metadata:            Null[Metadata](),
+		Output:              Null[*OutputSpecInput](),
+		Preset:              Null[string](),
+		WebhookURL:          Null[string](),
 		Enabled:             Bool(false),
 	})
 	must(t, err)
 	ixJSONEq(t, f.expect("PATCH", "/v1/automations/aut_1").Body,
-		`{"enabled":false,"trigger_connection_id":"","preset":"","output":{},"destination":null,"metadata":{}}`)
+		`{"enabled":false,"trigger_connection_id":null,"preset":null,"output":null,"destination":null,"metadata":null,"webhook_url":null}`)
+
+	// A raw output and an empty metadata map are sent as they are.
+	_, err = c.Automations.Update(ixCtx, "aut_1", &AutomationParams{
+		Output:   Value(RawOutputSpec(json.RawMessage(`{"codec":"av1"}`))),
+		Metadata: Value(Metadata{}),
+	})
+	must(t, err)
+	ixJSONEq(t, f.last().Body, `{"output":{"codec":"av1"},"metadata":{}}`)
 
 	// Only what is set is sent.
 	_, err = c.Automations.Update(ixCtx, "aut_1", &AutomationParams{Name: "Renamed"})

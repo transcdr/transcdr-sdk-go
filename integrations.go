@@ -24,7 +24,7 @@ func (s *ConnectionsService) All(ctx context.Context, params *ListParams, opts .
 // Create creates a connection. It is tested when saved; the outcome is in
 // Status and LastError.
 func (s *ConnectionsService) Create(ctx context.Context, params *ConnectionCreateParams, opts ...RequestOption) (*Connection, error) {
-	return doJSONBody[Connection](ctx, s.client, "POST", "/v1/connections", params, opts)
+	return create[Connection](ctx, s.client, "/v1/connections", params, opts)
 }
 
 // Get retrieves a connection.
@@ -103,7 +103,7 @@ func (s *AutomationsService) All(ctx context.Context, params *ListParams, opts .
 
 // Create creates an automation.
 func (s *AutomationsService) Create(ctx context.Context, params *AutomationParams, opts ...RequestOption) (*Automation, error) {
-	return doJSONBody[Automation](ctx, s.client, "POST", "/v1/automations", params, opts)
+	return create[Automation](ctx, s.client, "/v1/automations", params, opts)
 }
 
 // Get retrieves an automation.

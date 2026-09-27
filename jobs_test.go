@@ -55,10 +55,11 @@ func TestJobsCreateIdempotencyKeys(t *testing.T) {
 	if got := f.last().Header.Get("Idempotency-Key"); got != "mine" {
 		t.Fatalf("caller key lost: %q", got)
 	}
+	// Without retries a key is still sent: a caller may retry by hand.
 	_, err = f.client(WithMaxRetries(0)).Jobs.Create(context.Background(), &JobCreateParams{Input: URLInput("https://x")})
 	must(t, err)
-	if got := f.last().Header.Get("Idempotency-Key"); got != "" {
-		t.Fatalf("no retries, yet a key: %q", got)
+	if got := f.last().Header.Get("Idempotency-Key"); !uuidShape(got) {
+		t.Fatalf("Idempotency-Key = %q", got)
 	}
 }
 
