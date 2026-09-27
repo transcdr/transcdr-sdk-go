@@ -62,6 +62,11 @@ func TestIntegration(t *testing.T) {
 		must(t, err)
 		_, err = c.Usage.Get(ctx, &UsageParams{Granularity: "day"})
 		must(t, err)
+		inputs, err := c.Usage.Inputs(ctx, nil)
+		must(t, err)
+		if inputs.From == "" || inputs.To == "" {
+			t.Errorf("input report %+v", inputs)
+		}
 		_, err = c.Billing.Get(ctx)
 		must(t, err)
 		_, err = c.Billing.Transactions(ctx, &CreditTransactionListParams{Limit: 5})

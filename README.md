@@ -186,7 +186,7 @@ Signatures are `t=<unix>,v1=<hex HMAC-SHA256(secret, "<t>.<body>")>`, the same s
 | Account | `Auth` (register, login, switch, logout, password, me), `Organization` (+ `Members`), `Organizations`, `APIKeys` |
 | Media | `Uploads` (with `UploadFile`/`UploadPath`), `Assets`, `Jobs` (create, list, get, cancel, retry, delete, events, outputs, output and file URLs, deliveries, deliver, `WaitFor`), `Probe`, `Presets` |
 | Events | `Webhooks` (event destinations: HTTPS, SNS, SQS, connections; check, test, rotate secret, deliveries, redeliver), `Events` |
-| Billing | `Usage`, `Billing` (get, checkout, portal, settings, transactions, change plan, `Invoices`), `Plans` |
+| Billing | `Usage` (with the `Inputs` report), `Billing` (get, checkout, portal, settings, transactions, change plan, `Invoices`), `Plans` |
 | Service | `Capabilities`, `Status`, `Stats`, `Changelog`, `Announcements`, `OpenAPI` |
 | Integrations | `Connections` (check, test, browse, enable, disable), `Automations` (run, trigger, rotate hook token, items, `PushHook`), `Deliveries` |
 | Operators | `Admin` (overview, jobs, organizations, credit, `Announcements`, `Incidents`) |

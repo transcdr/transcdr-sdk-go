@@ -91,6 +91,21 @@ func (s *UsageService) Get(ctx context.Context, params *UsageParams, opts ...Req
 	return doJSON[Usage](ctx, s.client, "GET", "/v1/usage", q, opts)
 }
 
+// Inputs reports the inputs the range's jobs read, bucketed by duration,
+// size and kind (container/codec), for a duration × size chart.
+func (s *UsageService) Inputs(ctx context.Context, params *InputReportParams, opts ...RequestOption) (*InputReport, error) {
+	q := url.Values{}
+	if params != nil {
+		if params.From != "" {
+			q.Set("from", params.From)
+		}
+		if params.To != "" {
+			q.Set("to", params.To)
+		}
+	}
+	return doJSON[InputReport](ctx, s.client, "GET", "/v1/usage/inputs", q, opts)
+}
+
 // BillingService manages the plan, credit and spending controls.
 type BillingService struct {
 	client *Client

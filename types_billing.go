@@ -233,3 +233,54 @@ type Statement struct {
 	UsageCents   int64           `json:"usage_cents"`
 	Currency     string          `json:"currency"`
 }
+
+// InputReportParams choose the input report's range.
+type InputReportParams struct {
+	// From is YYYY-MM-DD; the API's default is 29 days before To.
+	From string
+	// To is YYYY-MM-DD; the API's default is today.
+	To string
+}
+
+// InputTotals are the totals for a set of inputs.
+type InputTotals struct {
+	Files           int64   `json:"files"`
+	SizeBytes       int64   `json:"size_bytes"`
+	InputMinutes    float64 `json:"input_minutes"`
+	BillableMinutes float64 `json:"billable_minutes"`
+}
+
+// InputKind is one kind of input, container/codec: mp4/h264, mkv/hevc, m4a/audio.
+type InputKind struct {
+	InputTotals
+	// Kind is container/codec, or "other" for the kinds past the seven most common.
+	Kind       string  `json:"kind"`
+	Container  *string `json:"container"`
+	VideoCodec *string `json:"video_codec"`
+}
+
+// InputPoint is the inputs of one kind in one duration × size bucket (log
+// scale, four per decade).
+type InputPoint struct {
+	InputTotals
+	Kind string `json:"kind"`
+	// MeanDurationSeconds and MeanSizeBytes are where to plot the point.
+	MeanDurationSeconds float64 `json:"mean_duration_seconds"`
+	MeanSizeBytes       float64 `json:"mean_size_bytes"`
+	// DurationRange and SizeRange are the bucket's bounds, [low, high).
+	DurationRange [2]float64 `json:"duration_range"`
+	SizeRange     [2]float64 `json:"size_range"`
+}
+
+// InputReport is the inputs a range's jobs read, bucketed by duration, size
+// and kind, for a duration × size chart.
+type InputReport struct {
+	From string `json:"from"`
+	To   string `json:"to"`
+	// Unmeasured counts inputs not probed yet, or with no duration or size:
+	// counted, not plotted.
+	Unmeasured int64 `json:"unmeasured"`
+	// Kinds has the most files first, and "other" last.
+	Kinds  []InputKind  `json:"kinds"`
+	Points []InputPoint `json:"points"`
+}
