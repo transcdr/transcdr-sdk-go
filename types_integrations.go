@@ -56,6 +56,9 @@ type ConnectionConfig struct {
 	URL Nullable[string] `json:"url,omitzero"`
 	// MessageGroupID is for FIFO queues and topics receiving events.
 	MessageGroupID Nullable[string] `json:"message_group_id,omitzero"`
+	// Kind echoes the connection's kind on storage configs; it is ignored when
+	// sent.
+	Kind string `json:"kind,omitempty"`
 }
 
 // ConnectionSecrets are write-only credentials. On update an omitted secret

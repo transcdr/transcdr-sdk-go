@@ -23,6 +23,8 @@ type APIKey struct {
 	LastUsedAt *time.Time `json:"last_used_at"`
 	ExpiresAt  *time.Time `json:"expires_at"`
 	CreatedAt  time.Time  `json:"created_at"`
+	// RevokedAt is when the key was revoked; revoked keys are not listed.
+	RevokedAt *time.Time `json:"revoked_at,omitempty"`
 	// Secret is present only in the create response.
 	Secret *string `json:"secret,omitempty"`
 }
@@ -81,6 +83,8 @@ type User struct {
 	Role           string    `json:"role"`
 	OrganizationID string    `json:"organization_id"`
 	CreatedAt      time.Time `json:"created_at"`
+	// LastLoginAt is when the user last signed in.
+	LastLoginAt *time.Time `json:"last_login_at,omitempty"`
 }
 
 // MemberCreateParams add a member. An existing user's email gives them

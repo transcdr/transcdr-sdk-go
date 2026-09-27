@@ -208,8 +208,11 @@ type Asset struct {
 	Metadata       Metadata   `json:"metadata"`
 	DownloadURL    string     `json:"download_url"`
 	// SourceURL is set for assets linked by URL; jobs read it directly.
-	SourceURL *string   `json:"source_url,omitempty"`
-	CreatedAt time.Time `json:"created_at"`
+	SourceURL *string `json:"source_url,omitempty"`
+	// Livemode is false for assets created with a test-mode key.
+	Livemode  *bool      `json:"livemode,omitempty"`
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 }
 
 // AssetImportParams link a remote file by URL.

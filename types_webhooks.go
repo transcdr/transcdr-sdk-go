@@ -35,6 +35,8 @@ type Event struct {
 	Type      string    `json:"type"`
 	CreatedAt time.Time `json:"created_at"`
 	Data      EventData `json:"data"`
+	// Livemode is false for events of test-mode jobs.
+	Livemode *bool `json:"livemode,omitempty"`
 }
 
 // EventData holds the event's object: a Job, an Asset, or another object

@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 )
 
@@ -64,7 +65,7 @@ func (s *UploadsService) UploadFile(ctx context.Context, r io.Reader, size int64
 		o.Filename = "upload"
 	}
 	if o.ContentType == "" {
-		o.ContentType = mime.TypeByExtension(filepath.Ext(o.Filename))
+		o.ContentType = contentTypeFor(o.Filename)
 		if o.ContentType == "" {
 			o.ContentType = "application/octet-stream"
 		}
@@ -143,6 +144,24 @@ func (s *UploadsService) UploadPath(ctx context.Context, path string, opts *Uplo
 		o.Filename = filepath.Base(path)
 	}
 	return s.UploadFile(ctx, f, info.Size(), &o)
+}
+
+// videoTypes are the media types of common video files: the system's MIME
+// table (mime.TypeByExtension) often lacks them.
+var videoTypes = map[string]string{
+	".mp4": "video/mp4", ".m4v": "video/x-m4v", ".mov": "video/quicktime", ".mkv": "video/x-matroska",
+	".webm": "video/webm", ".avi": "video/x-msvideo", ".ts": "video/mp2t", ".mts": "video/mp2t",
+	".m2ts": "video/mp2t", ".mxf": "application/mxf", ".mpg": "video/mpeg", ".mpeg": "video/mpeg",
+	".wmv": "video/x-ms-wmv", ".flv": "video/x-flv", ".3gp": "video/3gpp",
+}
+
+// contentTypeFor is the media type of a file name's extension, or "".
+func contentTypeFor(name string) string {
+	ext := strings.ToLower(filepath.Ext(name))
+	if t, ok := videoTypes[ext]; ok {
+		return t
+	}
+	return mime.TypeByExtension(ext)
 }
 
 type progressReader struct {
