@@ -55,12 +55,57 @@ type Quality struct {
 	BufferMs *int `json:"buffer_ms,omitempty"`
 }
 
+// Output modes (OutputSpec.Mode, OutputSpecInput.Mode).
+const (
+	// ModeSingle is one MP4 per rendition.
+	ModeSingle = "single"
+	// ModeHLS is an adaptive HLS ladder.
+	ModeHLS = "hls"
+	// ModeAudio is the audio alone, as one .mp3 file (label "audio", width
+	// and height 0).
+	ModeAudio = "audio"
+)
+
+// Audio modes (Audio.Mode).
+const (
+	AudioModeAuto = "auto"
+	AudioModeOpus = "opus"
+	// AudioModeMP3 is constant bit rate MP3, stereo at most, in a single MP4
+	// or audio-only output (not HLS).
+	AudioModeMP3  = "mp3"
+	AudioModeDrop = "drop"
+)
+
+// AudioChannels is an audio channel layout. The layouts other than
+// ChannelsSource downmix and never upmix. Values added later decode as they
+// are.
+type AudioChannels string
+
+// Audio channel layouts.
+const (
+	// ChannelsSource keeps the source's layout (the default).
+	ChannelsSource AudioChannels = "source"
+	ChannelsMono   AudioChannels = "mono"
+	ChannelsStereo AudioChannels = "stereo"
+	// ChannelsSurround51 is 5.1 surround; not with MP3.
+	ChannelsSurround51 AudioChannels = "5.1"
+	// ChannelsSurround71 is 7.1 surround; not with MP3.
+	ChannelsSurround71 AudioChannels = "7.1"
+)
+
 // Audio handling.
 type Audio struct {
-	// Mode is auto, opus or drop.
+	// Mode is auto, opus, mp3 or drop (the AudioMode constants).
 	Mode string `json:"mode,omitempty"`
-	// Bitrate is an Opus bitrate such as "128k" (6k–512k).
+	// Bitrate is a bitrate such as "128k" (6k–512k). MP3 takes 32k, 40k, 48k,
+	// 56k, 64k, 80k, 96k, 112k, 128k, 160k, 192k, 224k, 256k or 320k (default
+	// 128k stereo, 64k mono).
 	Bitrate *string `json:"bitrate,omitempty"`
+	// Channels is the channel layout; left empty, the source's.
+	Channels AudioChannels `json:"channels,omitempty"`
+	// StereoFallback, in HLS with surround audio, also adds a stereo
+	// rendition to the same audio group. The API's default is false.
+	StereoFallback *bool `json:"stereo_fallback,omitempty"`
 }
 
 // Trim cuts the input to [Start, End) seconds.
@@ -72,7 +117,7 @@ type Trim struct {
 // OutputSpec is a fully resolved output specification, as returned on jobs
 // and presets.
 type OutputSpec struct {
-	// Mode is "single" (one MP4 per rendition) or "hls".
+	// Mode is "single" (one MP4 per rendition), "hls" or "audio" (one .mp3).
 	Mode string `json:"mode"`
 	// Codec is av1, h264 or h265.
 	Codec      string      `json:"codec"`

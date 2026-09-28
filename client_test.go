@@ -267,6 +267,44 @@ func TestOutputSpecRaw(t *testing.T) {
 	}
 }
 
+func TestAudioSpec(t *testing.T) {
+	// Audio-only MP3: the new fields go out as the API names them.
+	in := OutputSpecInput{Mode: ModeAudio, Audio: &Audio{Mode: AudioModeMP3, Bitrate: String("64k"), Channels: ChannelsMono}}
+	got, err := json.Marshal(in)
+	must(t, err)
+	if want := `{"mode":"audio","audio":{"mode":"mp3","bitrate":"64k","channels":"mono"}}`; string(got) != want {
+		t.Fatalf("marshal = %s, want %s", got, want)
+	}
+
+	// Surround with a stereo fallback; false is sent when set, left out when nil.
+	in = OutputSpecInput{Mode: ModeHLS, Audio: &Audio{Mode: AudioModeOpus, Channels: ChannelsSurround51, StereoFallback: Bool(true)}}
+	got, err = json.Marshal(in)
+	must(t, err)
+	if want := `{"mode":"hls","audio":{"mode":"opus","channels":"5.1","stereo_fallback":true}}`; string(got) != want {
+		t.Fatalf("marshal = %s, want %s", got, want)
+	}
+	got, err = json.Marshal(Audio{StereoFallback: Bool(false)})
+	must(t, err)
+	if string(got) != `{"stereo_fallback":false}` {
+		t.Fatalf("marshal = %s", got)
+	}
+
+	// Decoding: known layouts, and one newer than this SDK decodes as it is.
+	var s OutputSpec
+	must(t, json.Unmarshal([]byte(`{"mode":"audio","codec":"av1","audio":{"mode":"mp3","bitrate":"128k","channels":"7.1","stereo_fallback":true}}`), &s))
+	if s.Mode != ModeAudio || s.Audio.Mode != AudioModeMP3 || s.Audio.Channels != ChannelsSurround71 || s.Audio.StereoFallback == nil || !*s.Audio.StereoFallback {
+		t.Fatalf("decoded %+v", s.Audio)
+	}
+	var a Audio
+	must(t, json.Unmarshal([]byte(`{"mode":"future","channels":"22.2"}`), &a))
+	if a.Mode != "future" || a.Channels != "22.2" || a.StereoFallback != nil {
+		t.Fatalf("decoded %+v", a)
+	}
+	if ChannelsSource != "source" || ChannelsStereo != "stereo" || ChannelsSurround51 != "5.1" {
+		t.Fatal("channel constants")
+	}
+}
+
 func TestHTTPClientOption(t *testing.T) {
 	f := newFakeAPI(t)
 	var used bool

@@ -104,6 +104,36 @@ preset, err := client.Presets.Create(ctx, &transcdr.PresetCreateParams{
 
 `transcdr.RawOutputSpec([]byte(`{…}`))` sends JSON exactly as given, and `spec.Raw()` returns the JSON a spec was decoded from.
 
+### Audio: MP3, audio-only, channels
+
+`Mode: transcdr.ModeAudio` writes the audio alone as one `.mp3` file (label `audio`, width and height 0), billed per
+output minute at the SD rate; a `single` job whose input has no video becomes audio-only by itself.
+`Audio.Mode = transcdr.AudioModeMP3` puts constant bit rate MP3 in a single MP4 or an audio-only output (not HLS),
+stereo at most, at 32k, 40k, 48k, 56k, 64k, 80k, 96k, 112k, 128k, 160k, 192k, 224k, 256k or 320k (default 128k
+stereo, 64k mono). `Audio.Channels` is `ChannelsSource` (the default), `ChannelsMono`, `ChannelsStereo`,
+`ChannelsSurround51` or `ChannelsSurround71`; it downmixes and never upmixes. In HLS with surround audio,
+`Audio.StereoFallback = transcdr.Bool(true)` adds a stereo rendition to the same audio group.
+
+```go
+// A podcast episode from a video recording.
+job, err := client.Jobs.Create(ctx, &transcdr.JobCreateParams{
+	Input: transcdr.AssetInput("ast_..."),
+	Output: &transcdr.OutputSpecInput{
+		Mode:  transcdr.ModeAudio,
+		Audio: &transcdr.Audio{Mode: transcdr.AudioModeMP3, Bitrate: transcdr.String("128k"), Channels: transcdr.ChannelsStereo},
+	},
+})
+
+// Surround HLS with a stereo rendition beside it.
+surround := &transcdr.OutputSpecInput{
+	Mode:  transcdr.ModeHLS,
+	Codec: "h264",
+	Audio: &transcdr.Audio{Channels: transcdr.ChannelsSurround51, StereoFallback: transcdr.Bool(true)},
+}
+```
+
+The `audio-mp3-podcast` and `audio-mp3-speech` system presets (`CategoryAudio`) are MP3 at 128k stereo and 64k mono.
+
 ## Explicit nulls
 
 Where the API clears a value with `null`, the field is a `transcdr.Nullable[T]`:
