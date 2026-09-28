@@ -139,6 +139,13 @@ out := &transcdr.OutputSpecInput{
 - `AudioModeMP3` is constant bit rate, stereo at most, in a single MP4 or an audio-only output (not HLS), at 32k, 40k,
   48k, 56k, 64k, 80k, 96k, 112k, 128k, 160k, 192k, 224k, 256k or 320k (default 128k stereo, 64k mono).
 
+AAC sources are decoded, so they can be downmixed or made Opus, MP3, FLAC or ALAC; they still pass through wherever
+nothing asks for a change. HE-AAC is decoded only as its AAC-LC core (no spectral band replication or parametric
+stereo: half the rate, less bandwidth), and `Audio.HeAac` says what an HE-AAC source becomes: `HeAacAuto` (the
+default) passes it through when only a codec change is asked and decodes its core when the job needs PCM (a downmix,
+an `.mp3` or `.flac` file); `HeAacPassthrough` never decodes it, failing a job that would need it; `HeAacCore` decodes
+its core whenever another codec is asked. AAC-LC sources are decoded in full whatever it says.
+
 `Mode: transcdr.ModeAudio` writes the audio alone as one file (label `audio`, width and height 0), billed per output
 minute at the SD rate. `Audio.Container` picks the file: `AudioContainerAuto` (the default) follows the codec, a
 `.flac` for FLAC, an `.m4a` for ALAC and an `.mp3` otherwise (auto audio is then MP3); `AudioContainerM4A` holds any

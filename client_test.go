@@ -354,6 +354,10 @@ func TestLosslessAndAACAudioSpec(t *testing.T) {
 			`{"mode":"single","audio":{"mode":"flac","bit_depth":"source","flac_compression":"fast"}}`},
 		{OutputSpecInput{Mode: ModeAudio, Audio: &Audio{Mode: AudioModeMP3, Container: AudioContainerMP3}},
 			`{"mode":"audio","audio":{"mode":"mp3","container":"mp3"}}`},
+		{OutputSpecInput{Mode: ModeSingle, Audio: &Audio{Mode: AudioModeOpus, Channels: ChannelsStereo, HeAac: HeAacPassthrough}},
+			`{"mode":"single","audio":{"mode":"opus","channels":"stereo","he_aac":"passthrough"}}`},
+		{OutputSpecInput{Mode: ModeAudio, Audio: &Audio{Mode: AudioModeFLAC, Container: AudioContainerFLAC, HeAac: HeAacCore}},
+			`{"mode":"audio","audio":{"mode":"flac","container":"flac","he_aac":"core"}}`},
 	}
 	for _, c := range cases {
 		got, err := json.Marshal(c.in)
@@ -376,9 +380,13 @@ func TestLosslessAndAACAudioSpec(t *testing.T) {
 	if s.Audio.Mode != AudioModeFLAC || s.Audio.BitDepth != AudioBitDepth24 || s.Audio.FlacCompression != FlacCompressionDefault || s.Audio.Container != AudioContainerM4A {
 		t.Fatalf("decoded %+v", s.Audio)
 	}
+	must(t, json.Unmarshal([]byte(`{"mode":"single","audio":{"mode":"mp3","he_aac":"auto"}}`), &s))
+	if s.Audio.HeAac != HeAacAuto {
+		t.Fatalf("decoded %+v", s.Audio)
+	}
 	var a Audio
-	must(t, json.Unmarshal([]byte(`{"bit_depth":"32","flac_compression":"max","container":"ogg"}`), &a))
-	if a.BitDepth != "32" || a.FlacCompression != "max" || a.Container != "ogg" {
+	must(t, json.Unmarshal([]byte(`{"bit_depth":"32","flac_compression":"max","container":"ogg","he_aac":"sbr"}`), &a))
+	if a.BitDepth != "32" || a.FlacCompression != "max" || a.Container != "ogg" || a.HeAac != "sbr" {
 		t.Fatalf("decoded %+v", a)
 	}
 	got, err := json.Marshal(Audio{Mode: AudioModeAAC})

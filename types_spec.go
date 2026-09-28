@@ -163,6 +163,26 @@ const (
 	AudioContainerM4A AudioContainer = "m4a"
 )
 
+// HeAac is what an HE-AAC (or HE-AAC v2) source becomes. HE-AAC is decoded
+// only as its AAC-LC core: spectral band replication and parametric stereo
+// are not decoded, so the core has half the stream's rate, less bandwidth
+// and, for v2, one channel. AAC-LC sources are decoded in full whatever it
+// says. Values added later decode as they are.
+type HeAac string
+
+// HE-AAC policies.
+const (
+	// HeAacAuto (the default) passes an HE-AAC source through when only a
+	// codec change is asked, and decodes its core when the job needs PCM (a
+	// downmix, an .mp3 or .flac file).
+	HeAacAuto HeAac = "auto"
+	// HeAacPassthrough never decodes it: a job that would need it decoded
+	// fails.
+	HeAacPassthrough HeAac = "passthrough"
+	// HeAacCore decodes its core whenever another codec is asked.
+	HeAacCore HeAac = "core"
+)
+
 // AudioChannels is an audio channel layout. The layouts other than
 // ChannelsSource downmix and never upmix. Values added later decode as they
 // are.
@@ -203,6 +223,9 @@ type Audio struct {
 	// Container, for ModeAudio only, is the file the output is; left empty,
 	// auto.
 	Container AudioContainer `json:"container,omitempty"`
+	// HeAac is what an HE-AAC source becomes; left empty, auto. Not with
+	// AudioModeDrop.
+	HeAac HeAac `json:"he_aac,omitempty"`
 }
 
 // Trim cuts the input to [Start, End) seconds.
