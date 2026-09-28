@@ -10,17 +10,51 @@ import (
 type Metadata map[string]string
 
 // Rendition is one rung of the output ladder.
+//
+// Width x Height is the largest the rendition may be: the video keeps its
+// shape inside that box (see OutputSpec.Fit) and is not enlarged past its own
+// size unless Upscale is on. Each output reports the size it came out at.
 type Rendition struct {
-	// Width is even, 64–7680.
+	// Width is the maximum width; even, 64–7680.
 	Width int `json:"width"`
-	// Height is even, 64–4320.
+	// Height is the maximum height; even, 64–4320.
 	Height int `json:"height"`
 	// Bitrate is this rendition's constant rate, such as "3M" or "800k"
 	// (100k–200M), with quality target "cbr" only.
 	Bitrate *string `json:"bitrate,omitempty"`
-	// Label is 1–32 of [A-Za-z0-9_-]; the API's default is "<short side>p".
+	// Label is 1–32 of [A-Za-z0-9_-]; the API's default is "<short side>p"
+	// of the size the rendition comes out at.
 	Label *string `json:"label,omitempty"`
+	// Fit is this rendition's own fit (a Fit* constant), over OutputSpec.Fit.
+	Fit string `json:"fit,omitempty"`
+	// Orientation is OrientationAuto or OrientationFixed: fixed keeps this
+	// rendition's box as written, e.g. a 9:16 cover rendition that crops a
+	// landscape video.
+	Orientation string `json:"orientation,omitempty"`
+	// Upscale is this rendition's own upscale, over OutputSpec.Upscale.
+	Upscale *bool `json:"upscale,omitempty"`
 }
+
+// How the video meets a rendition's box (OutputSpec.Fit, Rendition.Fit).
+const (
+	// FitContain keeps the video's shape inside the box. The default.
+	FitContain = "contain"
+	// FitCover fills the box, keeping the shape, and centre-crops the rest.
+	FitCover = "cover"
+	// FitPad keeps the shape and adds black bars to exactly the box.
+	FitPad = "pad"
+	// FitStretch distorts the picture to exactly the box.
+	FitStretch = "stretch"
+)
+
+// Whether a rendition's box turns to the video (Rendition.Orientation).
+const (
+	// OrientationAuto turns the box to the video's orientation: 1920x1080 on
+	// a portrait video is 1080x1920. The default.
+	OrientationAuto = "auto"
+	// OrientationFixed uses the box as written.
+	OrientationFixed = "fixed"
+)
 
 // Ladder asks for an automatic ABR ladder.
 type Ladder struct {
@@ -186,8 +220,12 @@ type OutputSpec struct {
 	// Codec is av1, h264 or h265.
 	Codec      string      `json:"codec"`
 	Renditions []Rendition `json:"renditions"`
-	Ladder     *Ladder     `json:"ladder"`
-	Quality    Quality     `json:"quality"`
+	// Fit is how the video meets each rendition's box (a Fit* constant).
+	Fit string `json:"fit"`
+	// Upscale lets a rendition be larger than the source.
+	Upscale bool    `json:"upscale"`
+	Ladder  *Ladder `json:"ladder"`
+	Quality Quality `json:"quality"`
 	// Gop is in frames; nil for the default of 2 s.
 	Gop            *int     `json:"gop"`
 	SegmentSeconds *float64 `json:"segment_seconds"`
@@ -229,6 +267,8 @@ type OutputSpecInput struct {
 	Mode           string            `json:"mode,omitempty"`
 	Codec          string            `json:"codec,omitempty"`
 	Renditions     []Rendition       `json:"renditions,omitempty"`
+	Fit            string            `json:"fit,omitempty"`
+	Upscale        *bool             `json:"upscale,omitempty"`
 	Ladder         Nullable[Ladder]  `json:"ladder,omitzero"`
 	Quality        *Quality          `json:"quality,omitempty"`
 	Gop            Nullable[int]     `json:"gop,omitzero"`
@@ -310,6 +350,10 @@ type MediaInfo struct {
 	Audio       []AudioStream    `json:"audio"`
 	Subtitles   []SubtitleStream `json:"subtitles"`
 	SizeBytes   int64            `json:"size_bytes"`
+	// DisplayWidth and DisplayHeight are set for non-square pixels only: the
+	// size the picture is shown at (720x576 at 64:45 is shown 1024x576).
+	DisplayWidth  int `json:"display_width,omitempty"`
+	DisplayHeight int `json:"display_height,omitempty"`
 }
 
 // SignedURL is a short-lived download URL.

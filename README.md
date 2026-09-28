@@ -104,6 +104,25 @@ preset, err := client.Presets.Create(ctx, &transcdr.PresetCreateParams{
 
 `transcdr.RawOutputSpec([]byte(`{…}`))` sends JSON exactly as given, and `spec.Raw()` returns the JSON a spec was decoded from.
 
+### Rendition sizes are maximums: fit and upscale
+
+A rendition's `Width` x `Height` is the largest it may be, not its exact size. The video keeps its shape inside the
+box, a portrait video turns a landscape box portrait, and nothing is enlarged past the source: a 640x480 video through
+a 1920x1080 rendition comes out 640x480 (and bills as SD). Each output reports the size it came out at.
+`FitContain` (the default) keeps the shape; `FitCover` fills the box and centre-crops; `FitPad` adds black bars to
+exactly the box; `FitStretch` distorts to it. `Upscale: transcdr.Bool(true)` lets a rendition be larger than the
+source. A rendition may set its own `Fit`, `Upscale` and `Orientation` (`OrientationFixed` keeps its box as written).
+
+```go
+out := &transcdr.OutputSpecInput{
+	Fit: transcdr.FitContain,
+	Renditions: []transcdr.Rendition{
+		{Width: 1920, Height: 1080},
+		{Width: 1080, Height: 1920, Fit: transcdr.FitCover, Orientation: transcdr.OrientationFixed},
+	},
+}
+```
+
 ### Audio: AAC, lossless, MP3, audio-only, channels
 
 `Audio.Mode` is `AudioModeAuto` (the default: compatible audio passes through, the rest becomes Opus),

@@ -305,6 +305,40 @@ func TestAudioSpec(t *testing.T) {
 	}
 }
 
+func TestFitAndUpscaleSpec(t *testing.T) {
+	in := OutputSpecInput{
+		Fit:     FitPad,
+		Upscale: Bool(true),
+		Renditions: []Rendition{
+			{Width: 1920, Height: 1080},
+			{Width: 1080, Height: 1920, Fit: FitCover, Orientation: OrientationFixed, Upscale: Bool(false)},
+		},
+	}
+	want := `{"renditions":[{"width":1920,"height":1080},{"width":1080,"height":1920,"fit":"cover","orientation":"fixed","upscale":false}],"fit":"pad","upscale":true}`
+	got, err := json.Marshal(in)
+	must(t, err)
+	if string(got) != want {
+		t.Fatalf("marshal = %s, want %s", got, want)
+	}
+	// An explicit false is sent, not dropped.
+	got, err = json.Marshal(OutputSpecInput{Upscale: Bool(false)})
+	must(t, err)
+	if string(got) != `{"upscale":false}` {
+		t.Fatalf("marshal = %s", got)
+	}
+
+	var s OutputSpec
+	must(t, json.Unmarshal([]byte(`{"mode":"single","codec":"av1","fit":"contain","upscale":false,"renditions":[{"width":1080,"height":1920,"fit":"cover","orientation":"fixed"}]}`), &s))
+	if s.Fit != FitContain || s.Upscale || s.Renditions[0].Fit != FitCover || s.Renditions[0].Orientation != OrientationFixed {
+		t.Fatalf("decoded %+v", s)
+	}
+	var m MediaInfo
+	must(t, json.Unmarshal([]byte(`{"width":720,"height":576,"display_width":1024,"display_height":576}`), &m))
+	if m.DisplayWidth != 1024 || m.DisplayHeight != 576 {
+		t.Fatalf("decoded %+v", m)
+	}
+}
+
 func TestLosslessAndAACAudioSpec(t *testing.T) {
 	cases := []struct {
 		in   OutputSpecInput
