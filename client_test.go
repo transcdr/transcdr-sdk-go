@@ -305,6 +305,55 @@ func TestAudioSpec(t *testing.T) {
 	}
 }
 
+func TestLosslessAndAACAudioSpec(t *testing.T) {
+	cases := []struct {
+		in   OutputSpecInput
+		want string
+	}{
+		{OutputSpecInput{Mode: ModeAudio, Audio: &Audio{Mode: AudioModeAAC, Bitrate: String("96k"), Channels: ChannelsStereo, Container: AudioContainerM4A}},
+			`{"mode":"audio","audio":{"mode":"aac","bitrate":"96k","channels":"stereo","container":"m4a"}}`},
+		{OutputSpecInput{Mode: ModeAudio, Audio: &Audio{Mode: AudioModeFLAC, BitDepth: AudioBitDepth24, FlacCompression: FlacCompressionBest, Container: AudioContainerFLAC}},
+			`{"mode":"audio","audio":{"mode":"flac","bit_depth":"24","flac_compression":"best","container":"flac"}}`},
+		{OutputSpecInput{Mode: ModeAudio, Audio: &Audio{Mode: AudioModeALAC, BitDepth: AudioBitDepth16, Container: AudioContainerAuto}},
+			`{"mode":"audio","audio":{"mode":"alac","bit_depth":"16","container":"auto"}}`},
+		{OutputSpecInput{Mode: ModeSingle, Audio: &Audio{Mode: AudioModeFLAC, BitDepth: AudioBitDepthSource, FlacCompression: FlacCompressionFast}},
+			`{"mode":"single","audio":{"mode":"flac","bit_depth":"source","flac_compression":"fast"}}`},
+		{OutputSpecInput{Mode: ModeAudio, Audio: &Audio{Mode: AudioModeMP3, Container: AudioContainerMP3}},
+			`{"mode":"audio","audio":{"mode":"mp3","container":"mp3"}}`},
+	}
+	for _, c := range cases {
+		got, err := json.Marshal(c.in)
+		must(t, err)
+		if string(got) != c.want {
+			t.Fatalf("marshal = %s, want %s", got, c.want)
+		}
+		var back OutputSpecInput
+		must(t, json.Unmarshal(got, &back))
+		again, err := json.Marshal(back)
+		must(t, err)
+		if string(again) != c.want {
+			t.Fatalf("round trip = %s, want %s", again, c.want)
+		}
+	}
+
+	// Decoding from a job: the new fields, and values newer than this SDK as they are.
+	var s OutputSpec
+	must(t, json.Unmarshal([]byte(`{"mode":"audio","codec":"av1","audio":{"mode":"flac","bit_depth":"24","flac_compression":"default","container":"m4a"}}`), &s))
+	if s.Audio.Mode != AudioModeFLAC || s.Audio.BitDepth != AudioBitDepth24 || s.Audio.FlacCompression != FlacCompressionDefault || s.Audio.Container != AudioContainerM4A {
+		t.Fatalf("decoded %+v", s.Audio)
+	}
+	var a Audio
+	must(t, json.Unmarshal([]byte(`{"bit_depth":"32","flac_compression":"max","container":"ogg"}`), &a))
+	if a.BitDepth != "32" || a.FlacCompression != "max" || a.Container != "ogg" {
+		t.Fatalf("decoded %+v", a)
+	}
+	got, err := json.Marshal(Audio{Mode: AudioModeAAC})
+	must(t, err)
+	if string(got) != `{"mode":"aac"}` {
+		t.Fatalf("empty optional fields sent: %s", got)
+	}
+}
+
 func TestHTTPClientOption(t *testing.T) {
 	f := newFakeAPI(t)
 	var used bool

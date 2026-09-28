@@ -61,19 +61,72 @@ const (
 	ModeSingle = "single"
 	// ModeHLS is an adaptive HLS ladder.
 	ModeHLS = "hls"
-	// ModeAudio is the audio alone, as one .mp3 file (label "audio", width
-	// and height 0).
+	// ModeAudio is the audio alone, as one file (label "audio", width and
+	// height 0): an .mp3, .flac or .m4a, as Audio.Container picks.
 	ModeAudio = "audio"
 )
 
 // Audio modes (Audio.Mode).
 const (
+	// AudioModeAuto passes compatible audio through and transcodes the rest:
+	// to Opus, or to MP3 in an audio-only .mp3.
 	AudioModeAuto = "auto"
 	AudioModeOpus = "opus"
 	// AudioModeMP3 is constant bit rate MP3, stereo at most, in a single MP4
 	// or audio-only output (not HLS).
-	AudioModeMP3  = "mp3"
+	AudioModeMP3 = "mp3"
+	// AudioModeAAC is AAC-LC, the audio that plays on the most devices; an
+	// AAC source passes through.
+	AudioModeAAC = "aac"
+	// AudioModeFLAC is lossless FLAC (a FLAC source is copied). No bitrate.
+	AudioModeFLAC = "flac"
+	// AudioModeALAC is lossless ALAC, Apple Lossless (an ALAC source is
+	// copied). No bitrate.
+	AudioModeALAC = "alac"
 	AudioModeDrop = "drop"
+)
+
+// AudioBitDepth is the sample depth of FLAC and ALAC output. Values added
+// later decode as they are.
+type AudioBitDepth string
+
+// Lossless sample depths.
+const (
+	// AudioBitDepthSource (the default) is 16-bit for a 16-bit or lossy
+	// source, 24-bit for a deeper one.
+	AudioBitDepthSource AudioBitDepth = "source"
+	AudioBitDepth16     AudioBitDepth = "16"
+	AudioBitDepth24     AudioBitDepth = "24"
+)
+
+// FlacCompression is FLAC's compression effort: the same audio either way,
+// a smaller file for more work. Values added later decode as they are.
+type FlacCompression string
+
+// FLAC compression efforts.
+const (
+	FlacCompressionFast FlacCompression = "fast"
+	// FlacCompressionDefault is the default.
+	FlacCompressionDefault FlacCompression = "default"
+	FlacCompressionBest    FlacCompression = "best"
+)
+
+// AudioContainer is the file audio-only output is. Values added later
+// decode as they are.
+type AudioContainer string
+
+// Audio-only files.
+const (
+	// AudioContainerAuto (the default) follows the codec: .flac for FLAC,
+	// .m4a for ALAC, .mp3 otherwise (auto audio is then MP3).
+	AudioContainerAuto AudioContainer = "auto"
+	// AudioContainerMP3 is audio.mp3 (audio/mpeg); it holds MP3 only.
+	AudioContainerMP3 AudioContainer = "mp3"
+	// AudioContainerFLAC is audio.flac (audio/flac); it holds FLAC only.
+	AudioContainerFLAC AudioContainer = "flac"
+	// AudioContainerM4A is audio.m4a (audio/mp4); it holds any codec (auto
+	// audio in an .m4a is Opus).
+	AudioContainerM4A AudioContainer = "m4a"
 )
 
 // AudioChannels is an audio channel layout. The layouts other than
@@ -95,17 +148,27 @@ const (
 
 // Audio handling.
 type Audio struct {
-	// Mode is auto, opus, mp3 or drop (the AudioMode constants).
+	// Mode is auto, opus, mp3, aac, flac, alac or drop (the AudioMode
+	// constants).
 	Mode string `json:"mode,omitempty"`
 	// Bitrate is a bitrate such as "128k" (6k–512k). MP3 takes 32k, 40k, 48k,
 	// 56k, 64k, 80k, 96k, 112k, 128k, 160k, 192k, 224k, 256k or 320k (default
-	// 128k stereo, 64k mono).
+	// 128k stereo, 64k mono). AAC takes 8k to 288k per main channel (the LFE
+	// does not count; default 64k mono, 128k stereo, 384k 5.1, 512k 7.1).
+	// Not with FLAC or ALAC.
 	Bitrate *string `json:"bitrate,omitempty"`
 	// Channels is the channel layout; left empty, the source's.
 	Channels AudioChannels `json:"channels,omitempty"`
 	// StereoFallback, in HLS with surround audio, also adds a stereo
 	// rendition to the same audio group. The API's default is false.
 	StereoFallback *bool `json:"stereo_fallback,omitempty"`
+	// BitDepth, for FLAC and ALAC only, is the output's sample depth.
+	BitDepth AudioBitDepth `json:"bit_depth,omitempty"`
+	// FlacCompression, for FLAC only, is the compression effort.
+	FlacCompression FlacCompression `json:"flac_compression,omitempty"`
+	// Container, for ModeAudio only, is the file the output is; left empty,
+	// auto.
+	Container AudioContainer `json:"container,omitempty"`
 }
 
 // Trim cuts the input to [Start, End) seconds.
@@ -117,7 +180,8 @@ type Trim struct {
 // OutputSpec is a fully resolved output specification, as returned on jobs
 // and presets.
 type OutputSpec struct {
-	// Mode is "single" (one MP4 per rendition), "hls" or "audio" (one .mp3).
+	// Mode is "single" (one MP4 per rendition), "hls" or "audio" (one .mp3,
+	// .flac or .m4a).
 	Mode string `json:"mode"`
 	// Codec is av1, h264 or h265.
 	Codec      string      `json:"codec"`

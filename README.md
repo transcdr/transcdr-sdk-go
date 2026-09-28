@@ -104,14 +104,32 @@ preset, err := client.Presets.Create(ctx, &transcdr.PresetCreateParams{
 
 `transcdr.RawOutputSpec([]byte(`{…}`))` sends JSON exactly as given, and `spec.Raw()` returns the JSON a spec was decoded from.
 
-### Audio: MP3, audio-only, channels
+### Audio: AAC, lossless, MP3, audio-only, channels
 
-`Mode: transcdr.ModeAudio` writes the audio alone as one `.mp3` file (label `audio`, width and height 0), billed per
-output minute at the SD rate; a `single` job whose input has no video becomes audio-only by itself.
-`Audio.Mode = transcdr.AudioModeMP3` puts constant bit rate MP3 in a single MP4 or an audio-only output (not HLS),
-stereo at most, at 32k, 40k, 48k, 56k, 64k, 80k, 96k, 112k, 128k, 160k, 192k, 224k, 256k or 320k (default 128k
-stereo, 64k mono). `Audio.Channels` is `ChannelsSource` (the default), `ChannelsMono`, `ChannelsStereo`,
-`ChannelsSurround51` or `ChannelsSurround71`; it downmixes and never upmixes. In HLS with surround audio,
+`Audio.Mode` is `AudioModeAuto` (the default: compatible audio passes through, the rest becomes Opus),
+`AudioModeOpus`, `AudioModeAAC`, `AudioModeMP3`, `AudioModeFLAC`, `AudioModeALAC` or `AudioModeDrop`.
+
+- `AudioModeAAC` is AAC-LC, the audio that plays on the most devices: every browser, iPhone, Android phone and TV. An
+  AAC source passes through. It works in a single MP4, HLS and audio-only `.m4a` output. `Bitrate` is 8k to 288k per
+  main channel (the LFE of 5.1 and 7.1 does not count); the default is 64k mono, 128k stereo, 384k 5.1 and 512k 7.1.
+- `AudioModeFLAC` and `AudioModeALAC` are lossless: a source already in that codec is copied, and they take no
+  `Bitrate`. Both work in a single MP4, HLS and audio-only output. `Audio.BitDepth` is `AudioBitDepthSource` (the
+  default: 16-bit for a 16-bit or lossy source, 24-bit for a deeper one), `AudioBitDepth16` or `AudioBitDepth24`. For
+  FLAC, `Audio.FlacCompression` is `FlacCompressionFast`, `FlacCompressionDefault` or `FlacCompressionBest`: the same
+  audio either way, a smaller file for more work.
+- `AudioModeMP3` is constant bit rate, stereo at most, in a single MP4 or an audio-only output (not HLS), at 32k, 40k,
+  48k, 56k, 64k, 80k, 96k, 112k, 128k, 160k, 192k, 224k, 256k or 320k (default 128k stereo, 64k mono).
+
+`Mode: transcdr.ModeAudio` writes the audio alone as one file (label `audio`, width and height 0), billed per output
+minute at the SD rate. `Audio.Container` picks the file: `AudioContainerAuto` (the default) follows the codec, a
+`.flac` for FLAC, an `.m4a` for ALAC and an `.mp3` otherwise (auto audio is then MP3); `AudioContainerM4A` holds any
+codec (auto audio in an `.m4a` is Opus); `AudioContainerFLAC` holds FLAC only and `AudioContainerMP3` MP3 only. The
+file is `audio.mp3` (`audio/mpeg`), `audio.flac` (`audio/flac`) or `audio.m4a` (`audio/mp4`). `Container` applies only
+to `ModeAudio`. A `single` job whose input has no video becomes audio-only by itself; with AAC or Opus audio it is an
+`.m4a`.
+
+`Audio.Channels` is `ChannelsSource` (the default), `ChannelsMono`, `ChannelsStereo`, `ChannelsSurround51` or
+`ChannelsSurround71`; it downmixes and never upmixes. In HLS with surround audio,
 `Audio.StereoFallback = transcdr.Bool(true)` adds a stereo rendition to the same audio group.
 
 ```go
@@ -124,15 +142,31 @@ job, err := client.Jobs.Create(ctx, &transcdr.JobCreateParams{
 	},
 })
 
-// Surround HLS with a stereo rendition beside it.
+// AAC in an .m4a for phones and browsers.
+m4a := &transcdr.OutputSpecInput{
+	Mode:  transcdr.ModeAudio,
+	Audio: &transcdr.Audio{Mode: transcdr.AudioModeAAC, Container: transcdr.AudioContainerM4A},
+}
+
+// A lossless 24-bit FLAC master.
+master := &transcdr.OutputSpecInput{
+	Mode:  transcdr.ModeAudio,
+	Audio: &transcdr.Audio{Mode: transcdr.AudioModeFLAC, BitDepth: transcdr.AudioBitDepth24, FlacCompression: transcdr.FlacCompressionBest},
+}
+
+// Surround AAC in HLS with a stereo rendition beside it.
 surround := &transcdr.OutputSpecInput{
 	Mode:  transcdr.ModeHLS,
 	Codec: "h264",
-	Audio: &transcdr.Audio{Channels: transcdr.ChannelsSurround51, StereoFallback: transcdr.Bool(true)},
+	Audio: &transcdr.Audio{Mode: transcdr.AudioModeAAC, Channels: transcdr.ChannelsSurround51, StereoFallback: transcdr.Bool(true)},
 }
 ```
 
-The `audio-mp3-podcast` and `audio-mp3-speech` system presets (`CategoryAudio`) are MP3 at 128k stereo and 64k mono.
+Audio system presets (`CategoryAudio`): `audio-mp3-podcast` and `audio-mp3-speech` (MP3 at 128k stereo and 64k mono),
+`audio-aac-m4a` (AAC in an `.m4a`) and `audio-alac-m4a` (Apple Lossless in an `.m4a`). In `CategoryArchive`,
+`audio-flac` is a native `.flac` at best compression and `archive-av1-flac` is visually lossless AV1 with FLAC audio in
+one MP4. The reach presets (`mp4-h264-compat-1080p`, `mp4-h265-1080p`, `hls-h264-abr`, `hls-h264-cbr`,
+`social-vertical-1080x1920`, `hls-h264-surround` and `mp4-h264-surround-1080p`, now in `CategoryTV`) use AAC audio.
 
 ## Explicit nulls
 

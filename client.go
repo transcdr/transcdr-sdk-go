@@ -21,7 +21,7 @@ import (
 )
 
 // Version is this SDK's version, sent in the User-Agent header.
-const Version = "0.5.0"
+const Version = "0.6.0"
 
 // DefaultBaseURL is the production API.
 const DefaultBaseURL = "https://api.transcdr.com"
