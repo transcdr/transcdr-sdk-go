@@ -203,7 +203,7 @@ func TestAutomationsCRUD(t *testing.T) {
 		PollIntervalSeconds: Int(120),
 		SettleSeconds:       Int(0),
 		Preset:              Value("hls-av1-abr"),
-		Output:              Value(&OutputSpecInput{Codec: "h264"}),
+		Output:              Value(OutputOverrides{"video": map[string]any{"codec": "h264"}}),
 		Destination:         Value(JobDestination{ConnectionID: "con_s", Prefix: "out/{stem}/"}),
 		AfterSuccess:        "delete",
 		Priority:            PriorityHigh,
@@ -216,7 +216,7 @@ func TestAutomationsCRUD(t *testing.T) {
 	}
 	ixJSONEq(t, f.expect("POST", "/v1/automations").Body, `{"name":"Ingest","trigger":"queue","trigger_connection_id":"con_q",
 		"source":{"connection_id":"con_s","prefix":"incoming/","pattern":"**/*.mp4"},
-		"poll_interval_seconds":120,"settle_seconds":0,"preset":"hls-av1-abr","output":{"codec":"h264"},
+		"poll_interval_seconds":120,"settle_seconds":0,"preset":"hls-av1-abr","output":{"video":{"codec":"h264"}},
 		"destination":{"connection_id":"con_s","prefix":"out/{stem}/"},"after_success":"delete","priority":"high",
 		"metadata":{"team":"video"},"webhook_url":"https://example.com/jobs"}`)
 
@@ -229,7 +229,7 @@ func TestAutomationsCRUD(t *testing.T) {
 		TriggerConnectionID: Null[string](),
 		Destination:         Null[JobDestination](),
 		Metadata:            Null[Metadata](),
-		Output:              Null[*OutputSpecInput](),
+		Output:              Null[OutputOverrides](),
 		Preset:              Null[string](),
 		WebhookURL:          Null[string](),
 		Enabled:             Bool(false),
@@ -238,13 +238,13 @@ func TestAutomationsCRUD(t *testing.T) {
 	ixJSONEq(t, f.expect("PATCH", "/v1/automations/aut_1").Body,
 		`{"enabled":false,"trigger_connection_id":null,"preset":null,"output":null,"destination":null,"metadata":null,"webhook_url":null}`)
 
-	// A raw output and an empty metadata map are sent as they are.
+	// Overrides with a removal, and an empty metadata map, are sent as they are.
 	_, err = c.Automations.Update(ixCtx, "aut_1", &AutomationParams{
-		Output:   Value(RawOutputSpec(json.RawMessage(`{"codec":"av1"}`))),
+		Output:   Value(OutputOverrides{"container": map[string]any{"format": "mp4", "segment_seconds": nil}}),
 		Metadata: Value(Metadata{}),
 	})
 	must(t, err)
-	ixJSONEq(t, f.last().Body, `{"output":{"codec":"av1"},"metadata":{}}`)
+	ixJSONEq(t, f.last().Body, `{"output":{"container":{"format":"mp4","segment_seconds":null}},"metadata":{}}`)
 
 	// Only what is set is sent.
 	_, err = c.Automations.Update(ixCtx, "aut_1", &AutomationParams{Name: "Renamed"})
@@ -370,7 +370,9 @@ func TestDecodeAutomationsFixture(t *testing.T) {
 		a.LastError == nil || a.LastTriggeredAt == nil || a.LastPolledAt != nil {
 		t.Fatalf("automation = %+v", a)
 	}
-	ixJSONEq(t, a.Output.Raw(), `{}`)
+	if a.Output == nil || len(a.Output) != 0 || a.ResolvedOutput == nil || a.ResolvedOutput.Video.Codec != CodecAV1 || ValidateOutput(*a.ResolvedOutput) != nil {
+		t.Fatalf("output %v, resolved %s", a.Output, a.ResolvedOutput.Raw())
+	}
 }
 
 func TestDecodeAutomationItemsFixture(t *testing.T) {

@@ -20,32 +20,59 @@
       "object": "preset",
       "output": {
         "audio": {
-          "mode": "auto"
+          "bitrate": "standard",
+          "channels": "source",
+          "codec": "opus",
+          "handling": "auto",
+          "he_aac": "auto"
         },
-        "bit_depth": "auto",
-        "codec": "av1",
-        "color": "sdr",
-        "filters": null,
-        "gop": null,
-        "ladder": null,
-        "max_fps": null,
-        "mode": "single",
-        "quality": {
-          "target": "standard"
+        "container": {
+          "format": "mp4"
         },
-        "renditions": [
-          {
-            "height": 1080,
-            "width": 1920
-          }
-        ],
-        "segment_seconds": null,
-        "subtitles": null,
-        "trim": null
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
+        },
+        "renditions": {
+          "sizes": [
+            {
+              "fit": "contain",
+              "height": 1080,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "width": 1920
+            }
+          ]
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "from_color",
+          "codec": "av1",
+          "color": "sdr",
+          "filters": [],
+          "frame_rate": {
+            "max": "source"
+          },
+          "gop": {
+            "seconds": 2
+          },
+          "quality": "standard"
+        }
       },
       "slug": "web-av1-1080p",
       "system": true,
-      "updated_at": null
+      "updated_at": null,
+      "version": 1
     },
     {
       "category": "web",
@@ -67,32 +94,59 @@
       "object": "preset",
       "output": {
         "audio": {
-          "mode": "auto"
+          "bitrate": "standard",
+          "channels": "source",
+          "codec": "opus",
+          "handling": "auto",
+          "he_aac": "auto"
         },
-        "bit_depth": "auto",
-        "codec": "av1",
-        "color": "sdr",
-        "filters": null,
-        "gop": null,
-        "ladder": null,
-        "max_fps": null,
-        "mode": "single",
-        "quality": {
-          "target": "standard"
+        "container": {
+          "format": "mp4"
         },
-        "renditions": [
-          {
-            "height": 720,
-            "width": 1280
-          }
-        ],
-        "segment_seconds": null,
-        "subtitles": null,
-        "trim": null
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
+        },
+        "renditions": {
+          "sizes": [
+            {
+              "fit": "contain",
+              "height": 720,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "width": 1280
+            }
+          ]
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "from_color",
+          "codec": "av1",
+          "color": "sdr",
+          "filters": [],
+          "frame_rate": {
+            "max": "source"
+          },
+          "gop": {
+            "seconds": 2
+          },
+          "quality": "standard"
+        }
       },
       "slug": "web-av1-720p",
       "system": true,
-      "updated_at": null
+      "updated_at": null,
+      "version": 1
     },
     {
       "category": "streaming",
@@ -112,29 +166,54 @@
       "object": "preset",
       "output": {
         "audio": {
-          "mode": "auto"
+          "bitrate": "standard",
+          "channels": "source",
+          "codec": "opus",
+          "handling": "auto",
+          "he_aac": "auto",
+          "stereo_fallback": false
         },
-        "bit_depth": "auto",
-        "codec": "av1",
-        "color": "sdr",
-        "filters": null,
-        "gop": null,
-        "ladder": {
-          "max_short_side": 1080
+        "container": {
+          "format": "hls",
+          "segment_seconds": 4.0
         },
-        "max_fps": null,
-        "mode": "hls",
-        "quality": {
-          "target": "standard"
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
         },
-        "renditions": [],
-        "segment_seconds": 4.0,
-        "subtitles": null,
-        "trim": null
+        "renditions": {
+          "ladder": {
+            "fit": "contain",
+            "max_short_side": 1080,
+            "upscale": false
+          }
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "from_color",
+          "codec": "av1",
+          "color": "sdr",
+          "filters": [],
+          "frame_rate": {
+            "max": "source"
+          },
+          "gop": "segment",
+          "quality": "standard"
+        }
       },
       "slug": "hls-av1-abr",
       "system": true,
-      "updated_at": null
+      "updated_at": null,
+      "version": 1
     },
     {
       "category": "streaming",
@@ -160,44 +239,83 @@
       "object": "preset",
       "output": {
         "audio": {
-          "mode": "auto"
+          "bitrate": "standard",
+          "channels": "source",
+          "codec": "opus",
+          "handling": "auto",
+          "he_aac": "auto",
+          "stereo_fallback": false
         },
-        "bit_depth": "auto",
-        "codec": "h264",
-        "color": "sdr",
-        "filters": null,
-        "gop": null,
-        "ladder": null,
-        "max_fps": null,
-        "mode": "hls",
-        "quality": {
-          "target": "standard"
+        "container": {
+          "format": "hls",
+          "segment_seconds": 6.0
         },
-        "renditions": [
-          {
-            "height": 1080,
-            "width": 1920
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
+        },
+        "renditions": {
+          "sizes": [
+            {
+              "fit": "contain",
+              "height": 1080,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "width": 1920
+            },
+            {
+              "fit": "contain",
+              "height": 720,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "width": 1280
+            },
+            {
+              "fit": "contain",
+              "height": 480,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "width": 854
+            },
+            {
+              "fit": "contain",
+              "height": 360,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "width": 640
+            }
+          ]
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "from_color",
+          "codec": "h264",
+          "color": "sdr",
+          "filters": [],
+          "frame_rate": {
+            "max": "source"
           },
-          {
-            "height": 720,
-            "width": 1280
-          },
-          {
-            "height": 480,
-            "width": 854
-          },
-          {
-            "height": 360,
-            "width": 640
-          }
-        ],
-        "segment_seconds": 6.0,
-        "subtitles": null,
-        "trim": null
+          "gop": "segment",
+          "quality": "standard"
+        }
       },
       "slug": "hls-h264-abr",
       "system": true,
-      "updated_at": null
+      "updated_at": null,
+      "version": 1
     },
     {
       "category": "tv",
@@ -223,48 +341,106 @@
       "object": "preset",
       "output": {
         "audio": {
-          "mode": "auto"
+          "bitrate": "standard",
+          "channels": "source",
+          "codec": "opus",
+          "handling": "auto",
+          "he_aac": "auto",
+          "stereo_fallback": false
         },
-        "bit_depth": "8bit",
-        "codec": "h264",
-        "color": "sdr",
-        "filters": null,
-        "gop": null,
-        "ladder": null,
-        "max_fps": null,
-        "mode": "hls",
-        "quality": {
-          "target": "cbr"
+        "container": {
+          "format": "hls",
+          "segment_seconds": 6.0
         },
-        "renditions": [
-          {
-            "bitrate": "5M",
-            "height": 1080,
-            "width": 1920
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
+        },
+        "renditions": {
+          "sizes": [
+            {
+              "fit": "contain",
+              "height": 1080,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "video": {
+                "cbr": {
+                  "bitrate": "5M"
+                }
+              },
+              "width": 1920
+            },
+            {
+              "fit": "contain",
+              "height": 720,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "video": {
+                "cbr": {
+                  "bitrate": "3M"
+                }
+              },
+              "width": 1280
+            },
+            {
+              "fit": "contain",
+              "height": 480,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "video": {
+                "cbr": {
+                  "bitrate": "1200k"
+                }
+              },
+              "width": 854
+            },
+            {
+              "fit": "contain",
+              "height": 360,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "video": {
+                "cbr": {
+                  "bitrate": "800k"
+                }
+              },
+              "width": 640
+            }
+          ]
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "8bit",
+          "cbr": {
+            "bitrate": "standard",
+            "buffer_ms": 1000
           },
-          {
-            "bitrate": "3M",
-            "height": 720,
-            "width": 1280
+          "codec": "h264",
+          "color": "sdr",
+          "filters": [],
+          "frame_rate": {
+            "max": "source"
           },
-          {
-            "bitrate": "1200k",
-            "height": 480,
-            "width": 854
-          },
-          {
-            "bitrate": "800k",
-            "height": 360,
-            "width": 640
-          }
-        ],
-        "segment_seconds": 6.0,
-        "subtitles": null,
-        "trim": null
+          "gop": "segment"
+        }
       },
       "slug": "hls-h264-cbr",
       "system": true,
-      "updated_at": null
+      "updated_at": null,
+      "version": 1
     },
     {
       "category": "tv",
@@ -292,32 +468,59 @@
       "object": "preset",
       "output": {
         "audio": {
-          "mode": "auto"
+          "bitrate": "standard",
+          "channels": "source",
+          "codec": "opus",
+          "handling": "auto",
+          "he_aac": "auto"
         },
-        "bit_depth": "8bit",
-        "codec": "h264",
-        "color": "sdr",
-        "filters": null,
-        "gop": null,
-        "ladder": null,
-        "max_fps": null,
-        "mode": "single",
-        "quality": {
-          "target": "high"
+        "container": {
+          "format": "mp4"
         },
-        "renditions": [
-          {
-            "height": 1080,
-            "width": 1920
-          }
-        ],
-        "segment_seconds": null,
-        "subtitles": null,
-        "trim": null
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
+        },
+        "renditions": {
+          "sizes": [
+            {
+              "fit": "contain",
+              "height": 1080,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "width": 1920
+            }
+          ]
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "8bit",
+          "codec": "h264",
+          "color": "sdr",
+          "filters": [],
+          "frame_rate": {
+            "max": "source"
+          },
+          "gop": {
+            "seconds": 2
+          },
+          "quality": "high"
+        }
       },
       "slug": "mp4-h264-compat-1080p",
       "system": true,
-      "updated_at": null
+      "updated_at": null,
+      "version": 1
     },
     {
       "category": "mobile",
@@ -339,32 +542,59 @@
       "object": "preset",
       "output": {
         "audio": {
-          "mode": "auto"
+          "bitrate": "standard",
+          "channels": "source",
+          "codec": "opus",
+          "handling": "auto",
+          "he_aac": "auto"
         },
-        "bit_depth": "auto",
-        "codec": "h265",
-        "color": "sdr",
-        "filters": null,
-        "gop": null,
-        "ladder": null,
-        "max_fps": null,
-        "mode": "single",
-        "quality": {
-          "target": "high"
+        "container": {
+          "format": "mp4"
         },
-        "renditions": [
-          {
-            "height": 1080,
-            "width": 1920
-          }
-        ],
-        "segment_seconds": null,
-        "subtitles": null,
-        "trim": null
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
+        },
+        "renditions": {
+          "sizes": [
+            {
+              "fit": "contain",
+              "height": 1080,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "width": 1920
+            }
+          ]
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "from_color",
+          "codec": "h265",
+          "color": "sdr",
+          "filters": [],
+          "frame_rate": {
+            "max": "source"
+          },
+          "gop": {
+            "seconds": 2
+          },
+          "quality": "high"
+        }
       },
       "slug": "mp4-h265-1080p",
       "system": true,
-      "updated_at": null
+      "updated_at": null,
+      "version": 1
     },
     {
       "category": "archive",
@@ -382,32 +612,59 @@
       "object": "preset",
       "output": {
         "audio": {
-          "mode": "auto"
+          "bitrate": "standard",
+          "channels": "source",
+          "codec": "opus",
+          "handling": "auto",
+          "he_aac": "auto"
         },
-        "bit_depth": "10bit",
-        "codec": "av1",
-        "color": "hdr10",
-        "filters": null,
-        "gop": null,
-        "ladder": null,
-        "max_fps": null,
-        "mode": "single",
-        "quality": {
-          "target": "high"
+        "container": {
+          "format": "mp4"
         },
-        "renditions": [
-          {
-            "height": 2160,
-            "width": 3840
-          }
-        ],
-        "segment_seconds": null,
-        "subtitles": null,
-        "trim": null
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
+        },
+        "renditions": {
+          "sizes": [
+            {
+              "fit": "contain",
+              "height": 2160,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "width": 3840
+            }
+          ]
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "10bit",
+          "codec": "av1",
+          "color": "hdr10",
+          "filters": [],
+          "frame_rate": {
+            "max": "source"
+          },
+          "gop": {
+            "seconds": 2
+          },
+          "quality": "high"
+        }
       },
       "slug": "hdr10-av1-2160p",
       "system": true,
-      "updated_at": null
+      "updated_at": null,
+      "version": 1
     },
     {
       "category": "social",
@@ -435,32 +692,59 @@
       "object": "preset",
       "output": {
         "audio": {
-          "mode": "auto"
+          "bitrate": "standard",
+          "channels": "source",
+          "codec": "opus",
+          "handling": "auto",
+          "he_aac": "auto"
         },
-        "bit_depth": "auto",
-        "codec": "h264",
-        "color": "sdr",
-        "filters": null,
-        "gop": null,
-        "ladder": null,
-        "max_fps": 30.0,
-        "mode": "single",
-        "quality": {
-          "target": "high"
+        "container": {
+          "format": "mp4"
         },
-        "renditions": [
-          {
-            "height": 1920,
-            "width": 1080
-          }
-        ],
-        "segment_seconds": null,
-        "subtitles": null,
-        "trim": null
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
+        },
+        "renditions": {
+          "sizes": [
+            {
+              "fit": "contain",
+              "height": 1920,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "width": 1080
+            }
+          ]
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "from_color",
+          "codec": "h264",
+          "color": "sdr",
+          "filters": [],
+          "frame_rate": {
+            "max": 30.0
+          },
+          "gop": {
+            "seconds": 2
+          },
+          "quality": "high"
+        }
       },
       "slug": "social-vertical-1080x1920",
       "system": true,
-      "updated_at": null
+      "updated_at": null,
+      "version": 1
     },
     {
       "category": "web",
@@ -482,32 +766,55 @@
       "object": "preset",
       "output": {
         "audio": {
-          "mode": "drop"
+          "handling": "drop"
         },
-        "bit_depth": "auto",
-        "codec": "av1",
-        "color": "sdr",
-        "filters": null,
-        "gop": null,
-        "ladder": null,
-        "max_fps": null,
-        "mode": "single",
-        "quality": {
-          "target": "standard"
+        "container": {
+          "format": "mp4"
         },
-        "renditions": [
-          {
-            "height": 720,
-            "width": 1280
-          }
-        ],
-        "segment_seconds": null,
-        "subtitles": null,
-        "trim": null
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
+        },
+        "renditions": {
+          "sizes": [
+            {
+              "fit": "contain",
+              "height": 720,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "width": 1280
+            }
+          ]
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "from_color",
+          "codec": "av1",
+          "color": "sdr",
+          "filters": [],
+          "frame_rate": {
+            "max": "source"
+          },
+          "gop": {
+            "seconds": 2
+          },
+          "quality": "standard"
+        }
       },
       "slug": "audio-strip-av1-720p",
       "system": true,
-      "updated_at": null
+      "updated_at": null,
+      "version": 1
     },
     {
       "category": "archive",
@@ -529,27 +836,54 @@
       "object": "preset",
       "output": {
         "audio": {
-          "mode": "auto"
+          "bitrate": "standard",
+          "channels": "source",
+          "codec": "opus",
+          "handling": "auto",
+          "he_aac": "auto"
         },
-        "bit_depth": "auto",
-        "codec": "av1",
-        "color": "sdr",
-        "filters": null,
-        "gop": null,
-        "ladder": null,
-        "max_fps": null,
-        "mode": "single",
-        "quality": {
-          "target": "visually_lossless"
+        "container": {
+          "format": "mp4"
         },
-        "renditions": [],
-        "segment_seconds": null,
-        "subtitles": null,
-        "trim": null
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
+        },
+        "renditions": {
+          "source_size": {
+            "fit": "contain",
+            "label": "by_size",
+            "upscale": false
+          }
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "from_color",
+          "codec": "av1",
+          "color": "sdr",
+          "filters": [],
+          "frame_rate": {
+            "max": "source"
+          },
+          "gop": {
+            "seconds": 2
+          },
+          "quality": "visually_lossless"
+        }
       },
       "slug": "archive-av1-high",
       "system": true,
-      "updated_at": null
+      "updated_at": null,
+      "version": 1
     }
   ],
   "has_more": false,

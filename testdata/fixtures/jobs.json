@@ -46,23 +46,49 @@
       "object": "job",
       "output": {
         "audio": {
-          "mode": "auto"
+          "bitrate": "standard",
+          "channels": "source",
+          "codec": "opus",
+          "handling": "auto",
+          "he_aac": "auto"
         },
-        "bit_depth": "auto",
-        "codec": "av1",
-        "color": "sdr",
-        "filters": null,
-        "gop": null,
-        "ladder": null,
-        "max_fps": null,
-        "mode": "single",
-        "quality": {
-          "target": "visually_lossless"
+        "container": {
+          "format": "mp4"
         },
-        "renditions": [],
-        "segment_seconds": null,
-        "subtitles": null,
-        "trim": null
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
+        },
+        "renditions": {
+          "source_size": {
+            "fit": "contain",
+            "label": "by_size",
+            "upscale": false
+          }
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "from_color",
+          "codec": "av1",
+          "color": "sdr",
+          "filters": [],
+          "frame_rate": {
+            "max": "source"
+          },
+          "gop": {
+            "seconds": 2
+          },
+          "quality": "visually_lossless"
+        }
       },
       "outputs": [
         {
@@ -78,6 +104,12 @@
       ],
       "playback_url": "https://api.transcdr.com/play/REDACTED/1200p.mp4",
       "playlist_url": null,
+      "preset": {
+        "id": "archive-av1-high",
+        "overrides": null,
+        "slug": "archive-av1-high",
+        "version": 1
+      },
       "preset_id": "archive-av1-high",
       "priority": "normal",
       "progress": {
@@ -152,30 +184,56 @@
       "object": "job",
       "output": {
         "audio": {
-          "mode": "auto"
+          "bitrate": "standard",
+          "channels": "source",
+          "codec": "opus",
+          "handling": "auto",
+          "he_aac": "auto"
         },
-        "bit_depth": "10bit",
-        "codec": "av1",
-        "color": "hdr10",
-        "filters": "hflip",
-        "gop": null,
-        "ladder": {
-          "max_short_side": 720
+        "container": {
+          "format": "mp4"
         },
-        "max_fps": 5.0,
-        "mode": "single",
-        "quality": {
-          "target": "standard"
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
         },
-        "renditions": [
-          {
-            "height": 2160,
-            "width": 3840
-          }
-        ],
-        "segment_seconds": null,
-        "subtitles": null,
-        "trim": null
+        "renditions": {
+          "sizes": [
+            {
+              "fit": "contain",
+              "height": 2160,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "width": 3840
+            }
+          ]
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "10bit",
+          "codec": "av1",
+          "color": "hdr10",
+          "filters": [
+            "hflip"
+          ],
+          "frame_rate": {
+            "max": 5.0
+          },
+          "gop": {
+            "seconds": 2
+          },
+          "quality": "standard"
+        }
       },
       "outputs": [
         {
@@ -191,6 +249,12 @@
       ],
       "playback_url": "https://api.transcdr.com/play/REDACTED/2160p.mp4",
       "playlist_url": null,
+      "preset": {
+        "id": "hdr10-av1-2160p",
+        "overrides": null,
+        "slug": "hdr10-av1-2160p",
+        "version": 1
+      },
       "preset_id": "hdr10-av1-2160p",
       "priority": "normal",
       "progress": {
@@ -263,26 +327,54 @@
       "object": "job",
       "output": {
         "audio": {
-          "mode": "opus"
+          "bitrate": "standard",
+          "channels": "source",
+          "codec": "opus",
+          "handling": "encode",
+          "he_aac": "auto"
         },
-        "bit_depth": "auto",
-        "codec": "av1",
-        "color": "sdr",
-        "filters": null,
-        "gop": null,
-        "ladder": null,
-        "max_fps": null,
-        "mode": "single",
-        "quality": {},
-        "renditions": [
-          {
-            "height": 1080,
-            "width": 1920
-          }
-        ],
-        "segment_seconds": null,
-        "subtitles": null,
-        "trim": null
+        "container": {
+          "format": "mp4"
+        },
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
+        },
+        "renditions": {
+          "sizes": [
+            {
+              "fit": "contain",
+              "height": 1080,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "width": 1920
+            }
+          ]
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "from_color",
+          "codec": "av1",
+          "color": "sdr",
+          "filters": [],
+          "frame_rate": {
+            "max": "source"
+          },
+          "gop": {
+            "seconds": 2
+          },
+          "quality": "standard"
+        }
       },
       "outputs": [
         {
@@ -298,6 +390,7 @@
       ],
       "playback_url": "https://api.transcdr.com/play/REDACTED/1080p.mp4",
       "playlist_url": null,
+      "preset": null,
       "preset_id": null,
       "priority": "normal",
       "progress": {
@@ -363,26 +456,54 @@
       "object": "job",
       "output": {
         "audio": {
-          "mode": "opus"
+          "bitrate": "standard",
+          "channels": "source",
+          "codec": "opus",
+          "handling": "encode",
+          "he_aac": "auto"
         },
-        "bit_depth": "auto",
-        "codec": "av1",
-        "color": "sdr",
-        "filters": null,
-        "gop": null,
-        "ladder": null,
-        "max_fps": null,
-        "mode": "single",
-        "quality": {},
-        "renditions": [
-          {
-            "height": 1080,
-            "width": 1920
-          }
-        ],
-        "segment_seconds": null,
-        "subtitles": null,
-        "trim": null
+        "container": {
+          "format": "mp4"
+        },
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
+        },
+        "renditions": {
+          "sizes": [
+            {
+              "fit": "contain",
+              "height": 1080,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "width": 1920
+            }
+          ]
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "from_color",
+          "codec": "av1",
+          "color": "sdr",
+          "filters": [],
+          "frame_rate": {
+            "max": "source"
+          },
+          "gop": {
+            "seconds": 2
+          },
+          "quality": "standard"
+        }
       },
       "outputs": [
         {
@@ -398,6 +519,7 @@
       ],
       "playback_url": "https://api.transcdr.com/play/REDACTED/1080p.mp4",
       "playlist_url": null,
+      "preset": null,
       "preset_id": null,
       "priority": "normal",
       "progress": {
@@ -470,23 +592,49 @@
       "object": "job",
       "output": {
         "audio": {
-          "mode": "auto"
+          "bitrate": "standard",
+          "channels": "source",
+          "codec": "opus",
+          "handling": "auto",
+          "he_aac": "auto"
         },
-        "bit_depth": "auto",
-        "codec": "av1",
-        "color": "sdr",
-        "filters": null,
-        "gop": null,
-        "ladder": null,
-        "max_fps": null,
-        "mode": "single",
-        "quality": {
-          "target": "visually_lossless"
+        "container": {
+          "format": "mp4"
         },
-        "renditions": [],
-        "segment_seconds": null,
-        "subtitles": null,
-        "trim": null
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
+        },
+        "renditions": {
+          "source_size": {
+            "fit": "contain",
+            "label": "by_size",
+            "upscale": false
+          }
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "from_color",
+          "codec": "av1",
+          "color": "sdr",
+          "filters": [],
+          "frame_rate": {
+            "max": "source"
+          },
+          "gop": {
+            "seconds": 2
+          },
+          "quality": "visually_lossless"
+        }
       },
       "outputs": [
         {
@@ -502,6 +650,12 @@
       ],
       "playback_url": "https://api.transcdr.com/play/REDACTED/640p.mp4",
       "playlist_url": null,
+      "preset": {
+        "id": "archive-av1-high",
+        "overrides": null,
+        "slug": "archive-av1-high",
+        "version": 1
+      },
       "preset_id": "archive-av1-high",
       "priority": "normal",
       "progress": {
@@ -567,28 +721,54 @@
       "object": "job",
       "output": {
         "audio": {
-          "mode": "opus"
+          "bitrate": "standard",
+          "channels": "source",
+          "codec": "opus",
+          "handling": "encode",
+          "he_aac": "auto"
         },
-        "bit_depth": "auto",
-        "codec": "av1",
-        "color": "sdr",
-        "filters": null,
-        "gop": null,
-        "ladder": null,
-        "max_fps": null,
-        "mode": "single",
-        "quality": {
-          "target": "standard"
+        "container": {
+          "format": "mp4"
         },
-        "renditions": [
-          {
-            "height": 1080,
-            "width": 1920
-          }
-        ],
-        "segment_seconds": null,
-        "subtitles": null,
-        "trim": null
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
+        },
+        "renditions": {
+          "sizes": [
+            {
+              "fit": "contain",
+              "height": 1080,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "width": 1920
+            }
+          ]
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "from_color",
+          "codec": "av1",
+          "color": "sdr",
+          "filters": [],
+          "frame_rate": {
+            "max": "source"
+          },
+          "gop": {
+            "seconds": 2
+          },
+          "quality": "standard"
+        }
       },
       "outputs": [
         {
@@ -604,6 +784,12 @@
       ],
       "playback_url": "https://api.transcdr.com/play/REDACTED/1080p.mp4",
       "playlist_url": null,
+      "preset": {
+        "id": "web-av1-1080p",
+        "overrides": null,
+        "slug": "web-av1-1080p",
+        "version": 1
+      },
       "preset_id": "web-av1-1080p",
       "priority": "high",
       "progress": {
@@ -669,25 +855,49 @@
       "object": "job",
       "output": {
         "audio": {
-          "mode": "auto"
+          "bitrate": "standard",
+          "channels": "source",
+          "codec": "opus",
+          "handling": "auto",
+          "he_aac": "auto"
         },
-        "bit_depth": "auto",
-        "codec": "av1",
-        "color": "sdr",
-        "filters": null,
-        "gop": null,
-        "ladder": {
-          "max_short_side": 2160
+        "container": {
+          "format": "mp4"
         },
-        "max_fps": null,
-        "mode": "single",
-        "quality": {
-          "target": "vmaf=90"
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
         },
-        "renditions": [],
-        "segment_seconds": null,
-        "subtitles": null,
-        "trim": null
+        "renditions": {
+          "ladder": {
+            "fit": "contain",
+            "max_short_side": 2160,
+            "upscale": false
+          }
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "from_color",
+          "codec": "av1",
+          "color": "sdr",
+          "filters": [],
+          "frame_rate": {
+            "max": "source"
+          },
+          "gop": {
+            "seconds": 2
+          },
+          "quality": "vmaf=90"
+        }
       },
       "outputs": [
         {
@@ -743,6 +953,12 @@
       ],
       "playback_url": "https://api.transcdr.com/play/REDACTED/1200p.mp4",
       "playlist_url": null,
+      "preset": {
+        "id": "web-av1-1080p",
+        "overrides": null,
+        "slug": "web-av1-1080p",
+        "version": 1
+      },
       "preset_id": "web-av1-1080p",
       "priority": "normal",
       "progress": {
@@ -863,30 +1079,62 @@
       "object": "job",
       "output": {
         "audio": {
-          "mode": "auto"
+          "bitrate": "standard",
+          "channels": "source",
+          "codec": "opus",
+          "handling": "auto",
+          "he_aac": "auto",
+          "stereo_fallback": false
         },
-        "bit_depth": "auto",
-        "codec": "av1",
-        "color": "sdr",
-        "filters": null,
-        "gop": null,
-        "ladder": null,
-        "max_fps": null,
-        "mode": "hls",
-        "quality": {},
-        "renditions": [
-          {
-            "height": 720,
-            "width": 1280
+        "container": {
+          "format": "hls",
+          "segment_seconds": 4
+        },
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
+        },
+        "renditions": {
+          "sizes": [
+            {
+              "fit": "contain",
+              "height": 720,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "width": 1280
+            },
+            {
+              "fit": "contain",
+              "height": 360,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "width": 640
+            }
+          ]
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "from_color",
+          "codec": "av1",
+          "color": "sdr",
+          "filters": [],
+          "frame_rate": {
+            "max": "source"
           },
-          {
-            "height": 360,
-            "width": 640
-          }
-        ],
-        "segment_seconds": null,
-        "subtitles": null,
-        "trim": null
+          "gop": "segment",
+          "quality": "standard"
+        }
       },
       "outputs": [
         {
@@ -912,6 +1160,7 @@
       ],
       "playback_url": "https://api.transcdr.com/play/REDACTED/master.m3u8",
       "playlist_url": "https://api.transcdr.com/v1/jobs/job_ZIbNKfl151quJhWYUV1Bnt/files/master.m3u8",
+      "preset": null,
       "preset_id": null,
       "priority": "normal",
       "progress": {
@@ -996,26 +1245,54 @@
       "object": "job",
       "output": {
         "audio": {
-          "mode": "auto"
+          "bitrate": "standard",
+          "channels": "source",
+          "codec": "opus",
+          "handling": "auto",
+          "he_aac": "auto",
+          "stereo_fallback": false
         },
-        "bit_depth": "auto",
-        "codec": "av1",
-        "color": "sdr",
-        "filters": null,
-        "gop": null,
-        "ladder": null,
-        "max_fps": null,
-        "mode": "hls",
-        "quality": {},
-        "renditions": [
-          {
-            "height": 360,
-            "width": 640
-          }
-        ],
-        "segment_seconds": null,
-        "subtitles": null,
-        "trim": null
+        "container": {
+          "format": "hls",
+          "segment_seconds": 4
+        },
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
+        },
+        "renditions": {
+          "sizes": [
+            {
+              "fit": "contain",
+              "height": 360,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "width": 640
+            }
+          ]
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "from_color",
+          "codec": "av1",
+          "color": "sdr",
+          "filters": [],
+          "frame_rate": {
+            "max": "source"
+          },
+          "gop": "segment",
+          "quality": "standard"
+        }
       },
       "outputs": [
         {
@@ -1031,6 +1308,7 @@
       ],
       "playback_url": "https://api.transcdr.com/play/REDACTED/master.m3u8",
       "playlist_url": "https://api.transcdr.com/v1/jobs/job_r5hLuvRfHEI4AUB6kIQKbJ/files/master.m3u8",
+      "preset": null,
       "preset_id": null,
       "priority": "normal",
       "progress": {
@@ -1103,21 +1381,49 @@
       "object": "job",
       "output": {
         "audio": {
-          "mode": "auto"
+          "bitrate": "standard",
+          "channels": "source",
+          "codec": "opus",
+          "handling": "auto",
+          "he_aac": "auto",
+          "stereo_fallback": false
         },
-        "bit_depth": "auto",
-        "codec": "h264",
-        "color": "sdr",
-        "filters": null,
-        "gop": null,
-        "ladder": {},
-        "max_fps": null,
-        "mode": "hls",
-        "quality": {},
-        "renditions": [],
-        "segment_seconds": null,
-        "subtitles": null,
-        "trim": null
+        "container": {
+          "format": "hls",
+          "segment_seconds": 4
+        },
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
+        },
+        "renditions": {
+          "ladder": {
+            "fit": "contain",
+            "max_short_side": 1080,
+            "upscale": false
+          }
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "from_color",
+          "codec": "h264",
+          "color": "sdr",
+          "filters": [],
+          "frame_rate": {
+            "max": "source"
+          },
+          "gop": "segment",
+          "quality": "standard"
+        }
       },
       "outputs": [
         {
@@ -1173,6 +1479,7 @@
       ],
       "playback_url": "https://api.transcdr.com/play/REDACTED/master.m3u8",
       "playlist_url": "https://api.transcdr.com/v1/jobs/job_CVp3d4wxKgSEEj4oAuBJj8/files/master.m3u8",
+      "preset": null,
       "preset_id": null,
       "priority": "normal",
       "progress": {

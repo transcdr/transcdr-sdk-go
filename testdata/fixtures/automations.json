@@ -17,6 +17,57 @@
       "poll_interval_seconds": 300,
       "preset": "web-av1-720p",
       "priority": "normal",
+      "resolved_output": {
+        "audio": {
+          "bitrate": "standard",
+          "channels": "source",
+          "codec": "opus",
+          "handling": "auto",
+          "he_aac": "auto"
+        },
+        "container": {
+          "format": "mp4"
+        },
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
+        },
+        "renditions": {
+          "sizes": [
+            {
+              "fit": "contain",
+              "height": 720,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "width": 1280
+            }
+          ]
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "from_color",
+          "codec": "av1",
+          "color": "sdr",
+          "filters": [],
+          "frame_rate": {
+            "max": "source"
+          },
+          "gop": {
+            "seconds": 2
+          },
+          "quality": "standard"
+        }
+      },
       "settle_seconds": 60,
       "source": {
         "connection_id": "con_4BQlcYLzMwxsWC1oUofAj2",
@@ -45,6 +96,57 @@
       "poll_interval_seconds": 300,
       "preset": "web-av1-720p",
       "priority": "normal",
+      "resolved_output": {
+        "audio": {
+          "bitrate": "standard",
+          "channels": "source",
+          "codec": "opus",
+          "handling": "auto",
+          "he_aac": "auto"
+        },
+        "container": {
+          "format": "mp4"
+        },
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
+        },
+        "renditions": {
+          "sizes": [
+            {
+              "fit": "contain",
+              "height": 720,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "width": 1280
+            }
+          ]
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "from_color",
+          "codec": "av1",
+          "color": "sdr",
+          "filters": [],
+          "frame_rate": {
+            "max": "source"
+          },
+          "gop": {
+            "seconds": 2
+          },
+          "quality": "standard"
+        }
+      },
       "settle_seconds": 60,
       "source": {
         "connection_id": "con_4BQlcYLzMwxsWC1oUofAj2",
@@ -73,6 +175,57 @@
       "poll_interval_seconds": 300,
       "preset": "web-av1-720p",
       "priority": "normal",
+      "resolved_output": {
+        "audio": {
+          "bitrate": "standard",
+          "channels": "source",
+          "codec": "opus",
+          "handling": "auto",
+          "he_aac": "auto"
+        },
+        "container": {
+          "format": "mp4"
+        },
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
+        },
+        "renditions": {
+          "sizes": [
+            {
+              "fit": "contain",
+              "height": 720,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "width": 1280
+            }
+          ]
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "from_color",
+          "codec": "av1",
+          "color": "sdr",
+          "filters": [],
+          "frame_rate": {
+            "max": "source"
+          },
+          "gop": {
+            "seconds": 2
+          },
+          "quality": "standard"
+        }
+      },
       "settle_seconds": 60,
       "source": {
         "connection_id": "con_yK5dfZQe5S2QlwFY4g4mch",
@@ -101,6 +254,57 @@
       "poll_interval_seconds": 300,
       "preset": "web-av1-720p",
       "priority": "normal",
+      "resolved_output": {
+        "audio": {
+          "bitrate": "standard",
+          "channels": "source",
+          "codec": "opus",
+          "handling": "auto",
+          "he_aac": "auto"
+        },
+        "container": {
+          "format": "mp4"
+        },
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
+        },
+        "renditions": {
+          "sizes": [
+            {
+              "fit": "contain",
+              "height": 720,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "width": 1280
+            }
+          ]
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "from_color",
+          "codec": "av1",
+          "color": "sdr",
+          "filters": [],
+          "frame_rate": {
+            "max": "source"
+          },
+          "gop": {
+            "seconds": 2
+          },
+          "quality": "standard"
+        }
+      },
       "settle_seconds": 60,
       "source": {
         "connection_id": "con_yK5dfZQe5S2QlwFY4g4mch",

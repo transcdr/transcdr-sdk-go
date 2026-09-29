@@ -44,41 +44,39 @@
   "metadata": {},
   "object": "job",
   "output": {
-    "audio": {
-      "mode": "auto"
-    },
-    "bit_depth": "auto",
-    "codec": "av1",
-    "color": "sdr",
-    "filters": null,
-    "fit": "contain",
-    "gop": null,
     "image": {
+      "color_profile": "srgb",
       "formats": [
         "avif",
         "jpeg"
       ],
       "frames": {
         "count": 2
+      },
+      "quality": {
+        "avif": 60,
+        "jpeg": 82
       }
     },
-    "ladder": null,
-    "max_fps": null,
-    "mode": "image",
-    "quality": {
-      "target": "visually_lossless"
+    "kind": "image",
+    "privacy": {
+      "capture_time": "strip",
+      "descriptive": "strip",
+      "device": "strip",
+      "location": "strip"
     },
-    "renditions": [
-      {
-        "height": 640,
-        "label": "small",
-        "width": 640
-      }
-    ],
-    "segment_seconds": null,
-    "subtitles": null,
-    "trim": null,
-    "upscale": false
+    "renditions": {
+      "sizes": [
+        {
+          "fit": "contain",
+          "height": 640,
+          "label": "small",
+          "orientation": "auto",
+          "upscale": false,
+          "width": 640
+        }
+      ]
+    }
   },
   "outputs": [
     {
@@ -140,6 +138,7 @@
   ],
   "playback_url": null,
   "playlist_url": null,
+  "preset": null,
   "preset_id": null,
   "priority": "normal",
   "progress": {

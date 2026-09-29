@@ -7,10 +7,36 @@ import (
 	"testing"
 )
 
-const presetBody = `{"object":"preset","id":"pre_1","slug":"broadcast-cbr","name":"Broadcast CBR","description":"","system":false,
-	"output":{"mode":"hls","codec":"h264","renditions":[{"width":1920,"height":1080,"bitrate":"6M"}],"ladder":null,"quality":{"target":"cbr","bitrate":"3M","buffer_ms":1500},
-	"gop":null,"segment_seconds":4.0,"audio":{"mode":"auto"},"subtitles":null,"color":"sdr","bit_depth":"auto","max_fps":null,"filters":null,"trim":null},
+const presetBody = `{"object":"preset","id":"pre_1","slug":"broadcast-cbr","name":"Broadcast CBR","description":"","system":false,"version":2,
+	"output":{"kind":"video","container":{"format":"hls","segment_seconds":4},
+	"video":{"codec":"h264","cbr":{"bitrate":"3M","buffer_ms":1500},"bit_depth":"from_color","color":"sdr","frame_rate":{"max":"source"},"gop":"segment","filters":[]},
+	"audio":{"handling":"auto","codec":"opus","bitrate":"standard","channels":"source","he_aac":"auto","stereo_fallback":false},
+	"renditions":{"sizes":[{"label":"by_size","width":1920,"height":1080,"fit":"contain","orientation":"auto","upscale":false,"video":{"cbr":{"bitrate":"6M"}}}]},
+	"subtitles":{"tracks":"all"},"trim":{"start":0,"end":"source"},
+	"privacy":{"location":"strip","capture_time":"strip","device":"strip","descriptive":"strip"}},
 	"metadata":{"team":"broadcast"},"created_at":"2026-09-27T10:00:00Z","updated_at":"2026-09-27T10:00:00Z"}`
+
+// specMap is a spec as the generic JSON a request body decodes to.
+func specMap(t *testing.T, s *OutputSpec) map[string]any {
+	t.Helper()
+	var m map[string]any
+	must(t, json.Unmarshal(mustJSON(t, s), &m))
+	return m
+}
+
+// testSpec is a complete spec: HLS at a constant bit rate.
+func testSpec() *OutputSpec {
+	s := NewVideoOutput(
+		ContainerHLS(4),
+		NewVideo(CodecH264, ConstantBitRate("3M", 1500), BitDepthFromColor, ColorSDR, FrameRateSource(), GopSegment(), nil),
+		Audio{Handling: HandlingAuto, Codec: AudioCodecOpus, Bitrate: BitrateStandard, Channels: ChannelsSource, HeAac: HeAacAuto, StereoFallback: Bool(false)},
+		RenditionSizes(NewSize(LabelBySize, 1920, 1080, FitContain, OrientationAuto, false).WithBitrate("6M")),
+		SubtitlesAll(),
+		NewTrim(0, TrimEndSource()),
+		PrivacyPreset(PrivacyStripAll),
+	)
+	return &s
+}
 
 func TestPresets(t *testing.T) {
 	f := newFakeAPI(t)
@@ -33,31 +59,22 @@ func TestPresets(t *testing.T) {
 		t.Fatalf("all = %d", len(all))
 	}
 
-	// A raw spec is sent exactly as given.
-	raw := `{"mode":"hls","codec":"h264","quality":{"target":"cbr","bitrate":"3M","buffer_ms":1500}}`
+	// A whole spec is sent as built.
 	f.reply(201, presetBody)
-	p, err := c.Presets.Create(fxCtx, &PresetCreateParams{Name: "Broadcast CBR", Slug: String("broadcast-cbr"), Output: RawOutputSpec(json.RawMessage(raw)), Metadata: Metadata{"team": "broadcast"}})
+	p, err := c.Presets.Create(fxCtx, &PresetCreateParams{Name: "Broadcast CBR", Slug: String("broadcast-cbr"), Output: testSpec(), Metadata: Metadata{"team": "broadcast"}})
 	must(t, err)
 	r := f.expect("POST", "/v1/presets")
-	if !strings.Contains(string(r.Body), `"output":`+raw) {
-		t.Fatalf("body = %s", r.Body)
+	var sent struct {
+		Output json.RawMessage `json:"output"`
 	}
-	fxBody(t, r, map[string]any{
-		"name": "Broadcast CBR", "slug": "broadcast-cbr", "metadata": map[string]any{"team": "broadcast"},
-		"output": map[string]any{"mode": "hls", "codec": "h264", "quality": map[string]any{"target": "cbr", "bitrate": "3M", "buffer_ms": float64(1500)}},
-	})
-	if p.Output.Quality.Target == nil || *p.Output.Quality.Target != QualityCBR || *p.Output.Renditions[0].Bitrate != "6M" {
+	must(t, json.Unmarshal(r.Body, &sent))
+	sameJSON(t, testSpec(), string(sent.Output))
+	if p.Version != 2 || p.Output.Video.CBR == nil || p.Output.Video.CBR.BufferMs != 1500 || p.Output.Renditions.Sizes[0].Video.CBR.Bitrate != "6M" {
 		t.Fatalf("output = %+v", p.Output)
 	}
 	if !strings.Contains(string(p.Output.Raw()), `"buffer_ms":1500`) {
 		t.Fatalf("Raw lost the spec: %s", p.Output.Raw())
 	}
-
-	// A typed spec: only the fields set are sent; Null sends null.
-	f.reply(201, presetBody)
-	_, err = c.Presets.Create(fxCtx, &PresetCreateParams{Name: "x", Output: &OutputSpecInput{Codec: "av1", Quality: &Quality{Target: String(QualityVMAF(93))}, Ladder: Null[Ladder]()}})
-	must(t, err)
-	fxBody(t, f.last(), map[string]any{"name": "x", "output": map[string]any{"codec": "av1", "quality": map[string]any{"target": "vmaf=93"}, "ladder": nil}})
 
 	f.reply(200, presetBody)
 	_, err = c.Presets.Get(fxCtx, "hls-av1-abr")
@@ -69,6 +86,12 @@ func TestPresets(t *testing.T) {
 	must(t, err)
 	fxBody(t, f.expect("PATCH", "/v1/presets/pre_1"), map[string]any{"description": "new", "metadata": map[string]any{}})
 
+	// Output on update is overrides over the latest version.
+	f.reply(200, presetBody)
+	_, err = c.Presets.Update(fxCtx, "pre_1", &PresetUpdateParams{Output: OutputOverrides{"video": map[string]any{"crf": 23}}})
+	must(t, err)
+	fxBody(t, f.last(), map[string]any{"output": map[string]any{"video": map[string]any{"crf": float64(23)}}})
+
 	f.reply(200, presetBody)
 	_, err = c.Presets.Update(fxCtx, "pre_1", &PresetUpdateParams{Description: Null[string](), Metadata: Null[Metadata]()})
 	must(t, err)
@@ -77,15 +100,19 @@ func TestPresets(t *testing.T) {
 	// Replace: PUT with the whole preset; description and metadata left out
 	// are not sent (the API empties them).
 	f.reply(200, presetBody)
-	_, err = c.Presets.Replace(fxCtx, "pre_1", &PresetReplaceParams{Name: "Broadcast CBR", Output: RawOutputSpec(json.RawMessage(`{"codec":"h264"}`))})
+	audio := NewAudioOutput(ContainerAudio(FormatM4A), NewAudio(HandlingEncode, AudioCodecALAC, ChannelsStereo, HeAacAuto), PrivacyPreset(PrivacyStripAll))
+	audio.Audio.BitDepth = AudioBitDepth16
+	_, err = c.Presets.Replace(fxCtx, "pre_1", &PresetReplaceParams{Name: "Broadcast CBR", Output: &audio})
 	must(t, err)
-	fxBody(t, f.expect("PUT", "/v1/presets/pre_1"), map[string]any{"name": "Broadcast CBR", "output": map[string]any{"codec": "h264"}})
+	wantAudio := map[string]any{"kind": "audio", "container": map[string]any{"format": "m4a"}, "privacy": map[string]any{"preset": "strip_all"},
+		"audio": map[string]any{"handling": "encode", "codec": "alac", "channels": "stereo", "he_aac": "auto", "bit_depth": "16"}}
+	fxBody(t, f.expect("PUT", "/v1/presets/pre_1"), map[string]any{"name": "Broadcast CBR", "output": wantAudio})
 	f.reply(200, presetBody)
 	_, err = c.Presets.Replace(fxCtx, "pre_1", &PresetReplaceParams{
-		Name: "n", Slug: String("s"), Description: "d", Metadata: Metadata{"k": "v"}, Output: &OutputSpecInput{Mode: "hls"},
+		Name: "n", Slug: String("s"), Description: "d", Metadata: Metadata{"k": "v"}, Output: &audio,
 	})
 	must(t, err)
-	fxBody(t, f.last(), map[string]any{"name": "n", "slug": "s", "description": "d", "metadata": map[string]any{"k": "v"}, "output": map[string]any{"mode": "hls"}})
+	fxBody(t, f.last(), map[string]any{"name": "n", "slug": "s", "description": "d", "metadata": map[string]any{"k": "v"}, "output": wantAudio})
 	if f.last().Header.Get("Idempotency-Key") != "" {
 		t.Error("PUT needs no idempotency key")
 	}
@@ -159,20 +186,20 @@ func TestPresetCategoriesAndCompatibility(t *testing.T) {
 	// Create: set them, or leave them out to derive them.
 	f.reply(201, presetBody)
 	_, err = c.Presets.Create(fxCtx, &PresetCreateParams{
-		Name: "Phones", Output: &OutputSpecInput{Codec: "h265"},
+		Name: "Phones", Output: testSpec(),
 		Category:           CategoryMobile,
 		Compatibility:      []Platform{PlatformIOS},
 		CompatibilityNotes: map[Platform]string{PlatformIOS: "Our app only."},
 	})
 	must(t, err)
 	fxBody(t, f.expect("POST", "/v1/presets"), map[string]any{
-		"name": "Phones", "output": map[string]any{"codec": "h265"}, "category": "mobile",
+		"name": "Phones", "output": specMap(t, testSpec()), "category": "mobile",
 		"compatibility": []any{"ios"}, "compatibility_notes": map[string]any{"ios": "Our app only."},
 	})
 	f.reply(201, presetBody)
-	_, err = c.Presets.Create(fxCtx, &PresetCreateParams{Name: "x", Output: &OutputSpecInput{}, Compatibility: []Platform{}})
+	_, err = c.Presets.Create(fxCtx, &PresetCreateParams{Name: "x", Output: testSpec(), Compatibility: []Platform{}})
 	must(t, err)
-	fxBody(t, f.last(), map[string]any{"name": "x", "output": map[string]any{}, "compatibility": []any{}})
+	fxBody(t, f.last(), map[string]any{"name": "x", "output": specMap(t, testSpec()), "compatibility": []any{}})
 
 	// Update: Value sets, Null derives again, left out is kept.
 	f.reply(200, presetBody)
@@ -188,9 +215,9 @@ func TestPresetCategoriesAndCompatibility(t *testing.T) {
 
 	// Replace: left out is not sent (the API derives them).
 	f.reply(200, presetBody)
-	_, err = c.Presets.Replace(fxCtx, "pre_1", &PresetReplaceParams{Name: "n", Output: &OutputSpecInput{}, Category: CategoryArchive})
+	_, err = c.Presets.Replace(fxCtx, "pre_1", &PresetReplaceParams{Name: "n", Output: testSpec(), Category: CategoryArchive})
 	must(t, err)
-	fxBody(t, f.expect("PUT", "/v1/presets/pre_1"), map[string]any{"name": "n", "output": map[string]any{}, "category": "archive"})
+	fxBody(t, f.expect("PUT", "/v1/presets/pre_1"), map[string]any{"name": "n", "output": specMap(t, testSpec()), "category": "archive"})
 }
 
 func TestEvents(t *testing.T) {

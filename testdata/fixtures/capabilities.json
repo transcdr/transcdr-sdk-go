@@ -59,7 +59,7 @@
     "brightness=N",
     "contrast=N",
     "saturation=N",
-    "denoise=\u2026"
+    "denoise=…"
   ],
   "image_formats": [
     {
@@ -169,6 +169,1246 @@
     }
   ],
   "object": "capabilities",
+  "output": {
+    "audio_codecs": [
+      {
+        "bitrates": null,
+        "id": "opus",
+        "lossless": false,
+        "max_channels": 8,
+        "name": "Opus"
+      },
+      {
+        "bitrates": [
+          "32k",
+          "64k",
+          "128k",
+          "320k"
+        ],
+        "id": "mp3",
+        "lossless": false,
+        "max_channels": 2,
+        "name": "MP3"
+      }
+    ],
+    "compatibility": {
+      "v1_requests": "accepted: a request without output.kind is read as v1, with v1's defaults",
+      "v1_responses": {
+        "header": "Transcdr-Output-Spec",
+        "query": "output_spec=v1 (GET)",
+        "sunset": "Wed, 31 Mar 2027 00:00:00 GMT",
+        "value": "v1"
+      }
+    },
+    "conditions": "A field is required (or, when required is false, allowed) when any object in `when` matches.",
+    "containers": [
+      {
+        "audio_codecs": [
+          "opus",
+          "mp3",
+          "aac",
+          "flac",
+          "alac"
+        ],
+        "id": "mp4",
+        "kind": "video"
+      },
+      {
+        "audio_codecs": [
+          "opus",
+          "aac",
+          "flac",
+          "alac"
+        ],
+        "id": "hls",
+        "kind": "video"
+      },
+      {
+        "audio_codecs": [
+          "mp3"
+        ],
+        "id": "mp3",
+        "kind": "audio"
+      },
+      {
+        "audio_codecs": [
+          "flac"
+        ],
+        "id": "flac",
+        "kind": "audio"
+      },
+      {
+        "audio_codecs": [
+          "opus",
+          "mp3",
+          "aac",
+          "flac",
+          "alac"
+        ],
+        "id": "m4a",
+        "kind": "audio"
+      }
+    ],
+    "fields": [
+      {
+        "description": "",
+        "group": null,
+        "path": "kind",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {}
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "container",
+        "required": true,
+        "shape": {
+          "type": "object"
+        },
+        "when": [
+          {
+            "kind": [
+              "video",
+              "audio"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "container.format",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "kind": [
+              "video",
+              "audio"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "container.segment_seconds",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "container.format": [
+              "hls"
+            ],
+            "kind": [
+              "video"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "video",
+        "required": true,
+        "shape": {
+          "type": "object"
+        },
+        "when": [
+          {
+            "kind": [
+              "video"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "video.codec",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "kind": [
+              "video"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": "video.rate",
+        "path": "video.quality",
+        "required": false,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "kind": [
+              "video"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": "video.rate",
+        "path": "video.crf",
+        "required": false,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "kind": [
+              "video"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": "video.rate",
+        "path": "video.cbr",
+        "required": false,
+        "shape": {
+          "type": "object"
+        },
+        "when": [
+          {
+            "kind": [
+              "video"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "video.cbr.bitrate",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "kind": [
+              "video"
+            ],
+            "video.cbr": [
+              "*"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "video.cbr.buffer_ms",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "kind": [
+              "video"
+            ],
+            "video.cbr": [
+              "*"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "video.bit_depth",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "kind": [
+              "video"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "video.color",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "kind": [
+              "video"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "video.frame_rate",
+        "required": true,
+        "shape": {
+          "type": "object"
+        },
+        "when": [
+          {
+            "kind": [
+              "video"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "video.frame_rate.max",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "kind": [
+              "video"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "video.gop",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "kind": [
+              "video"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "video.filters",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "kind": [
+              "video"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "audio",
+        "required": true,
+        "shape": {
+          "type": "object"
+        },
+        "when": [
+          {
+            "kind": [
+              "video",
+              "audio"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "audio.handling",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "kind": [
+              "video",
+              "audio"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "audio.codec",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "audio.handling": [
+              "auto",
+              "encode"
+            ],
+            "kind": [
+              "video",
+              "audio"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "audio.bitrate",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "audio.codec": [
+              "opus",
+              "mp3",
+              "aac"
+            ],
+            "audio.handling": [
+              "auto",
+              "encode"
+            ],
+            "kind": [
+              "video",
+              "audio"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "audio.channels",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "audio.handling": [
+              "auto",
+              "encode"
+            ],
+            "kind": [
+              "video",
+              "audio"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "audio.he_aac",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "audio.handling": [
+              "auto",
+              "encode"
+            ],
+            "kind": [
+              "video",
+              "audio"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "audio.stereo_fallback",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "audio.handling": [
+              "auto",
+              "encode"
+            ],
+            "container.format": [
+              "hls"
+            ],
+            "kind": [
+              "video"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "audio.bit_depth",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "audio.codec": [
+              "flac",
+              "alac"
+            ],
+            "audio.handling": [
+              "auto",
+              "encode"
+            ],
+            "kind": [
+              "video",
+              "audio"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "audio.flac_compression",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "audio.codec": [
+              "flac"
+            ],
+            "audio.handling": [
+              "auto",
+              "encode"
+            ],
+            "kind": [
+              "video",
+              "audio"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "image",
+        "required": true,
+        "shape": {
+          "type": "object"
+        },
+        "when": [
+          {
+            "kind": [
+              "image"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "image.formats",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "kind": [
+              "image"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "image.lossless",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "image.formats": [
+              "webp"
+            ],
+            "kind": [
+              "image"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "image.quality",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "image.formats": [
+              "avif",
+              "jpeg"
+            ],
+            "kind": [
+              "image"
+            ]
+          },
+          {
+            "image.formats": [
+              "webp"
+            ],
+            "image.lossless": [
+              "false"
+            ],
+            "kind": [
+              "image"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "image.color_profile",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "kind": [
+              "image"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "image.frames",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "kind": [
+              "image"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "renditions",
+        "required": true,
+        "shape": {
+          "type": "object"
+        },
+        "when": [
+          {
+            "kind": [
+              "video",
+              "image"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": "renditions",
+        "path": "renditions.sizes",
+        "required": false,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "kind": [
+              "video",
+              "image"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": "renditions",
+        "path": "renditions.ladder",
+        "required": false,
+        "shape": {
+          "type": "object"
+        },
+        "when": [
+          {
+            "kind": [
+              "video"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": "renditions",
+        "path": "renditions.source_size",
+        "required": false,
+        "shape": {
+          "type": "object"
+        },
+        "when": [
+          {
+            "kind": [
+              "video",
+              "image"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "renditions.sizes[].label",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "kind": [
+              "video",
+              "image"
+            ],
+            "renditions.sizes": [
+              "*"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "renditions.sizes[].width",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "kind": [
+              "video",
+              "image"
+            ],
+            "renditions.sizes": [
+              "*"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "renditions.sizes[].height",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "kind": [
+              "video",
+              "image"
+            ],
+            "renditions.sizes": [
+              "*"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "renditions.sizes[].fit",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "kind": [
+              "video",
+              "image"
+            ],
+            "renditions.sizes": [
+              "*"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "renditions.sizes[].orientation",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "kind": [
+              "video",
+              "image"
+            ],
+            "renditions.sizes": [
+              "*"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "renditions.sizes[].upscale",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "kind": [
+              "video",
+              "image"
+            ],
+            "renditions.sizes": [
+              "*"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "renditions.sizes[].video",
+        "required": false,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "kind": [
+              "video"
+            ],
+            "renditions.sizes": [
+              "*"
+            ],
+            "video.cbr": [
+              "*"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "renditions.ladder.max_short_side",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "kind": [
+              "video"
+            ],
+            "renditions.ladder": [
+              "*"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "renditions.ladder.fit",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "kind": [
+              "video"
+            ],
+            "renditions.ladder": [
+              "*"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "renditions.ladder.upscale",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "kind": [
+              "video"
+            ],
+            "renditions.ladder": [
+              "*"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "renditions.source_size.label",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "kind": [
+              "video",
+              "image"
+            ],
+            "renditions.source_size": [
+              "*"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "renditions.source_size.fit",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "kind": [
+              "video",
+              "image"
+            ],
+            "renditions.source_size": [
+              "*"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "renditions.source_size.upscale",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "kind": [
+              "video",
+              "image"
+            ],
+            "renditions.source_size": [
+              "*"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "subtitles",
+        "required": true,
+        "shape": {
+          "type": "object"
+        },
+        "when": [
+          {
+            "kind": [
+              "video"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": "subtitles",
+        "path": "subtitles.tracks",
+        "required": false,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "kind": [
+              "video"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": "subtitles",
+        "path": "subtitles.languages",
+        "required": false,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "kind": [
+              "video"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "trim",
+        "required": true,
+        "shape": {
+          "type": "object"
+        },
+        "when": [
+          {
+            "kind": [
+              "video"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "trim.start",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "kind": [
+              "video"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "trim.end",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "kind": [
+              "video"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "privacy",
+        "required": true,
+        "shape": {
+          "type": "object"
+        },
+        "when": [
+          {}
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "privacy.preset",
+        "required": false,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {}
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "privacy.location",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "privacy.preset": [
+              "!"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "privacy.capture_time",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "privacy.preset": [
+              "!"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "privacy.device",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "privacy.preset": [
+              "!"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "",
+        "group": null,
+        "path": "privacy.descriptive",
+        "required": true,
+        "shape": {
+          "type": "enum"
+        },
+        "when": [
+          {
+            "privacy.preset": [
+              "!"
+            ]
+          }
+        ]
+      }
+    ],
+    "follow_values": {
+      "trim.end: source": "the end of the source"
+    },
+    "groups": [
+      {
+        "exactly_one": true,
+        "members": [
+          "video.quality",
+          "video.crf",
+          "video.cbr"
+        ],
+        "name": "video.rate",
+        "when": [
+          {
+            "kind": [
+              "video"
+            ]
+          }
+        ]
+      },
+      {
+        "exactly_one": true,
+        "members": [
+          "renditions.sizes",
+          "renditions.ladder",
+          "renditions.source_size"
+        ],
+        "name": "renditions",
+        "when": [
+          {
+            "kind": [
+              "video",
+              "image"
+            ]
+          }
+        ]
+      },
+      {
+        "exactly_one": true,
+        "members": [
+          "subtitles.tracks",
+          "subtitles.languages"
+        ],
+        "name": "subtitles",
+        "when": [
+          {
+            "kind": [
+              "video"
+            ]
+          }
+        ]
+      }
+    ],
+    "kinds": [
+      "video",
+      "audio",
+      "image"
+    ],
+    "version": 2
+  },
   "quality_targets": [
     "visually_lossless",
     "high",
@@ -186,68 +1426,122 @@
       "object": "preset",
       "output": {
         "audio": {
-          "mode": "auto"
+          "bitrate": "standard",
+          "channels": "source",
+          "codec": "opus",
+          "handling": "auto",
+          "he_aac": "auto"
         },
-        "bit_depth": "auto",
-        "codec": "av1",
-        "color": "sdr",
-        "filters": null,
-        "gop": null,
-        "ladder": null,
-        "max_fps": null,
-        "mode": "single",
-        "quality": {
-          "target": "standard"
+        "container": {
+          "format": "mp4"
         },
-        "renditions": [
-          {
-            "height": 1080,
-            "width": 1920
-          }
-        ],
-        "segment_seconds": null,
-        "subtitles": null,
-        "trim": null
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
+        },
+        "renditions": {
+          "sizes": [
+            {
+              "fit": "contain",
+              "height": 1080,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "width": 1920
+            }
+          ]
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "from_color",
+          "codec": "av1",
+          "color": "sdr",
+          "filters": [],
+          "frame_rate": {
+            "max": "source"
+          },
+          "gop": {
+            "seconds": 2
+          },
+          "quality": "standard"
+        }
       },
       "slug": "web-av1-1080p",
       "system": true,
-      "updated_at": null
+      "updated_at": null,
+      "version": 1
     },
     {
       "created_at": null,
-      "description": "One faststart MP4, AV1 + Opus at 720p \u2014 small files for previews and feeds.",
+      "description": "One faststart MP4, AV1 + Opus at 720p — small files for previews and feeds.",
       "id": "web-av1-720p",
       "metadata": {},
       "name": "Web AV1 720p",
       "object": "preset",
       "output": {
         "audio": {
-          "mode": "auto"
+          "bitrate": "standard",
+          "channels": "source",
+          "codec": "opus",
+          "handling": "auto",
+          "he_aac": "auto"
         },
-        "bit_depth": "auto",
-        "codec": "av1",
-        "color": "sdr",
-        "filters": null,
-        "gop": null,
-        "ladder": null,
-        "max_fps": null,
-        "mode": "single",
-        "quality": {
-          "target": "standard"
+        "container": {
+          "format": "mp4"
         },
-        "renditions": [
-          {
-            "height": 720,
-            "width": 1280
-          }
-        ],
-        "segment_seconds": null,
-        "subtitles": null,
-        "trim": null
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
+        },
+        "renditions": {
+          "sizes": [
+            {
+              "fit": "contain",
+              "height": 720,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "width": 1280
+            }
+          ]
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "from_color",
+          "codec": "av1",
+          "color": "sdr",
+          "filters": [],
+          "frame_rate": {
+            "max": "source"
+          },
+          "gop": {
+            "seconds": 2
+          },
+          "quality": "standard"
+        }
       },
       "slug": "web-av1-720p",
       "system": true,
-      "updated_at": null
+      "updated_at": null,
+      "version": 1
     },
     {
       "created_at": null,
@@ -258,29 +1552,54 @@
       "object": "preset",
       "output": {
         "audio": {
-          "mode": "auto"
+          "bitrate": "standard",
+          "channels": "source",
+          "codec": "opus",
+          "handling": "auto",
+          "he_aac": "auto",
+          "stereo_fallback": false
         },
-        "bit_depth": "auto",
-        "codec": "av1",
-        "color": "sdr",
-        "filters": null,
-        "gop": null,
-        "ladder": {
-          "max_short_side": 1080
+        "container": {
+          "format": "hls",
+          "segment_seconds": 4.0
         },
-        "max_fps": null,
-        "mode": "hls",
-        "quality": {
-          "target": "standard"
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
         },
-        "renditions": [],
-        "segment_seconds": 4.0,
-        "subtitles": null,
-        "trim": null
+        "renditions": {
+          "ladder": {
+            "fit": "contain",
+            "max_short_side": 1080,
+            "upscale": false
+          }
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "from_color",
+          "codec": "av1",
+          "color": "sdr",
+          "filters": [],
+          "frame_rate": {
+            "max": "source"
+          },
+          "gop": "segment",
+          "quality": "standard"
+        }
       },
       "slug": "hls-av1-abr",
       "system": true,
-      "updated_at": null
+      "updated_at": null,
+      "version": 1
     },
     {
       "created_at": null,
@@ -291,44 +1610,83 @@
       "object": "preset",
       "output": {
         "audio": {
-          "mode": "auto"
+          "bitrate": "standard",
+          "channels": "source",
+          "codec": "opus",
+          "handling": "auto",
+          "he_aac": "auto",
+          "stereo_fallback": false
         },
-        "bit_depth": "auto",
-        "codec": "h264",
-        "color": "sdr",
-        "filters": null,
-        "gop": null,
-        "ladder": null,
-        "max_fps": null,
-        "mode": "hls",
-        "quality": {
-          "target": "standard"
+        "container": {
+          "format": "hls",
+          "segment_seconds": 6.0
         },
-        "renditions": [
-          {
-            "height": 1080,
-            "width": 1920
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
+        },
+        "renditions": {
+          "sizes": [
+            {
+              "fit": "contain",
+              "height": 1080,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "width": 1920
+            },
+            {
+              "fit": "contain",
+              "height": 720,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "width": 1280
+            },
+            {
+              "fit": "contain",
+              "height": 480,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "width": 854
+            },
+            {
+              "fit": "contain",
+              "height": 360,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "width": 640
+            }
+          ]
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "from_color",
+          "codec": "h264",
+          "color": "sdr",
+          "filters": [],
+          "frame_rate": {
+            "max": "source"
           },
-          {
-            "height": 720,
-            "width": 1280
-          },
-          {
-            "height": 480,
-            "width": 854
-          },
-          {
-            "height": 360,
-            "width": 640
-          }
-        ],
-        "segment_seconds": 6.0,
-        "subtitles": null,
-        "trim": null
+          "gop": "segment",
+          "quality": "standard"
+        }
       },
       "slug": "hls-h264-abr",
       "system": true,
-      "updated_at": null
+      "updated_at": null,
+      "version": 1
     },
     {
       "created_at": null,
@@ -339,32 +1697,59 @@
       "object": "preset",
       "output": {
         "audio": {
-          "mode": "auto"
+          "bitrate": "standard",
+          "channels": "source",
+          "codec": "opus",
+          "handling": "auto",
+          "he_aac": "auto"
         },
-        "bit_depth": "8bit",
-        "codec": "h264",
-        "color": "sdr",
-        "filters": null,
-        "gop": null,
-        "ladder": null,
-        "max_fps": null,
-        "mode": "single",
-        "quality": {
-          "target": "high"
+        "container": {
+          "format": "mp4"
         },
-        "renditions": [
-          {
-            "height": 1080,
-            "width": 1920
-          }
-        ],
-        "segment_seconds": null,
-        "subtitles": null,
-        "trim": null
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
+        },
+        "renditions": {
+          "sizes": [
+            {
+              "fit": "contain",
+              "height": 1080,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "width": 1920
+            }
+          ]
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "8bit",
+          "codec": "h264",
+          "color": "sdr",
+          "filters": [],
+          "frame_rate": {
+            "max": "source"
+          },
+          "gop": {
+            "seconds": 2
+          },
+          "quality": "high"
+        }
       },
       "slug": "mp4-h264-compat-1080p",
       "system": true,
-      "updated_at": null
+      "updated_at": null,
+      "version": 1
     },
     {
       "created_at": null,
@@ -375,32 +1760,59 @@
       "object": "preset",
       "output": {
         "audio": {
-          "mode": "auto"
+          "bitrate": "standard",
+          "channels": "source",
+          "codec": "opus",
+          "handling": "auto",
+          "he_aac": "auto"
         },
-        "bit_depth": "auto",
-        "codec": "h265",
-        "color": "sdr",
-        "filters": null,
-        "gop": null,
-        "ladder": null,
-        "max_fps": null,
-        "mode": "single",
-        "quality": {
-          "target": "high"
+        "container": {
+          "format": "mp4"
         },
-        "renditions": [
-          {
-            "height": 1080,
-            "width": 1920
-          }
-        ],
-        "segment_seconds": null,
-        "subtitles": null,
-        "trim": null
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
+        },
+        "renditions": {
+          "sizes": [
+            {
+              "fit": "contain",
+              "height": 1080,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "width": 1920
+            }
+          ]
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "from_color",
+          "codec": "h265",
+          "color": "sdr",
+          "filters": [],
+          "frame_rate": {
+            "max": "source"
+          },
+          "gop": {
+            "seconds": 2
+          },
+          "quality": "high"
+        }
       },
       "slug": "mp4-h265-1080p",
       "system": true,
-      "updated_at": null
+      "updated_at": null,
+      "version": 1
     },
     {
       "created_at": null,
@@ -411,135 +1823,239 @@
       "object": "preset",
       "output": {
         "audio": {
-          "mode": "auto"
+          "bitrate": "standard",
+          "channels": "source",
+          "codec": "opus",
+          "handling": "auto",
+          "he_aac": "auto"
         },
-        "bit_depth": "10bit",
-        "codec": "av1",
-        "color": "hdr10",
-        "filters": null,
-        "gop": null,
-        "ladder": null,
-        "max_fps": null,
-        "mode": "single",
-        "quality": {
-          "target": "high"
+        "container": {
+          "format": "mp4"
         },
-        "renditions": [
-          {
-            "height": 2160,
-            "width": 3840
-          }
-        ],
-        "segment_seconds": null,
-        "subtitles": null,
-        "trim": null
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
+        },
+        "renditions": {
+          "sizes": [
+            {
+              "fit": "contain",
+              "height": 2160,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "width": 3840
+            }
+          ]
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "10bit",
+          "codec": "av1",
+          "color": "hdr10",
+          "filters": [],
+          "frame_rate": {
+            "max": "source"
+          },
+          "gop": {
+            "seconds": 2
+          },
+          "quality": "high"
+        }
       },
       "slug": "hdr10-av1-2160p",
       "system": true,
-      "updated_at": null
+      "updated_at": null,
+      "version": 1
     },
     {
       "created_at": null,
       "description": "Portrait 9:16 for shorts, reels and stories, capped at 30 fps.",
       "id": "social-vertical-1080x1920",
       "metadata": {},
-      "name": "Social vertical 1080\u00d71920",
+      "name": "Social vertical 1080×1920",
       "object": "preset",
       "output": {
         "audio": {
-          "mode": "auto"
+          "bitrate": "standard",
+          "channels": "source",
+          "codec": "opus",
+          "handling": "auto",
+          "he_aac": "auto"
         },
-        "bit_depth": "auto",
-        "codec": "h264",
-        "color": "sdr",
-        "filters": null,
-        "gop": null,
-        "ladder": null,
-        "max_fps": 30.0,
-        "mode": "single",
-        "quality": {
-          "target": "high"
+        "container": {
+          "format": "mp4"
         },
-        "renditions": [
-          {
-            "height": 1920,
-            "width": 1080
-          }
-        ],
-        "segment_seconds": null,
-        "subtitles": null,
-        "trim": null
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
+        },
+        "renditions": {
+          "sizes": [
+            {
+              "fit": "contain",
+              "height": 1920,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "width": 1080
+            }
+          ]
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "from_color",
+          "codec": "h264",
+          "color": "sdr",
+          "filters": [],
+          "frame_rate": {
+            "max": 30.0
+          },
+          "gop": {
+            "seconds": 2
+          },
+          "quality": "high"
+        }
       },
       "slug": "social-vertical-1080x1920",
       "system": true,
-      "updated_at": null
+      "updated_at": null,
+      "version": 1
     },
     {
       "created_at": null,
-      "description": "Video only \u2014 the audio track is dropped. For backgrounds and loops.",
+      "description": "Video only — the audio track is dropped. For backgrounds and loops.",
       "id": "audio-strip-av1-720p",
       "metadata": {},
       "name": "Silent AV1 720p",
       "object": "preset",
       "output": {
         "audio": {
-          "mode": "drop"
+          "handling": "drop"
         },
-        "bit_depth": "auto",
-        "codec": "av1",
-        "color": "sdr",
-        "filters": null,
-        "gop": null,
-        "ladder": null,
-        "max_fps": null,
-        "mode": "single",
-        "quality": {
-          "target": "standard"
+        "container": {
+          "format": "mp4"
         },
-        "renditions": [
-          {
-            "height": 720,
-            "width": 1280
-          }
-        ],
-        "segment_seconds": null,
-        "subtitles": null,
-        "trim": null
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
+        },
+        "renditions": {
+          "sizes": [
+            {
+              "fit": "contain",
+              "height": 720,
+              "label": "by_size",
+              "orientation": "auto",
+              "upscale": false,
+              "width": 1280
+            }
+          ]
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "from_color",
+          "codec": "av1",
+          "color": "sdr",
+          "filters": [],
+          "frame_rate": {
+            "max": "source"
+          },
+          "gop": {
+            "seconds": 2
+          },
+          "quality": "standard"
+        }
       },
       "slug": "audio-strip-av1-720p",
       "system": true,
-      "updated_at": null
+      "updated_at": null,
+      "version": 1
     },
     {
       "created_at": null,
-      "description": "Source resolution, visually lossless AV1 \u2014 shrink a library without visible loss.",
+      "description": "Source resolution, visually lossless AV1 — shrink a library without visible loss.",
       "id": "archive-av1-high",
       "metadata": {},
       "name": "Archive AV1 (visually lossless)",
       "object": "preset",
       "output": {
         "audio": {
-          "mode": "auto"
+          "bitrate": "standard",
+          "channels": "source",
+          "codec": "opus",
+          "handling": "auto",
+          "he_aac": "auto"
         },
-        "bit_depth": "auto",
-        "codec": "av1",
-        "color": "sdr",
-        "filters": null,
-        "gop": null,
-        "ladder": null,
-        "max_fps": null,
-        "mode": "single",
-        "quality": {
-          "target": "visually_lossless"
+        "container": {
+          "format": "mp4"
         },
-        "renditions": [],
-        "segment_seconds": null,
-        "subtitles": null,
-        "trim": null
+        "kind": "video",
+        "privacy": {
+          "capture_time": "strip",
+          "descriptive": "strip",
+          "device": "strip",
+          "location": "strip"
+        },
+        "renditions": {
+          "source_size": {
+            "fit": "contain",
+            "label": "by_size",
+            "upscale": false
+          }
+        },
+        "subtitles": {
+          "tracks": "all"
+        },
+        "trim": {
+          "end": "source",
+          "start": 0
+        },
+        "video": {
+          "bit_depth": "from_color",
+          "codec": "av1",
+          "color": "sdr",
+          "filters": [],
+          "frame_rate": {
+            "max": "source"
+          },
+          "gop": {
+            "seconds": 2
+          },
+          "quality": "visually_lossless"
+        }
       },
       "slug": "archive-av1-high",
       "system": true,
-      "updated_at": null
+      "updated_at": null,
+      "version": 1
     }
   ]
 }

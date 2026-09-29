@@ -2,7 +2,7 @@
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/transcdr/transcdr-sdk-go.svg)](https://pkg.go.dev/github.com/transcdr/transcdr-sdk-go)
 
-This is the Go client for the [Transcdr](https://transcdr.com) video transcoding API. It covers every endpoint of the v1 API, the same surface as the TypeScript SDK. You can submit jobs, upload files, manage presets, connections, automations and event destinations, and verify webhook signatures.
+This is the Go client for the [Transcdr](https://transcdr.com) video transcoding API. It covers every endpoint of the v1 API, the same surface as the TypeScript SDK, and speaks output spec v2 (see [Migrating from v1](#migrating-from-v1)). You can submit jobs, upload files, manage presets, connections, automations and event destinations, and verify webhook signatures.
 
 ```sh
 go get github.com/transcdr/transcdr-sdk-go
@@ -85,168 +85,236 @@ jobs, err := transcdr.Collect(client.Jobs.All(ctx, nil), 500) // at most 500
 
 ## Output specifications
 
-Output specifications are typed with `OutputSpecInput`. Constant bit rate is `Quality.Target = "cbr"`:
+An `OutputSpec` says what a job produces, in sections: `Kind` (`KindVideo`, `KindAudio` or `KindImage`), `Container`,
+`Video`, `Audio`, `Image`, `Renditions`, `Subtitles`, `Trim` and `Privacy`. This is output spec v2.
+
+**Nothing has a default.** A spec states every field its kind, container, codec and audio handling need. A value that
+follows the source is written out: `FrameRateSource()`, `ChannelsSource`, `BitrateStandard`, `BitDepthFromColor`,
+`LabelBySize`, `FramesPoster()`, `GopSegment()`, `TrimEndSource()`, `SubtitlesAll()`. The SDK never fills a field in.
+
+Build a spec with the constructor for its kind, which takes every section that kind needs:
+
+| Constructor | Sections |
+|---|---|
+| `NewVideoOutput` | container, video, audio, renditions, subtitles, trim, privacy |
+| `NewAudioOutput` | container, audio, privacy |
+| `NewImageOutput` | image, renditions, privacy |
+
+Exclusive choices are built by constructors, so exactly one is set:
+
+| Section | Choices |
+|---|---|
+| video rate | `QualityLevel(QualityHigh)` or `QualityLevel(QualityVMAF(93))`, `ConstantRateFactor(23)`, `ConstantBitRate("5M", 1000)` |
+| renditions | `RenditionSizes(sizes...)`, `RenditionLadder(maxShortSide, fit, upscale)`, `RenditionSourceSize(label, fit, upscale)` |
+| subtitles | `SubtitlesAll()`, `SubtitlesNone()`, `SubtitleLanguages("eng", "deu")` |
+| gop | `GopSeconds(2)`, `GopFrames(48)`, `GopSegment()` (HLS: one keyframe per segment) |
+| frame rate | `FrameRateSource()`, `MaxFrameRate(30)` |
+| image frames | `FramesPoster()`, `FramesCount(12)`, `FramesAt(1.5, 10)` |
+| trim end | `TrimEndSource()`, `TrimEndAt(7.5)` |
+| privacy | `PrivacyPreset(PrivacyStripAll)`, refined with `.WithLocation(…)`, `.WithCaptureTime(…)`, `.WithDevice(…)`, `.WithDescriptive(…)`; or all four categories with `PrivacyFields(location, captureTime, device, descriptive)` |
+
+### Examples
+
+An adaptive HLS ladder of H.264 at a constant bit rate:
 
 ```go
-preset, err := client.Presets.Create(ctx, &transcdr.PresetCreateParams{
-	Name: "Broadcast CBR",
-	Output: &transcdr.OutputSpecInput{
-		Mode:    "hls",
-		Codec:   "h264",
-		Quality: &transcdr.Quality{Target: transcdr.String(transcdr.QualityCBR), Bitrate: transcdr.String("3M")},
-		Renditions: []transcdr.Rendition{
-			{Width: 1920, Height: 1080, Bitrate: transcdr.String("6M")},
-			{Width: 1280, Height: 720},
-		},
-	},
-})
+spec := transcdr.NewVideoOutput(
+	transcdr.ContainerHLS(6),
+	transcdr.NewVideo(transcdr.CodecH264, transcdr.ConstantBitRate(transcdr.BitrateStandard, 1000), transcdr.BitDepth8,
+		transcdr.ColorSDR, transcdr.FrameRateSource(), transcdr.GopSegment(), nil),
+	transcdr.Audio{Handling: transcdr.HandlingEncode, Codec: transcdr.AudioCodecAAC, Bitrate: transcdr.BitrateStandard,
+		Channels: transcdr.ChannelsSource, HeAac: transcdr.HeAacAuto, StereoFallback: transcdr.Bool(false)},
+	transcdr.RenditionSizes(
+		transcdr.NewSize(transcdr.LabelBySize, 1920, 1080, transcdr.FitContain, transcdr.OrientationAuto, false).WithBitrate("5M"),
+		transcdr.NewSize(transcdr.LabelBySize, 1280, 720, transcdr.FitContain, transcdr.OrientationAuto, false).WithBitrate("3M"),
+	),
+	transcdr.SubtitlesAll(),
+	transcdr.NewTrim(0, transcdr.TrimEndSource()),
+	transcdr.PrivacyPreset(transcdr.PrivacyStripAll),
+)
+job, err := client.Jobs.Create(ctx, &transcdr.JobCreateParams{Input: transcdr.AssetInput("ast_..."), Output: &spec})
+
+// An automatic ladder instead of the two sizes:
+ladder := transcdr.RenditionLadder(1080, transcdr.FitContain, false)
+spec.Renditions = &ladder
 ```
 
-`transcdr.RawOutputSpec([]byte(`{…}`))` sends JSON exactly as given, and `spec.Raw()` returns the JSON a spec was decoded from.
-
-### Rendition sizes are maximums: fit and upscale
-
-A rendition's `Width` x `Height` is the largest it may be, not its exact size. The video keeps its shape inside the
-box, a portrait video turns a landscape box portrait, and nothing is enlarged past the source: a 640x480 video through
-a 1920x1080 rendition comes out 640x480 (and bills as SD). Each output reports the size it came out at.
-`FitContain` (the default) keeps the shape; `FitCover` fills the box and centre-crops; `FitPad` adds black bars to
-exactly the box; `FitStretch` distorts to it. `Upscale: transcdr.Bool(true)` lets a rendition be larger than the
-source. A rendition may set its own `Fit`, `Upscale` and `Orientation` (`OrientationFixed` keeps its box as written).
+A single portrait MP4 for social apps, capped at 30 fps:
 
 ```go
-out := &transcdr.OutputSpecInput{
-	Fit: transcdr.FitContain,
-	Renditions: []transcdr.Rendition{
-		{Width: 1920, Height: 1080},
-		{Width: 1080, Height: 1920, Fit: transcdr.FitCover, Orientation: transcdr.OrientationFixed},
-	},
-}
+spec := transcdr.NewVideoOutput(
+	transcdr.ContainerMP4(),
+	transcdr.NewVideo(transcdr.CodecH264, transcdr.QualityLevel(transcdr.QualityHigh), transcdr.BitDepthFromColor,
+		transcdr.ColorSDR, transcdr.MaxFrameRate(30), transcdr.GopSeconds(2), nil),
+	transcdr.Audio{Handling: transcdr.HandlingEncode, Codec: transcdr.AudioCodecAAC, Bitrate: transcdr.BitrateStandard,
+		Channels: transcdr.ChannelsSource, HeAac: transcdr.HeAacAuto},
+	transcdr.RenditionSizes(transcdr.NewSize(transcdr.LabelBySize, 1080, 1920, transcdr.FitCover, transcdr.OrientationFixed, false)),
+	transcdr.SubtitlesAll(),
+	transcdr.NewTrim(0, transcdr.TrimEndSource()),
+	transcdr.PrivacyPreset(transcdr.PrivacyStripAll),
+)
 ```
 
-### Audio: AAC, lossless, MP3, audio-only, channels
-
-`Audio.Mode` is `AudioModeAuto` (the default: compatible audio passes through, the rest becomes Opus),
-`AudioModeOpus`, `AudioModeAAC`, `AudioModeMP3`, `AudioModeFLAC`, `AudioModeALAC` or `AudioModeDrop`.
-
-- `AudioModeAAC` is AAC-LC, the audio that plays on the most devices: every browser, iPhone, Android phone and TV. An
-  AAC source passes through. It works in a single MP4, HLS and audio-only `.m4a` output. `Bitrate` is 8k to 288k per
-  main channel (the LFE of 5.1 and 7.1 does not count); the default is 64k mono, 128k stereo, 384k 5.1 and 512k 7.1.
-- `AudioModeFLAC` and `AudioModeALAC` are lossless: a source already in that codec is copied, and they take no
-  `Bitrate`. Both work in a single MP4, HLS and audio-only output. `Audio.BitDepth` is `AudioBitDepthSource` (the
-  default: 16-bit for a 16-bit or lossy source, 24-bit for a deeper one), `AudioBitDepth16` or `AudioBitDepth24`. For
-  FLAC, `Audio.FlacCompression` is `FlacCompressionFast`, `FlacCompressionDefault` or `FlacCompressionBest`: the same
-  audio either way, a smaller file for more work.
-- `AudioModeMP3` is constant bit rate, stereo at most, in a single MP4 or an audio-only output (not HLS), at 32k, 40k,
-  48k, 56k, 64k, 80k, 96k, 112k, 128k, 160k, 192k, 224k, 256k or 320k (default 128k stereo, 64k mono).
-
-AAC sources are decoded, so they can be downmixed or made Opus, MP3, FLAC or ALAC; they still pass through wherever
-nothing asks for a change. HE-AAC is decoded only as its AAC-LC core (no spectral band replication or parametric
-stereo: half the rate, less bandwidth), and `Audio.HeAac` says what an HE-AAC source becomes: `HeAacAuto` (the
-default) passes it through when only a codec change is asked and decodes its core when the job needs PCM (a downmix,
-an `.mp3` or `.flac` file); `HeAacPassthrough` never decodes it, failing a job that would need it; `HeAacCore` decodes
-its core whenever another codec is asked. AAC-LC sources are decoded in full whatever it says.
-
-`Mode: transcdr.ModeAudio` writes the audio alone as one file (label `audio`, width and height 0), billed per output
-minute at the SD rate. `Audio.Container` picks the file: `AudioContainerAuto` (the default) follows the codec, a
-`.flac` for FLAC, an `.m4a` for ALAC and an `.mp3` otherwise (auto audio is then MP3); `AudioContainerM4A` holds any
-codec (auto audio in an `.m4a` is Opus); `AudioContainerFLAC` holds FLAC only and `AudioContainerMP3` MP3 only. The
-file is `audio.mp3` (`audio/mpeg`), `audio.flac` (`audio/flac`) or `audio.m4a` (`audio/mp4`). `Container` applies only
-to `ModeAudio`. A `single` job whose input has no video becomes audio-only by itself; with AAC or Opus audio it is an
-`.m4a`.
-
-`Audio.Channels` is `ChannelsSource` (the default), `ChannelsMono`, `ChannelsStereo`, `ChannelsSurround51` or
-`ChannelsSurround71`; it downmixes and never upmixes. In HLS with surround audio,
-`Audio.StereoFallback = transcdr.Bool(true)` adds a stereo rendition to the same audio group.
+An audio-only MP3, and a lossless FLAC master:
 
 ```go
-// A podcast episode from a video recording.
-job, err := client.Jobs.Create(ctx, &transcdr.JobCreateParams{
-	Input: transcdr.AssetInput("ast_..."),
-	Output: &transcdr.OutputSpecInput{
-		Mode:  transcdr.ModeAudio,
-		Audio: &transcdr.Audio{Mode: transcdr.AudioModeMP3, Bitrate: transcdr.String("128k"), Channels: transcdr.ChannelsStereo},
-	},
-})
+podcast := transcdr.NewAudioOutput(
+	transcdr.ContainerAudio(transcdr.FormatMP3),
+	transcdr.Audio{Handling: transcdr.HandlingEncode, Codec: transcdr.AudioCodecMP3, Bitrate: "64k",
+		Channels: transcdr.ChannelsMono, HeAac: transcdr.HeAacAuto},
+	transcdr.PrivacyPreset(transcdr.PrivacyStripAll),
+)
 
-// AAC in an .m4a for phones and browsers.
-m4a := &transcdr.OutputSpecInput{
-	Mode:  transcdr.ModeAudio,
-	Audio: &transcdr.Audio{Mode: transcdr.AudioModeAAC, Container: transcdr.AudioContainerM4A},
-}
+master := transcdr.NewAudioOutput(
+	transcdr.ContainerAudio(transcdr.FormatFLAC),
+	transcdr.Audio{Handling: transcdr.HandlingEncode, Codec: transcdr.AudioCodecFLAC, Channels: transcdr.ChannelsSource,
+		HeAac: transcdr.HeAacAuto, BitDepth: transcdr.AudioBitDepth24, FlacCompression: transcdr.FlacCompressionBest},
+	transcdr.PrivacyPreset(transcdr.PrivacyStripAll),
+)
+```
 
-// A lossless 24-bit FLAC master.
-master := &transcdr.OutputSpecInput{
-	Mode:  transcdr.ModeAudio,
-	Audio: &transcdr.Audio{Mode: transcdr.AudioModeFLAC, BitDepth: transcdr.AudioBitDepth24, FlacCompression: transcdr.FlacCompressionBest},
-}
+Twelve evenly spaced JPEG stills of a video:
 
-// Surround AAC in HLS with a stereo rendition beside it.
-surround := &transcdr.OutputSpecInput{
-	Mode:  transcdr.ModeHLS,
-	Codec: "h264",
-	Audio: &transcdr.Audio{Mode: transcdr.AudioModeAAC, Channels: transcdr.ChannelsSurround51, StereoFallback: transcdr.Bool(true)},
+```go
+stills := transcdr.NewImageOutput(
+	transcdr.Image{Formats: []transcdr.ImageFormat{transcdr.ImageFormatJPEG}, Quality: map[transcdr.ImageFormat]int{transcdr.ImageFormatJPEG: 80},
+		ColorProfile: transcdr.ColorProfileSRGB, Frames: transcdr.FramesCount(12)},
+	transcdr.RenditionSizes(transcdr.NewSize("sheet", 320, 320, transcdr.FitContain, transcdr.OrientationAuto, false)),
+	transcdr.PrivacyPreset(transcdr.PrivacyStripAll),
+)
+```
+
+### Which fields a spec needs
+
+| Field | Required when |
+|---|---|
+| `Kind`, `Privacy` | always (`Privacy`: a preset, which any of the four categories refine, or all of location, capture time, device and descriptive) |
+| `Container.Format` | kind video (`FormatMP4`, `FormatHLS`) or audio (`FormatMP3`, `FormatFLAC`, `FormatM4A`) |
+| `Container.SegmentSeconds` | format HLS (1–20) |
+| `Video.Codec`, `BitDepth`, `Color`, `FrameRate`, `Gop`, `Filters`, and one rate | kind video |
+| `Audio.Handling` | kind video or audio (`HandlingDrop` is for video only) |
+| `Audio.Codec`, `Channels`, `HeAac` | handling auto or encode |
+| `Audio.Bitrate` | codec opus, mp3 or aac |
+| `Audio.StereoFallback` | HLS, with an audio track |
+| `Audio.BitDepth` | codec flac or alac |
+| `Audio.FlacCompression` | codec flac |
+| `Image.Formats`, `ColorProfile`, `Frames` | kind image |
+| `Image.Lossless` | WebP among the formats |
+| `Image.Quality` | a lossy format is made: one entry per lossy format made (`{avif: 60, jpeg: 82}`) |
+| one of sizes, ladder, source size | kind video or image (the ladder is for video only) |
+| `Subtitles`, `Trim` | kind video |
+
+A field given where it does not apply is refused too. `transcdr.ValidateOutput(spec)` checks a spec against this
+table, which is the same one the API lists in `Capabilities.Output`, and reports every problem at once with the API's
+params and messages. `Jobs.Create`, `Presets.Create` and `Presets.Replace` run it on a whole spec before sending: an
+incomplete spec returns a `*transcdr.Error` with code `validation_failed`, `Status` 0 and every problem in `Errors`, and
+nothing is sent. Values checked against each other (HDR colour with 8-bit, MP3 in HLS) and plan limits are the API's to
+check.
+
+```go
+for _, e := range transcdr.ValidateOutput(spec) {
+	fmt.Println(e.Param, e.Message) // output.audio.bitrate output.audio.bitrate is required when …
 }
 ```
 
-Audio system presets (`CategoryAudio`): `audio-mp3-podcast` and `audio-mp3-speech` (MP3 at 128k stereo and 64k mono),
-`audio-aac-m4a` (AAC in an `.m4a`) and `audio-alac-m4a` (Apple Lossless in an `.m4a`). In `CategoryArchive`,
-`audio-flac` is a native `.flac` at best compression and `archive-av1-flac` is visually lossless AV1 with FLAC audio in
-one MP4. The reach presets (`mp4-h264-compat-1080p`, `mp4-h265-1080p`, `hls-h264-abr`, `hls-h264-cbr`,
-`social-vertical-1080x1920`, `hls-h264-surround` and `mp4-h264-surround-1080p`, now in `CategoryTV`) use AAC audio.
+Values that follow the source:
+
+| Value | Resolves to |
+|---|---|
+| `FrameRateSource()` | the source's frame rate, not capped |
+| `BitDepthFromColor` | 8-bit for SDR, 10-bit for HDR10 and HLG, the source's for passthrough |
+| `ConstantBitRate(BitrateStandard, …)` | a rate per size by codec, short side and frame rate: H.264 at 30 fps about 5M at 1080p, 3M at 720p, 1.2M at 480p, 0.8M at 360p; H.265 about 0.65× that, AV1 about 0.5×; more above 30 fps |
+| `GopSegment()` | HLS: a keyframe at the start of each segment and none inside it |
+| audio `BitrateStandard` | AAC 64k mono, 128k stereo, 384k 5.1, 512k 7.1; Opus 96k stereo, 320k 5.1, 416k 7.1; MP3 64k mono, 128k stereo |
+| `ChannelsSource` | the source's layout (MP3 folds a wider one to stereo) |
+| `AudioBitDepthSource` | 16-bit for a 16-bit or lossy source, 24-bit for a deeper one |
+| `HeAacAuto` | an HE-AAC source passes through where only a codec change is asked; its AAC-LC core is decoded where the job needs PCM |
+| `LabelBySize` | `<short side>p` of the size it comes out at; for images `<width>x<height>` |
+| `TrimEndSource()` | the end of the source |
+| `FramesPoster()` | an image input as it is; a video's frame 10% of the way in |
+| `SubtitlesAll()` | every subtitle track |
+
+### Sizes are maximums
+
+A size's `Width` x `Height` is the largest the output may be. The picture keeps its shape inside the box with
+`FitContain`; `FitCover` fills the box and centre-crops; `FitPad` adds black bars to exactly the box; `FitStretch`
+distorts to it. `OrientationAuto` turns the box to the picture's orientation (1920x1080 on a portrait video is
+1080x1920), `OrientationFixed` uses it as written. Nothing is enlarged past the source unless `Upscale` is true. Each
+output reports the size it came out at.
+
+### Audio
+
+`HandlingAuto` keeps compatible audio as it is and makes the rest `Codec`, which is `AudioCodecOpus`
+(`AudioCodecMP3` in an `.mp3`); `HandlingEncode` makes `Codec`, copying a source already in it when nothing else
+changes; `HandlingDrop` makes no audio track (`transcdr.AudioDrop()`).
+
+- `AudioCodecAAC` is AAC-LC, which plays on the most devices. It takes 8k to 288k per main channel.
+- `AudioCodecMP3` is constant bit rate at 32k, 40k, 48k, 56k, 64k, 80k, 96k, 112k, 128k, 160k, 192k, 224k, 256k or
+  320k, stereo at most; for an MP4 or an `.mp3`, not HLS.
+- `AudioCodecFLAC` and `AudioCodecALAC` are lossless and take no bitrate; `BitDepth` is `AudioBitDepthSource`, `16` or
+  `24`, and FLAC's `FlacCompression` (`fast`, `balanced`, `best`) trades time for size.
+- `Channels` downmixes and never upmixes. `StereoFallback` adds, in HLS beside surround audio, a stereo downmix in the
+  same audio group.
+- HE-AAC is decoded only as its AAC-LC core. `HeAacPassthrough` never decodes it, failing a job that would need it;
+  `HeAacCore` decodes its core whenever another codec or a change is asked.
+
+`KindAudio` writes the audio alone as one file, `audio.mp3`, `audio.flac` or `audio.m4a` (an `.mp3` holds MP3 only, a
+`.flac` FLAC only, an `.m4a` any codec), billed per output minute at the SD rate.
 
 ### Image jobs
 
-`ModeImage` makes still images, of an image input (JPEG, PNG, WebP, AVIF, GIF, TIFF, BMP, HEIC) or taken from a
-video. Every rendition is made in every format of `Image.Formats`: `ImageFormatAVIF` (the default), `ImageFormatWebP`,
-`ImageFormatJPEG` and `ImageFormatPNG`, one to four of them. Image renditions are 16 to 8192 on a side, odd sizes
-allowed, and fit as video renditions do.
+`KindImage` makes still images, of an image input (JPEG, PNG, WebP, AVIF, GIF, TIFF, BMP, HEIC) or taken from a video.
+Every size is made in every format of `Image.Formats`: one to four of `ImageFormatAVIF`, `ImageFormatWebP`,
+`ImageFormatJPEG` and `ImageFormatPNG`. Image sizes are 16 to 8192 on a side, odd sizes allowed.
 
-- `Image.Quality` (1 to 100) applies to the lossy formats; left nil, each has its own default (AVIF 60, WebP 80,
-  JPEG 82). `Image.Lossless = transcdr.Bool(true)` makes WebP lossless; PNG always is.
-- Outputs are upright, sRGB unless `Image.KeepColorProfile` is true, and never carry EXIF, XMP or GPS.
-- From a video, `Image.Frames` picks the stills: `AtSeconds` or `Count` evenly spaced. Left nil, one frame 10% of the
-  way in.
-- Each `JobOutput` carries its `Format`, its `Rendition`, and for a video's stills its `Frame` (from 1) and
-  `AtSeconds`.
+- `Image.Quality` names each lossy format made, 1 to 100. `Image.Lossless` is required with WebP; PNG always is lossless.
+- Outputs are upright, sRGB unless `ColorProfile` is `ColorProfileKeep`, and carry no identifying metadata unless
+  `Privacy` keeps a category.
+- Each `JobOutput` carries its `Format`, its `Rendition`, and for a video's stills its `Frame` (from 1) and `AtSeconds`.
 - Images are billed per output image by the pixels it came out at: `JobBilling.BillableImages` counts them and
-  `JobBilling.Tier` is `ImageTierUpTo1MP`, `ImageTierUpTo4MP` or `ImageTierOver4MP`. The prices are `ImageRates` on a
-  `Plan` and on `Billing`.
+  `JobBilling.Tier` is `ImageTierUpTo1MP`, `ImageTierUpTo4MP` or `ImageTierOver4MP`.
+
+Image system presets (`CategoryImage`): `web-avif` and `web-webp`, `thumbnail-jpeg`, `png-lossless`, `video-poster` and
+`contact-sheet`.
+
+## Presets, versions and overrides
+
+A preset is a complete spec, and presets are versioned: editing a preset's output adds a version, and a version never
+changes. `Preset.Version` is the latest. A job names one by system slug (`hls-av1-abr`), your preset's slug or `pre_…`
+id for its latest version, or `"<slug>@N"` for version N.
 
 ```go
-// A photo as AVIF with a JPEG fallback, at two sizes.
-job, err := client.Jobs.Create(ctx, &transcdr.JobCreateParams{
-	Input: transcdr.AssetInput("ast_..."),
-	Output: &transcdr.OutputSpecInput{
-		Mode:       transcdr.ModeImage,
-		Renditions: []transcdr.Rendition{{Width: 1920, Height: 1920}, {Width: 640, Height: 640, Label: transcdr.String("small")}},
-		Image: transcdr.Value(transcdr.Image{
-			Formats: []transcdr.ImageFormat{transcdr.ImageFormatAVIF, transcdr.ImageFormatJPEG},
-			Quality: transcdr.Int(70),
-		}),
-	},
-})
-
-// Twelve evenly spaced JPEG stills of a video.
-stills := &transcdr.OutputSpecInput{
-	Mode:       transcdr.ModeImage,
-	Renditions: []transcdr.Rendition{{Width: 480, Height: 270}},
-	Image: transcdr.Value(transcdr.Image{
-		Formats: []transcdr.ImageFormat{transcdr.ImageFormatJPEG},
-		Frames:  &transcdr.ImageFrames{Count: transcdr.Int(12)},
-	}),
-}
-
-job, err = client.Jobs.WaitFor(ctx, job.ID, nil)
-for _, o := range job.Outputs {
-	fmt.Println(o.Rendition, o.Format, o.URL)
-}
-fmt.Println(job.Billing.BillableImages, *job.Billing.Tier)
+versions, err := client.Presets.Versions(ctx, "web-avif") // every version, oldest first
+first, err := client.Presets.GetVersion(ctx, "web-avif", 1) // one version
 ```
 
-Image system presets (`CategoryImage`): `web-avif` and `web-webp` (1920, 1280 and 640 wide), `thumbnail-jpeg`,
-`png-lossless`, `video-poster` (AVIF and JPEG of the frame 10% in) and `contact-sheet` (12 evenly spaced JPEG stills of
-a video). `Capabilities` lists the `ImageFormats` and `InputImageFormats`, and `Capabilities.ImageLimits()` the image
-limits.
+With a preset, `Overrides` give only what to change, as a JSON merge document:
+
+```go
+job, err := client.Jobs.Create(ctx, &transcdr.JobCreateParams{
+	Input:     transcdr.URLInput("https://example.com/talk.mov"),
+	Preset:    transcdr.String("social-vertical-1080x1920@1"),
+	Overrides: transcdr.OutputOverrides{"video": map[string]any{"frame_rate": map[string]any{"max": 24}}},
+})
+```
+
+| In `Overrides` | Effect |
+|---|---|
+| an object | merged key by key |
+| a scalar or an array (`sizes`, `formats`, `filters`, …) | replaces |
+| one choice of a group (`quality`/`crf`/`cbr`, `sizes`/`ladder`/`source_size`, `tracks`/`languages`) | replaces the others |
+| `privacy.preset` | replaces the preset's privacy |
+| `nil` (JSON null) | removes the field |
+| `kind` | cannot change |
+
+The result must be complete: a field left dangling (say `segment_seconds` after switching to `mp4`) is refused by name,
+so set it to `nil` too. A job gives either `Preset` (with `Overrides`, if any) or `Output`, the whole spec; the SDK
+refuses neither and both. Every job records `Preset` (`ID`, `Version`, `Overrides`), nil when given whole, and its
+`Output` is always the resolved, complete spec, which is what runs.
+
+`Presets.Update` (PATCH) merges `Output` overrides over the latest version, so a field you leave out keeps its value.
+`Presets.Create` and `Presets.Replace` (PUT) take the whole spec. An automation's `Output` is overrides over its
+preset, and `ResolvedOutput` the spec they resolve to now.
 
 ## Explicit nulls
 
@@ -274,19 +342,9 @@ On update, `null` clears:
 - an automation's `Destination`, `Preset`, `Output`, `Metadata`, `WebhookURL` and `TriggerConnectionID`
 - an event destination's `Description`, `AWS.Endpoint` and `AWS.MessageGroupID`
 - a connection's `Config` fields
+- in `Overrides` and `OutputOverrides`, a field (as `nil`)
 - a preset's `Description` and `Metadata`; for `Category`, `Compatibility` and `CompatibilityNotes`, `null` means derive it from the output again
 - the organization's `BillingEmail`
-
-### Replacing a preset
-
-`Presets.Update` (PATCH) merges `Output` into the stored specification, so a field you leave out keeps its value. `Presets.Replace` (PUT) sets the whole preset: `Output` is merged over the defaults instead, a description or metadata left out is emptied, and the slug is kept unless you set it.
-
-```go
-client.Presets.Replace(ctx, id, &transcdr.PresetReplaceParams{
-	Name:   "Web H.264",
-	Output: transcdr.RawOutputSpec([]byte(`{"mode":"hls","codec":"h264"}`)),
-})
-```
 
 ### Where a preset plays
 
@@ -328,6 +386,7 @@ API errors are `*transcdr.Error` values carrying:
 - the HTTP `Status` and error `Type`
 - `Code`, e.g. `validation_failed` or `insufficient_credit`
 - `Param` and per-field `Details`
+- `Errors`: every problem with a refused output spec, missing fields first (`Param` and `Message` are the first)
 - the `RequestID` to quote to support
 
 `RetryAfter()` reads the `Retry-After` header on 429s. If no response arrives, the error is a `*transcdr.ConnectionError` instead.
@@ -395,7 +454,77 @@ Signatures are `t=<unix>,v1=<hex HMAC-SHA256(secret, "<t>.<body>")>`, the same s
 | Billing | `Usage` (with the `Inputs` report), `Billing` (get, checkout, portal, settings, transactions, change plan, `Invoices`), `Plans` |
 | Service | `Capabilities`, `Status`, `Stats`, `Changelog`, `Announcements`, `OpenAPI` |
 | Integrations | `Connections` (check, test, browse, enable, disable), `Automations` (run, trigger, rotate hook token, items, `PushHook`), `Deliveries` |
-| Operators | `Admin` (overview, jobs, organizations, credit, `Announcements`, `Incidents`) |
+
+## Migrating from v1
+
+1.0.0 speaks output spec v2 only. The v1 shape (`Mode`, `Codec`, `Quality.Target`, `Renditions` as a list, `Audio.Mode`,
+top-level `Fit` and `Upscale`, `Ladder`, …) and `OutputSpecInput`, `RawOutputSpec`, `Rendition` and `Quality` are
+gone. A v2 spec states every field; the v1 defaults are in the right-hand column, so writing them out gives exactly
+what a v1 request got.
+
+| v1 | v2 | v1 default, written out in v2 |
+|---|---|---|
+| `mode: single` | `kind: video`, `container.format: mp4` | `single` |
+| `mode: hls` | `kind: video`, `container.format: hls` | |
+| `segment_seconds` | `container.segment_seconds` | `4` |
+| `mode: audio` | `kind: audio` | |
+| `audio.container` | `container.format` (`mp4` read as `m4a`) | `auto` → `flac` for flac, `m4a` for alac, else `mp3` |
+| `mode: image` | `kind: image` | |
+| `codec` | `video.codec` | `av1` |
+| `quality.target` (a level) | `video.quality` | none set → `quality: "standard"` |
+| `quality.crf` | `video.crf` (a level `target` is dropped: crf won) | |
+| `quality.target: cbr` | `video.cbr` | |
+| `quality.bitrate` | `video.cbr.bitrate` | `"standard"` |
+| `quality.buffer_ms` | `video.cbr.buffer_ms` | `1000` |
+| `bit_depth` | `video.bit_depth` (`auto` → `from_color`) | `from_color` |
+| `color` | `video.color` | `sdr` |
+| `max_fps` | `video.frame_rate.max` | `"source"` |
+| `gop` | `video.gop.frames` | mp4: `{ seconds: 2 }`; hls: `"segment"` |
+| `filters: "a,b"` | `video.filters: ["a", "b"]` | `[]` |
+| `renditions[]` | `renditions.sizes[]` | none and no ladder → `source_size`, with the top-level `fit` and `upscale` |
+| `renditions[].label` | `sizes[].label` | `by_size` |
+| `renditions[].fit` / `upscale` | `sizes[].fit` / `upscale` | the top-level `fit` / `upscale`, which default to `contain` / `false` |
+| `renditions[].orientation` | `sizes[].orientation` | `auto` |
+| `renditions[].bitrate` | `sizes[].video.cbr.bitrate` | |
+| `fit`, `upscale` (top level) | written onto every size, the ladder or the source size; dropped for audio | `contain`, `false` |
+| `ladder` | `renditions.ladder` (dropped when `renditions` is non-empty, as v1 ignored it) | `max_short_side` → `1080` |
+| `audio.mode: auto` | `handling: auto`, `codec: opus` (`mp3` in an mp3 container) | |
+| `audio.mode: opus` \| `mp3` \| `aac` \| `flac` \| `alac` | `handling: encode`, `codec` | |
+| `audio.mode: drop` | `handling: drop` | |
+| `audio.bitrate` | `audio.bitrate` | `"standard"` (lossy) |
+| `audio.channels` | `audio.channels` | `source` |
+| `audio.he_aac` | `audio.he_aac` | `auto` |
+| `audio.stereo_fallback` | `audio.stereo_fallback` | `false` (hls) |
+| `audio.bit_depth` | `audio.bit_depth` | `source` (flac/alac) |
+| `audio.flac_compression` | `audio.flac_compression` (`default` → `balanced`) | `balanced` (flac) |
+| `subtitles: all\|none` | `subtitles.tracks` | `all` |
+| `subtitles: "eng,deu"` | `subtitles.languages` | |
+| `trim` | `trim` | `{ start: 0, end: "source" }`; `end` unset → `"source"` |
+| `image.formats` | `image.formats` | `["avif"]` |
+| `image.quality: 70` | `image.quality: { <each lossy format>: 70 }` | avif 60, webp 80, jpeg 82 |
+| `image.lossless` | `image.lossless` | `false` (webp) |
+| `image.keep_color_profile` | `image.color_profile: keep \| srgb` | `srgb` |
+| `image.frames` | `image.frames` | `"poster"` |
+| `privacy` | `privacy`, all four fields resolved | `{ preset: "strip_all" }` |
+
+In Go:
+- `JobCreateParams.Output` is a whole `*OutputSpec`; over a preset, use `Overrides` (`OutputOverrides`, a JSON merge
+  document). A job needs one of `Preset` and `Output`; one with neither, which v1 read as its default spec, is refused.
+- `PresetCreateParams.Output` and `PresetReplaceParams.Output` are a whole `*OutputSpec`; `PresetUpdateParams.Output`
+  and `AutomationParams.Output` are `OutputOverrides`.
+- `Job.Preset` is new (`PresetProvenance`), as are `Preset.Version`, `Presets.Versions`, `Presets.GetVersion`,
+  `Automation.ResolvedOutput`, `Capabilities.Output`, `Error.Errors` and `ValidateOutput`.
+- `FlacCompressionDefault` is now `FlacCompressionBalanced`; `AudioContainer*` are `Format*` container formats;
+  `Audio.Mode` is `Audio.Handling` plus `Audio.Codec`; `Image.KeepColorProfile` is `Image.ColorProfile`.
+- Webhook payloads the API stored before v2 keep their v1 `output`; `Event.Data.Job()` decodes them only in v2, so read
+  such an event's raw `Data.Object`.
+
+**Older SDK versions keep working.** The API still accepts v1 requests with their defaults, and 0.x releases of this
+SDK, whose fields are all optional and would read a v2 response as an empty spec, can ask for responses in the v1
+shape with the `Transcdr-Output-Spec: v1` header (or `?output_spec=v1` on a GET), with
+`transcdr.WithHeader("Transcdr-Output-Spec", "v1")`. That compatibility mode is deprecated from
+the start: its responses carry `Deprecation: true` and a `Sunset` date, and it is removed after 31 March 2027. Move to
+1.0.0 before then.
 
 ## Development
 

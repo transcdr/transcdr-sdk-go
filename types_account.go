@@ -289,7 +289,86 @@ type Capabilities struct {
 	// [Capabilities.ImageLimits] for limits.image.
 	Limits        json.RawMessage `json:"limits"`
 	SystemPresets []Preset        `json:"system_presets"`
-	raw           json.RawMessage
+	// Output describes the output spec (v2) as data: every field, when it
+	// is required, and the facts a client needs to offer it.
+	Output *OutputCapabilities `json:"output"`
+	raw    json.RawMessage
+}
+
+// OutputCapabilities describe the output spec as data (capabilities.output).
+// A field is required (or, when not Required, allowed) when any clause of
+// its When matches; a clause matches when every path in it has one of the
+// listed values ("*": present, "!": absent). Outside When it is refused.
+// [ValidateOutput] applies the same table.
+type OutputCapabilities struct {
+	// Version is the output spec's version, 2.
+	Version int           `json:"version"`
+	Kinds   []OutputKind  `json:"kinds"`
+	Fields  []OutputField `json:"fields"`
+	Groups  []OutputGroup `json:"groups"`
+	// Conditions explains When in words.
+	Conditions  string             `json:"conditions"`
+	Containers  []OutputContainer  `json:"containers"`
+	AudioCodecs []OutputAudioCodec `json:"audio_codecs"`
+	// FollowValues explain each value that follows the source, keyed
+	// "<path>: <value>".
+	FollowValues  map[string]string   `json:"follow_values"`
+	Compatibility OutputCompatibility `json:"compatibility"`
+}
+
+// OutputField is one field of the output spec.
+type OutputField struct {
+	// Path is relative to output; "[]" stands for each entry of a list.
+	Path     string                `json:"path"`
+	Required bool                  `json:"required"`
+	When     []map[string][]string `json:"when"`
+	// Shape is the value's shape, such as {"type": "enum", "values": [...]}.
+	Shape json.RawMessage `json:"shape"`
+	// Group is the exclusive group the field is one choice of.
+	Group       *string `json:"group"`
+	Description string  `json:"description"`
+}
+
+// OutputGroup is an exclusive group: exactly one member is given when When
+// matches.
+type OutputGroup struct {
+	Name       string                `json:"name"`
+	Members    []string              `json:"members"`
+	When       []map[string][]string `json:"when"`
+	ExactlyOne bool                  `json:"exactly_one"`
+}
+
+// OutputContainer is a container format and the audio codecs it holds.
+type OutputContainer struct {
+	ID          ContainerFormat `json:"id"`
+	Kind        OutputKind      `json:"kind"`
+	AudioCodecs []AudioCodec    `json:"audio_codecs"`
+}
+
+// OutputAudioCodec is an audio codec's facts.
+type OutputAudioCodec struct {
+	ID          AudioCodec `json:"id"`
+	Name        string     `json:"name"`
+	Lossless    bool       `json:"lossless"`
+	MaxChannels int        `json:"max_channels"`
+	// Bitrates are the fixed rates it takes (MP3), or nil for any.
+	Bitrates []string `json:"bitrates"`
+}
+
+// OutputCompatibility is how v1 requests and responses are still served.
+type OutputCompatibility struct {
+	V1Requests  string            `json:"v1_requests"`
+	V1Responses OutputV1Responses `json:"v1_responses"`
+}
+
+// OutputV1Responses is the deprecated compatibility mode that returns
+// output in the v1 shape, for clients not yet moved to v2.
+type OutputV1Responses struct {
+	Header string `json:"header"`
+	Value  string `json:"value"`
+	Query  string `json:"query"`
+	// Sunset is when the mode is removed (an HTTP date).
+	Sunset string `json:"sunset"`
 }
 
 // Raw is the whole response, including fields newer than this SDK.

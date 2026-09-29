@@ -18,7 +18,7 @@ func TestJobsCreate(t *testing.T) {
 		WebhookURL:   String("https://example.com/hook"),
 		Destination:  &JobDestination{ConnectionID: "con_1", Prefix: "out/{job_id}/"},
 		MaxCostCents: Int64(250),
-		Output:       &OutputSpecInput{Codec: "h264"},
+		Overrides:    OutputOverrides{"video": map[string]any{"codec": "h264"}},
 	})
 	must(t, err)
 	if job.ID != "job_1" || job.Status != JobQueued {
@@ -32,7 +32,7 @@ func TestJobsCreate(t *testing.T) {
 	}
 	if b["preset"] != "hls-av1-abr" || b["priority"] != "high" || b["max_cost_cents"] != float64(250) ||
 		b["metadata"].(map[string]any)["customer"] != "acme" || b["webhook_url"] != "https://example.com/hook" ||
-		b["destination"].(map[string]any)["prefix"] != "out/{job_id}/" || b["output"].(map[string]any)["codec"] != "h264" {
+		b["destination"].(map[string]any)["prefix"] != "out/{job_id}/" || b["output"].(map[string]any)["video"].(map[string]any)["codec"] != "h264" {
 		t.Fatalf("body = %s", r.Body)
 	}
 	if key := r.Header.Get("Idempotency-Key"); !uuidShape(key) {
@@ -41,22 +41,22 @@ func TestJobsCreate(t *testing.T) {
 
 	// Minimal body: nothing optional is sent.
 	f.reply(201, `{"id":"job_2"}`)
-	_, err = f.client().Jobs.Create(context.Background(), &JobCreateParams{Input: AssetInput("ast_1")})
+	_, err = f.client().Jobs.Create(context.Background(), &JobCreateParams{Input: AssetInput("ast_1"), Preset: String("web-av1-1080p@1")})
 	must(t, err)
-	if string(f.last().Body) != `{"input":{"type":"asset","asset_id":"ast_1"}}` {
+	if string(f.last().Body) != `{"input":{"type":"asset","asset_id":"ast_1"},"preset":"web-av1-1080p@1"}` {
 		t.Fatalf("minimal body = %s", f.last().Body)
 	}
 }
 
 func TestJobsCreateIdempotencyKeys(t *testing.T) {
 	f := newFakeAPI(t)
-	_, err := f.client().Jobs.Create(context.Background(), &JobCreateParams{Input: URLInput("https://x")}, WithIdempotencyKey("mine"))
+	_, err := f.client().Jobs.Create(context.Background(), &JobCreateParams{Input: URLInput("https://x"), Preset: String("p")}, WithIdempotencyKey("mine"))
 	must(t, err)
 	if got := f.last().Header.Get("Idempotency-Key"); got != "mine" {
 		t.Fatalf("caller key lost: %q", got)
 	}
 	// Without retries a key is still sent: a caller may retry by hand.
-	_, err = f.client(WithMaxRetries(0)).Jobs.Create(context.Background(), &JobCreateParams{Input: URLInput("https://x")})
+	_, err = f.client(WithMaxRetries(0)).Jobs.Create(context.Background(), &JobCreateParams{Input: URLInput("https://x"), Preset: String("p")})
 	must(t, err)
 	if got := f.last().Header.Get("Idempotency-Key"); !uuidShape(got) {
 		t.Fatalf("Idempotency-Key = %q", got)
@@ -136,7 +136,7 @@ func TestJobDecodingFromFixture(t *testing.T) {
 	if job.Input.Type != "asset" || job.Input.AssetID != "ast_mS8WEuP2joqZkCGyVc2DYZ" {
 		t.Fatalf("input = %+v", job.Input)
 	}
-	if job.Output.Codec != "av1" || job.Output.Mode != "single" || len(job.Output.Raw()) == 0 {
+	if job.Output.Kind != KindVideo || job.Output.Video.Codec != CodecAV1 || job.Output.Container.Format != FormatMP4 || len(job.Output.Raw()) == 0 {
 		t.Fatalf("output = %+v", job.Output)
 	}
 	if job.InputInfo == nil || job.InputInfo.VideoCodec != "h264" {

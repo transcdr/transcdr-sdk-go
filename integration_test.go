@@ -116,41 +116,56 @@ func TestIntegration(t *testing.T) {
 	t.Run("presets", func(t *testing.T) {
 		system, err := c.Presets.Get(ctx, "hls-av1-abr")
 		must(t, err)
-		if !system.System || system.Output.Mode != "hls" {
-			t.Errorf("system preset %+v", system)
+		if !system.System || system.Output.Kind != KindVideo || system.Output.Container.Format != FormatHLS || ValidateOutput(system.Output) != nil {
+			t.Errorf("system preset %s", system.Output.Raw())
 		}
-		p, err := c.Presets.Create(ctx, &PresetCreateParams{
-			Name: "sdk-go cbr " + suffix,
-			Output: RawOutputSpec([]byte(`{"mode":"hls","codec":"h264","quality":{"target":"cbr","bitrate":"4M","buffer_ms":1500},
-				"renditions":[{"width":1920,"height":1080,"bitrate":"6M"},{"width":1280,"height":720}]}`)),
-		})
+		spec := NewVideoOutput(
+			ContainerHLS(6),
+			NewVideo(CodecH264, ConstantBitRate("4M", 1500), BitDepth8, ColorSDR, FrameRateSource(), GopSegment(), nil),
+			Audio{Handling: HandlingEncode, Codec: AudioCodecAAC, Bitrate: BitrateStandard, Channels: ChannelsSource, HeAac: HeAacAuto, StereoFallback: Bool(false)},
+			RenditionSizes(
+				NewSize(LabelBySize, 1920, 1080, FitContain, OrientationAuto, false).WithBitrate("6M"),
+				NewSize(LabelBySize, 1280, 720, FitContain, OrientationAuto, false),
+			),
+			SubtitlesAll(), NewTrim(0, TrimEndSource()), PrivacyPreset(PrivacyStripAll),
+		)
+		p, err := c.Presets.Create(ctx, &PresetCreateParams{Name: "sdk-go cbr " + suffix, Output: &spec})
 		must(t, err)
 		defer func() { must(t, c.Presets.Delete(ctx, p.ID)) }()
-		if p.Output.Quality.Target == nil || *p.Output.Quality.Target != QualityCBR || *p.Output.Renditions[0].Bitrate != "6M" {
+		if p.Version != 1 || p.Output.Video.CBR == nil || p.Output.Renditions.Sizes[0].Video.CBR.Bitrate != "6M" {
 			t.Errorf("output %s", p.Output.Raw())
 		}
 		updated, err := c.Presets.Update(ctx, p.ID, &PresetUpdateParams{
 			Description: Value("updated"),
-			Output:      &OutputSpecInput{Quality: &Quality{Bitrate: String("5M")}},
+			Output:      OutputOverrides{"video": map[string]any{"cbr": map[string]any{"bitrate": "5M"}}},
 			Metadata:    Value(Metadata{"k": "v"}),
 		})
 		must(t, err)
-		if updated.Description != "updated" || *updated.Output.Quality.Bitrate != "5M" || updated.Metadata["k"] != "v" {
+		if updated.Description != "updated" || updated.Version != 2 || updated.Output.Video.CBR.Bitrate != "5M" || updated.Metadata["k"] != "v" {
 			t.Errorf("updated %+v", updated)
+		}
+		versions, err := c.Presets.Versions(ctx, p.ID)
+		must(t, err)
+		if len(versions) != 2 || versions[0].Output.Video.CBR.Bitrate != "4M" {
+			t.Errorf("versions %+v", versions)
+		}
+		first, err := c.Presets.GetVersion(ctx, p.ID, 1)
+		must(t, err)
+		if first.Version != 1 || first.Output.Video.CBR.Bitrate != "4M" {
+			t.Errorf("version 1 %s", first.Output.Raw())
 		}
 		cleared, err := c.Presets.Update(ctx, p.ID, &PresetUpdateParams{Description: Null[string](), Metadata: Null[Metadata]()})
 		must(t, err)
 		if cleared.Description != "" || len(cleared.Metadata) != 0 {
 			t.Errorf("cleared %+v", cleared)
 		}
-		// Replace: the output is the whole spec, so the CBR quality and the
-		// renditions go back to their defaults.
-		replaced, err := c.Presets.Replace(ctx, p.ID, &PresetReplaceParams{
-			Name: "sdk-go replaced " + suffix, Output: RawOutputSpec([]byte(`{"mode":"single","codec":"h264"}`)), Description: "whole",
-		})
+		// Replace: the output is the whole spec, a new version.
+		audio := NewAudioOutput(ContainerAudio(FormatMP3),
+			Audio{Handling: HandlingEncode, Codec: AudioCodecMP3, Bitrate: "64k", Channels: ChannelsMono, HeAac: HeAacAuto},
+			PrivacyPreset(PrivacyStripAll))
+		replaced, err := c.Presets.Replace(ctx, p.ID, &PresetReplaceParams{Name: "sdk-go replaced " + suffix, Output: &audio, Description: "whole"})
 		must(t, err)
-		if replaced.Slug != p.Slug || replaced.Description != "whole" || replaced.Output.Mode != "single" ||
-			(replaced.Output.Quality.Target != nil && *replaced.Output.Quality.Target == QualityCBR) {
+		if replaced.Slug != p.Slug || replaced.Description != "whole" || replaced.Output.Kind != KindAudio || replaced.Version != 3 {
 			t.Errorf("replaced %s", replaced.Output.Raw())
 		}
 		n := 0
@@ -292,9 +307,13 @@ func TestIntegration(t *testing.T) {
 	})
 
 	t.Run("errors", func(t *testing.T) {
-		_, err := c.Presets.Create(ctx, &PresetCreateParams{Name: "sdk-go bad", Output: RawOutputSpec([]byte(`{"quality":{"target":"high","bitrate":"5M"}}`))})
+		// An MP4 over an HLS preset still carrying segment_seconds.
+		_, err := c.Jobs.Create(ctx, &JobCreateParams{
+			Input: URLInput("https://example.com/in.mp4"), Preset: String("hls-av1-abr"),
+			Overrides: OutputOverrides{"container": map[string]any{"format": "mp4"}},
+		})
 		e, ok := AsError(err)
-		if !ok || e.Status != 422 || e.RequestID == "" || e.Message == "" {
+		if !ok || e.Status != 422 || e.RequestID == "" || e.Message == "" || len(e.Errors) == 0 || e.Errors[0].Param != e.Param {
 			t.Errorf("err = %v", err)
 		}
 		bad := NewClient(WithAPIKey("tdk_test_example"))

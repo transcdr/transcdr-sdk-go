@@ -150,15 +150,19 @@ type JobBilling struct {
 type Job struct {
 	ID string `json:"id"`
 	// Kind is transcode or probe.
-	Kind      string      `json:"kind,omitempty"`
-	Status    JobStatus   `json:"status"`
-	Input     JobInput    `json:"input"`
-	InputInfo *MediaInfo  `json:"input_info"`
-	PresetID  *string     `json:"preset_id"`
-	Output    OutputSpec  `json:"output"`
-	Priority  string      `json:"priority"`
-	Progress  Progress    `json:"progress"`
-	Outputs   []JobOutput `json:"outputs"`
+	Kind      string     `json:"kind,omitempty"`
+	Status    JobStatus  `json:"status"`
+	Input     JobInput   `json:"input"`
+	InputInfo *MediaInfo `json:"input_info"`
+	PresetID  *string    `json:"preset_id"`
+	// Preset is where the spec came from: the preset version and the
+	// request's output over it; nil for a job given its whole spec.
+	Preset *PresetProvenance `json:"preset"`
+	// Output is the resolved spec, complete and explicit: what runs.
+	Output   OutputSpec  `json:"output"`
+	Priority string      `json:"priority"`
+	Progress Progress    `json:"progress"`
+	Outputs  []JobOutput `json:"outputs"`
 	// PlaylistURL is the bearer-authenticated HLS master playlist.
 	PlaylistURL *string `json:"playlist_url"`
 	// PlaybackURL is, for completed jobs, a signed URL (6 h) a player can
@@ -178,20 +182,55 @@ type Job struct {
 	UpdatedAt   time.Time   `json:"updated_at"`
 }
 
-// JobCreateParams submit a job.
+// JobCreateParams submit a job. Give either Preset, with Overrides over it
+// if any, or Output, the whole spec: the SDK refuses neither, and both.
 type JobCreateParams struct {
 	Input JobInput `json:"input"`
-	// Output overrides are merged over the preset's spec.
-	Output *OutputSpecInput `json:"output,omitempty"`
-	// Preset is a system preset slug (e.g. hls-av1-abr) or a pre_… id.
-	Preset     *string  `json:"preset,omitempty"`
-	Priority   *string  `json:"priority,omitempty"`
-	Metadata   Metadata `json:"metadata,omitempty"`
-	WebhookURL *string  `json:"webhook_url,omitempty"`
+	// Preset names a preset: a system slug (hls-av1-abr), your preset's slug
+	// or pre_… id for its latest version, or "<slug>@N" for version N.
+	Preset *string `json:"preset,omitempty"`
+	// Overrides are merged over the preset's spec (with Preset only).
+	Overrides OutputOverrides `json:"-"`
+	// Output is the whole spec (without Preset). The SDK checks it with
+	// [ValidateOutput] before sending.
+	Output     *OutputSpec `json:"-"`
+	Priority   *string     `json:"priority,omitempty"`
+	Metadata   Metadata    `json:"metadata,omitempty"`
+	WebhookURL *string     `json:"webhook_url,omitempty"`
 	// Destination delivers every output file to a connection on completion.
 	Destination *JobDestination `json:"destination,omitempty"`
 	// MaxCostCents refuses the job (cost_limit_exceeded) if it would cost more.
 	MaxCostCents *int64 `json:"max_cost_cents,omitempty"`
+}
+
+// MarshalJSON sends Output or Overrides as the request's output.
+func (p JobCreateParams) MarshalJSON() ([]byte, error) {
+	type plain JobCreateParams
+	var output any
+	switch {
+	case p.Output != nil:
+		output = p.Output
+	case p.Overrides != nil:
+		output = p.Overrides
+	}
+	return json.Marshal(struct {
+		plain
+		Output any `json:"output,omitempty"`
+	}{plain(p), output})
+}
+
+// check refuses what the API would: neither a preset nor a spec, a whole
+// spec beside a preset, overrides without one, or an incomplete spec.
+func (p *JobCreateParams) check() error {
+	switch {
+	case p.Preset == nil && p.Output == nil:
+		return outputError([]FieldError{{Param: "output", Message: "Give preset (with overrides, if any) or output, the whole spec."}})
+	case p.Preset != nil && p.Output != nil:
+		return outputError([]FieldError{{Param: "output", Message: "With preset, give the fields to change as overrides, not a whole output."}})
+	case p.Preset == nil && p.Overrides != nil:
+		return outputError([]FieldError{{Param: "output", Message: "Overrides need a preset; without one, give output, the whole spec."}})
+	}
+	return checkOutput(p.Output)
 }
 
 // JobListParams filter jobs.
@@ -282,10 +321,13 @@ type Preset struct {
 	// CompatibilityNotes gives each platform in Compatibility its minimum
 	// versions and conditions, such as audio that depends on the source.
 	CompatibilityNotes map[Platform]string `json:"compatibility_notes"`
-	Output             OutputSpec          `json:"output"`
-	Metadata           Metadata            `json:"metadata"`
-	CreatedAt          *time.Time          `json:"created_at"`
-	UpdatedAt          *time.Time          `json:"updated_at"`
+	// Version is the preset's latest version; editing its output adds one.
+	Version int `json:"version"`
+	// Output is the latest version's spec, complete.
+	Output    OutputSpec `json:"output"`
+	Metadata  Metadata   `json:"metadata"`
+	CreatedAt *time.Time `json:"created_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // PresetCategory is the group a preset is shown in. More may be added, so
@@ -333,11 +375,12 @@ const (
 
 // PresetCreateParams create a preset.
 type PresetCreateParams struct {
-	Name        string           `json:"name"`
-	Slug        *string          `json:"slug,omitempty"`
-	Description *string          `json:"description,omitempty"`
-	Output      *OutputSpecInput `json:"output"`
-	Metadata    Metadata         `json:"metadata,omitempty"`
+	Name        string  `json:"name"`
+	Slug        *string `json:"slug,omitempty"`
+	Description *string `json:"description,omitempty"`
+	// Output is the whole spec, checked with [ValidateOutput] before sending.
+	Output   *OutputSpec `json:"output"`
+	Metadata Metadata    `json:"metadata,omitempty"`
 	// Category, Compatibility and CompatibilityNotes left out are derived
 	// from Output. A non-nil empty Compatibility claims no platform; notes
 	// are only for platforms the preset claims.
@@ -349,13 +392,13 @@ type PresetCreateParams struct {
 // PresetUpdateParams change a preset (PATCH): a field left out is
 // unchanged, Null clears Description or Metadata and derives Category,
 // Compatibility or CompatibilityNotes from the spec again, and Output is
-// merged into the stored spec. To set the whole preset, use
-// [PresetsService.Replace].
+// merged over the latest version: a changed spec is a new version. To set
+// the whole preset, use [PresetsService.Replace].
 type PresetUpdateParams struct {
 	Name        *string            `json:"name,omitempty"`
 	Slug        *string            `json:"slug,omitempty"`
 	Description Nullable[string]   `json:"description,omitzero"`
-	Output      *OutputSpecInput   `json:"output,omitempty"`
+	Output      OutputOverrides    `json:"output,omitempty"`
 	Metadata    Nullable[Metadata] `json:"metadata,omitzero"`
 
 	Category           Nullable[PresetCategory]      `json:"category,omitzero"`
@@ -363,13 +406,14 @@ type PresetUpdateParams struct {
 	CompatibilityNotes Nullable[map[Platform]string] `json:"compatibility_notes,omitzero"`
 }
 
-// PresetReplaceParams replace a preset (PUT). Output is the whole spec: a
-// field left out of it takes its default, as on create. Description and
+// PresetReplaceParams replace a preset (PUT). Output is the whole spec,
+// complete (checked with [ValidateOutput] before sending); a changed spec is
+// a new version. Description and
 // Metadata left out are emptied; Category, Compatibility and
 // CompatibilityNotes left out are derived again; Slug left out is kept.
 type PresetReplaceParams struct {
 	Name               string              `json:"name"`
-	Output             *OutputSpecInput    `json:"output"`
+	Output             *OutputSpec         `json:"output"`
 	Slug               *string             `json:"slug,omitempty"`
 	Description        string              `json:"description,omitempty"`
 	Metadata           Metadata            `json:"metadata,omitempty"`

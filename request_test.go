@@ -55,7 +55,7 @@ func TestPostWithoutKeyNotRetried(t *testing.T) {
 func TestPostWithKeyRetriedWithSameKey(t *testing.T) {
 	f := newFakeAPI(t)
 	f.reply(500, "").reply(429, "", "Retry-After", "0").reply(200, `{"id":"job_1","status":"queued"}`)
-	job, err := f.client().Jobs.Create(context.Background(), &JobCreateParams{Input: URLInput("https://example.com/in.mp4")})
+	job, err := f.client().Jobs.Create(context.Background(), &JobCreateParams{Input: URLInput("https://example.com/in.mp4"), Preset: String("hls-av1-abr")})
 	must(t, err)
 	reqs := f.all()
 	if job.ID != "job_1" || len(reqs) != 3 {

@@ -61,9 +61,8 @@ func decodeStrictPage[T any](t *testing.T, name string) *Page[T] {
 
 // Types with a custom decoder, checked strictly through a method-less copy.
 type (
-	strictSpec  OutputSpec
-	strictInput OutputSpecInput
-	strictCaps  Capabilities
+	strictSpec OutputSpec
+	strictCaps Capabilities
 )
 
 // checkNested strictly decodes the JSON at key in each object of a fixture
@@ -100,7 +99,7 @@ func TestFixturesNestedSpecs(t *testing.T) {
 	checkNested(t, "jobs.json", "output", func() any { return new(strictSpec) })
 	checkNested(t, "job_image.json", "output", func() any { return new(strictSpec) })
 	checkNested(t, "presets.json", "output", func() any { return new(strictSpec) })
-	checkNested(t, "automations.json", "output", func() any { return new(strictInput) })
+	checkNested(t, "automations.json", "resolved_output", func() any { return new(strictSpec) })
 	var caps strictCaps
 	decodeStrict(t, "capabilities.json", &caps)
 }
@@ -160,7 +159,7 @@ func TestFixturesDecode(t *testing.T) {
 		"job.json": func(t *testing.T) {
 			var j Job
 			decodeStrict(t, "job.json", &j)
-			if j.ID == "" || j.Output.Codec == "" {
+			if j.ID == "" || j.Output.Video == nil || j.Output.Video.Codec == "" {
 				t.Fatal("job incomplete")
 			}
 		},
