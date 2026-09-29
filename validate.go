@@ -30,12 +30,15 @@ type ruleTerm struct {
 }
 
 type ruleField struct {
-	Path     string       `json:"path"`
-	Required bool         `json:"required"`
-	When     [][][]any    `json:"when"`
-	Object   bool         `json:"object"`
-	Group    *string      `json:"group"`
-	when     [][]ruleTerm // parsed
+	Path     string    `json:"path"`
+	Required bool      `json:"required"`
+	When     [][][]any `json:"when"`
+	Object   bool      `json:"object"`
+	Group    *string   `json:"group"`
+	// Allowed is where the field may also be given without being required.
+	Allowed [][][]any    `json:"allowed"`
+	when    [][]ruleTerm // parsed
+	allowed [][]ruleTerm
 }
 
 type ruleGroup struct {
@@ -55,6 +58,7 @@ var outputRules = func() (r struct {
 	}
 	for i := range r.Fields {
 		r.Fields[i].when = parseCondition(r.Fields[i].When)
+		r.Fields[i].allowed = parseCondition(r.Fields[i].Allowed)
 	}
 	for i := range r.Groups {
 		r.Groups[i].when = parseCondition(r.Groups[i].When)
@@ -134,7 +138,9 @@ func validateDocument(doc any) []FieldError {
 		if privacyMissing && strings.HasPrefix(f.Path, "privacy") {
 			continue
 		}
-		applies := holds(root, f.when)
+		// Required where `when` holds; allowed there or where `allowed` does.
+		requiredHere := holds(root, f.when)
+		applies := requiredHere || holds(root, f.allowed)
 		for _, in := range instances(root, f.Path) {
 			if isUnder(in.path, refused) {
 				continue
@@ -143,7 +149,7 @@ func validateDocument(doc any) []FieldError {
 				refused = append(refused, in.path)
 			}
 			switch {
-			case in.value == nil && applies && f.Required && !f.Object:
+			case in.value == nil && requiredHere && f.Required && !f.Object:
 				errs = append(errs, fieldError(in.path, fmt.Sprintf("output.%s is required when %s.", in.path, describe(f.when))))
 			case in.value != nil && !applies:
 				errs = append(errs, fieldError(in.path, fmt.Sprintf("output.%s does not apply here: it applies when %s. Remove it (or set it to null).", in.path, describe(f.when))))

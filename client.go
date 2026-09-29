@@ -64,8 +64,6 @@ type Client struct {
 	Announcements *AnnouncementsService
 	// Changelog is public: no key needed.
 	Changelog *ChangelogService
-	// Admin is the platform operator console (operator session tokens only).
-	Admin *AdminService
 }
 
 // Option configures a [Client].
@@ -147,7 +145,6 @@ func NewClient(opts ...Option) *Client {
 	c.Deliveries = &DeliveriesService{c}
 	c.Announcements = &AnnouncementsService{c}
 	c.Changelog = &ChangelogService{c}
-	c.Admin = &AdminService{client: c, Announcements: &AdminAnnouncementsService{c}, Incidents: &AdminIncidentsService{c}}
 	return c
 }
 

@@ -109,6 +109,7 @@
           "preset": {
             "id": "archive-av1-high",
             "overrides": null,
+            "slug": "archive-av1-high",
             "version": 1
           },
           "preset_id": "archive-av1-high",
@@ -220,6 +221,7 @@
           "preset": {
             "id": "archive-av1-high",
             "overrides": null,
+            "slug": "archive-av1-high",
             "version": 1
           },
           "preset_id": "archive-av1-high",
@@ -318,6 +320,7 @@
           "preset": {
             "id": "archive-av1-high",
             "overrides": null,
+            "slug": "archive-av1-high",
             "version": 1
           },
           "preset_id": "archive-av1-high",
@@ -416,6 +419,7 @@
           "preset": {
             "id": "archive-av1-high",
             "overrides": null,
+            "slug": "archive-av1-high",
             "version": 1
           },
           "preset_id": "archive-av1-high",
@@ -580,6 +584,7 @@
           "preset": {
             "id": "hdr10-av1-2160p",
             "overrides": null,
+            "slug": "hdr10-av1-2160p",
             "version": 1
           },
           "preset_id": "hdr10-av1-2160p",
@@ -700,6 +705,7 @@
           "preset": {
             "id": "hdr10-av1-2160p",
             "overrides": null,
+            "slug": "hdr10-av1-2160p",
             "version": 1
           },
           "preset_id": "hdr10-av1-2160p",
@@ -807,6 +813,7 @@
           "preset": {
             "id": "hdr10-av1-2160p",
             "overrides": null,
+            "slug": "hdr10-av1-2160p",
             "version": 1
           },
           "preset_id": "hdr10-av1-2160p",
@@ -914,6 +921,7 @@
           "preset": {
             "id": "hdr10-av1-2160p",
             "overrides": null,
+            "slug": "hdr10-av1-2160p",
             "version": 1
           },
           "preset_id": "hdr10-av1-2160p",

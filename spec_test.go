@@ -176,7 +176,7 @@ func TestValidateOutputCases(t *testing.T) {
 		Errors []FieldError    `json:"errors"`
 	}
 	must(t, json.Unmarshal(raw, &cases))
-	if len(cases) < 20 {
+	if len(cases) < 26 {
 		t.Fatalf("%d cases", len(cases))
 	}
 	for _, c := range cases {
@@ -210,10 +210,18 @@ func TestValidateOutputTyped(t *testing.T) {
 	if !reflect.DeepEqual(params, want) {
 		t.Fatalf("params = %v", params)
 	}
-	// Both a preset and categories in privacy.
+	// A preset refined by some categories is complete.
 	spec = exampleHLS()
-	spec.Privacy.Location = "keep"
-	if errs := ValidateOutput(spec); len(errs) != 1 || errs[0].Param != "output.privacy.location" {
+	spec.Privacy = PrivacyPreset(PrivacyStripLocation).WithLocation("approximate").WithDevice("strip")
+	if errs := ValidateOutput(spec); errs != nil {
+		t.Fatalf("errors %+v", errs)
+	}
+	sameJSON(t, spec.Privacy, `{"preset":"strip_location","location":"approximate","device":"strip"}`)
+	sameJSON(t, PrivacyPreset(PrivacyKeepAll).WithCaptureTime("date").WithDescriptive("strip"),
+		`{"preset":"keep_all","capture_time":"date","descriptive":"strip"}`)
+	// Without a preset, all four are needed.
+	spec.Privacy = Privacy{Location: "keep"}
+	if errs := ValidateOutput(spec); len(errs) != 3 || errs[0].Param != "output.privacy.capture_time" {
 		t.Fatalf("errors %+v", errs)
 	}
 }
@@ -243,7 +251,7 @@ func TestJobCreateSendsWholeSpec(t *testing.T) {
 
 func TestJobCreatePresetOverrides(t *testing.T) {
 	f := newFakeAPI(t)
-	f.reply(200, `{"id":"job_1","preset_id":"social-vertical-1080x1920","preset":{"id":"social-vertical-1080x1920@1","version":1,"overrides":{"video":{"frame_rate":{"max":24}}}}}`)
+	f.reply(200, `{"id":"job_1","preset_id":"social-vertical-1080x1920","preset":{"id":"social-vertical-1080x1920@1","slug":"social-vertical-1080x1920","version":1,"overrides":{"video":{"frame_rate":{"max":24}}}}}`)
 	job, err := f.client().Jobs.Create(context.Background(), &JobCreateParams{
 		Input:  URLInput("https://example.com/a.mp4"),
 		Preset: String("social-vertical-1080x1920@1"),
@@ -257,7 +265,7 @@ func TestJobCreatePresetOverrides(t *testing.T) {
 		!strings.Contains(string(f.last().Body), `"preset":"social-vertical-1080x1920@1"`) {
 		t.Fatalf("body = %s", f.last().Body)
 	}
-	if p := job.Preset; p == nil || p.ID != "social-vertical-1080x1920@1" || p.Version != 1 || p.Overrides["video"] == nil {
+	if p := job.Preset; p == nil || p.ID != "social-vertical-1080x1920@1" || p.Slug != "social-vertical-1080x1920" || p.Version != 1 || p.Overrides["video"] == nil {
 		t.Fatalf("provenance %+v", job.Preset)
 	}
 

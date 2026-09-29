@@ -111,7 +111,7 @@ Exclusive choices are built by constructors, so exactly one is set:
 | frame rate | `FrameRateSource()`, `MaxFrameRate(30)` |
 | image frames | `FramesPoster()`, `FramesCount(12)`, `FramesAt(1.5, 10)` |
 | trim end | `TrimEndSource()`, `TrimEndAt(7.5)` |
-| privacy | `PrivacyPreset(PrivacyStripAll)`, or all four categories with `PrivacyFields(location, captureTime, device, descriptive)` |
+| privacy | `PrivacyPreset(PrivacyStripAll)`, refined with `.WithLocation(…)`, `.WithCaptureTime(…)`, `.WithDevice(…)`, `.WithDescriptive(…)`; or all four categories with `PrivacyFields(location, captureTime, device, descriptive)` |
 
 ### Examples
 
@@ -188,7 +188,7 @@ stills := transcdr.NewImageOutput(
 
 | Field | Required when |
 |---|---|
-| `Kind`, `Privacy` | always (`Privacy`: a preset, or all of location, capture time, device and descriptive) |
+| `Kind`, `Privacy` | always (`Privacy`: a preset, which any of the four categories refine, or all of location, capture time, device and descriptive) |
 | `Container.Format` | kind video (`FormatMP4`, `FormatHLS`) or audio (`FormatMP3`, `FormatFLAC`, `FormatM4A`) |
 | `Container.SegmentSeconds` | format HLS (1–20) |
 | `Video.Codec`, `BitDepth`, `Color`, `FrameRate`, `Gop`, `Filters`, and one rate | kind video |
@@ -454,7 +454,6 @@ Signatures are `t=<unix>,v1=<hex HMAC-SHA256(secret, "<t>.<body>")>`, the same s
 | Billing | `Usage` (with the `Inputs` report), `Billing` (get, checkout, portal, settings, transactions, change plan, `Invoices`), `Plans` |
 | Service | `Capabilities`, `Status`, `Stats`, `Changelog`, `Announcements`, `OpenAPI` |
 | Integrations | `Connections` (check, test, browse, enable, disable), `Automations` (run, trigger, rotate hook token, items, `PushHook`), `Deliveries` |
-| Operators | `Admin` (overview, jobs, organizations, credit, `Announcements`, `Incidents`) |
 
 ## Migrating from v1
 

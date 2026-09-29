@@ -22,6 +22,9 @@ Output spec v2: a declarative, explicit output specification. This release speak
 - Presets are versioned: `Preset.Version`, `Presets.Versions`, `Presets.GetVersion`. `PresetUpdateParams.Output` is
   overrides over the latest version.
 - Automations: `Output` is `OutputOverrides`; `ResolvedOutput` is the spec they resolve to now.
+- `Privacy` is a preset refined by any of its four categories (`PrivacyPreset(…).WithCaptureTime("date")`), or all four
+  categories without one (`PrivacyFields`).
+- `Job.Preset` carries the preset's `Slug` too.
 - `Capabilities.Output` describes the spec as data: fields, when each is required, exclusive groups, containers,
   audio codecs, follow values and the v1 compatibility mode.
 
@@ -30,6 +33,8 @@ Output spec v2: a declarative, explicit output specification. This release speak
 - Removed: `OutputSpecInput`, `RawOutputSpec`, `Rendition`, `Quality`, the exported fields of `ImageFrames` (use `FramesPoster`, `FramesCount`, `FramesAt`), the `Mode*`,
   `AudioMode*` and `AudioContainer*` constants, and `QualityCBR`. `FlacCompressionDefault` is `FlacCompressionBalanced`.
 - A job with neither a preset nor an output is refused by the SDK (v1 read it as its default spec).
+- Removed the operator console (`Client.Admin`: overview, jobs, organizations, credit, announcements and incidents).
+  It is for Transcdr's own operators, not a customer API, and is no longer part of the public SDK.
 
 ### Migrating from v1
 

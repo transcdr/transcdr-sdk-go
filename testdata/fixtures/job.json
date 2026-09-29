@@ -105,6 +105,7 @@
   "preset": {
     "id": "archive-av1-high",
     "overrides": null,
+    "slug": "archive-av1-high",
     "version": 1
   },
   "preset_id": "archive-av1-high",

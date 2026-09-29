@@ -139,8 +139,7 @@ func TestServicesAreWired(t *testing.T) {
 		c.Uploads == nil || c.Assets == nil || c.Jobs == nil || c.Probe == nil || c.Presets == nil || c.Webhooks == nil ||
 		c.Events == nil || c.Usage == nil || c.Billing == nil || c.Billing.Invoices == nil || c.Plans == nil ||
 		c.Capabilities == nil || c.Status == nil || c.Stats == nil || c.Connections == nil || c.Automations == nil ||
-		c.Deliveries == nil || c.Announcements == nil || c.Changelog == nil || c.Admin == nil ||
-		c.Admin.Announcements == nil || c.Admin.Incidents == nil {
+		c.Deliveries == nil || c.Announcements == nil || c.Changelog == nil {
 		t.Fatal("a service is nil")
 	}
 }

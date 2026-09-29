@@ -787,9 +787,12 @@ const (
 	PrivacyKeepAll = "keep_all"
 )
 
-// Privacy is which identifying metadata of the source survives: exactly one
-// of Preset or all four categories. Build it with PrivacyPreset or
-// PrivacyFields. Responses always give the four categories.
+// Privacy is which identifying metadata of the source survives: a Preset,
+// whose categories any of the four fields refine, or all four categories
+// without a preset. Build it with PrivacyPreset (refined with its With…
+// methods) or PrivacyFields. Responses always give the four categories.
+//
+//	transcdr.PrivacyPreset(transcdr.PrivacyStripAll).WithCaptureTime("date")
 type Privacy struct {
 	// Preset is PrivacyStripAll, PrivacyStripLocation or PrivacyKeepAll.
 	Preset string `json:"preset,omitempty"`
@@ -806,7 +809,19 @@ type Privacy struct {
 // PrivacyPreset is one of the privacy presets.
 func PrivacyPreset(preset string) Privacy { return Privacy{Preset: preset} }
 
-// PrivacyFields states each category.
+// WithLocation refines the preset's location handling.
+func (p Privacy) WithLocation(location string) Privacy { p.Location = location; return p }
+
+// WithCaptureTime refines the preset's capture time handling.
+func (p Privacy) WithCaptureTime(captureTime string) Privacy { p.CaptureTime = captureTime; return p }
+
+// WithDevice refines the preset's device handling.
+func (p Privacy) WithDevice(device string) Privacy { p.Device = device; return p }
+
+// WithDescriptive refines the preset's descriptive tags handling.
+func (p Privacy) WithDescriptive(descriptive string) Privacy { p.Descriptive = descriptive; return p }
+
+// PrivacyFields states each category, without a preset.
 func PrivacyFields(location, captureTime, device, descriptive string) Privacy {
 	return Privacy{Location: location, CaptureTime: captureTime, Device: device, Descriptive: descriptive}
 }
@@ -815,7 +830,9 @@ func PrivacyFields(location, captureTime, device, descriptive string) Privacy {
 // request named it, the version used, and the request's output over it.
 type PresetProvenance struct {
 	// ID is the preset as the request named it (a slug or pre_… id).
-	ID      string `json:"id"`
+	ID string `json:"id"`
+	// Slug is the preset's slug.
+	Slug    string `json:"slug"`
 	Version int    `json:"version"`
 	// Overrides are the request's output over the preset, in v2; nil when
 	// none.

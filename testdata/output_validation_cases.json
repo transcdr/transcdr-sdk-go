@@ -803,10 +803,64 @@
     "location": "keep"
    }
   },
+  "errors": []
+ },
+ {
+  "name": "privacy preset plus all fields",
+  "output": {
+   "kind": "audio",
+   "container": {
+    "format": "mp3"
+   },
+   "audio": {
+    "handling": "encode",
+    "codec": "mp3",
+    "bitrate": "64k",
+    "channels": "mono",
+    "he_aac": "auto"
+   },
+   "privacy": {
+    "preset": "keep_all",
+    "location": "approximate",
+    "capture_time": "date",
+    "device": "keep",
+    "descriptive": "strip"
+   }
+  },
+  "errors": []
+ },
+ {
+  "name": "privacy empty",
+  "output": {
+   "kind": "audio",
+   "container": {
+    "format": "mp3"
+   },
+   "audio": {
+    "handling": "encode",
+    "codec": "mp3",
+    "bitrate": "64k",
+    "channels": "mono",
+    "he_aac": "auto"
+   },
+   "privacy": {}
+  },
   "errors": [
    {
     "param": "output.privacy.location",
-    "message": "output.privacy.location does not apply here: it applies when privacy.preset is not given. Remove it (or set it to null)."
+    "message": "output.privacy.location is required when privacy.preset is not given."
+   },
+   {
+    "param": "output.privacy.capture_time",
+    "message": "output.privacy.capture_time is required when privacy.preset is not given."
+   },
+   {
+    "param": "output.privacy.device",
+    "message": "output.privacy.device is required when privacy.preset is not given."
+   },
+   {
+    "param": "output.privacy.descriptive",
+    "message": "output.privacy.descriptive is required when privacy.preset is not given."
    }
   ]
  },

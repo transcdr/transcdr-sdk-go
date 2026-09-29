@@ -57,10 +57,10 @@
   {"path": "trim.end", "required": true, "when": [[["kind", ["video"]]]], "object": false, "group": null},
   {"path": "privacy", "required": true, "when": [[]], "object": true, "group": null},
   {"path": "privacy.preset", "required": false, "when": [[]], "object": false, "group": null},
-  {"path": "privacy.location", "required": true, "when": [[["privacy.preset", ["!"]]]], "object": false, "group": null},
-  {"path": "privacy.capture_time", "required": true, "when": [[["privacy.preset", ["!"]]]], "object": false, "group": null},
-  {"path": "privacy.device", "required": true, "when": [[["privacy.preset", ["!"]]]], "object": false, "group": null},
-  {"path": "privacy.descriptive", "required": true, "when": [[["privacy.preset", ["!"]]]], "object": false, "group": null}
+  {"path": "privacy.location", "required": true, "when": [[["privacy.preset", ["!"]]]], "object": false, "allowed": [[]], "group": null},
+  {"path": "privacy.capture_time", "required": true, "when": [[["privacy.preset", ["!"]]]], "object": false, "allowed": [[]], "group": null},
+  {"path": "privacy.device", "required": true, "when": [[["privacy.preset", ["!"]]]], "object": false, "allowed": [[]], "group": null},
+  {"path": "privacy.descriptive", "required": true, "when": [[["privacy.preset", ["!"]]]], "object": false, "allowed": [[]], "group": null}
  ],
  "groups": [
   {"name": "video.rate", "parent": "video", "members": ["video.quality", "video.crf", "video.cbr"], "when": [[["kind", ["video"]]]]},
