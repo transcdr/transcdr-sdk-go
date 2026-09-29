@@ -15,9 +15,11 @@ type Metadata map[string]string
 // shape inside that box (see OutputSpec.Fit) and is not enlarged past its own
 // size unless Upscale is on. Each output reports the size it came out at.
 type Rendition struct {
-	// Width is the maximum width; even, 64–7680.
+	// Width is the maximum width; even, 64–7680. With ModeImage, 16–8192
+	// and odd sizes are allowed.
 	Width int `json:"width"`
-	// Height is the maximum height; even, 64–4320.
+	// Height is the maximum height; even, 64–4320. With ModeImage, 16–8192
+	// and odd sizes are allowed.
 	Height int `json:"height"`
 	// Bitrate is this rendition's constant rate, such as "3M" or "800k"
 	// (100k–200M), with quality target "cbr" only.
@@ -98,7 +100,52 @@ const (
 	// ModeAudio is the audio alone, as one file (label "audio", width and
 	// height 0): an .mp3, .flac or .m4a, as Audio.Container picks.
 	ModeAudio = "audio"
+	// ModeImage is still images, of an image input or taken from a video:
+	// every rendition in every format of OutputSpec.Image.
+	ModeImage = "image"
 )
+
+// ImageFormat is an image output format. Values added later decode as they
+// are.
+type ImageFormat string
+
+// Image output formats (Image.Formats).
+const (
+	// ImageFormatAVIF is the default and the smallest.
+	ImageFormatAVIF ImageFormat = "avif"
+	ImageFormatWebP ImageFormat = "webp"
+	ImageFormatJPEG ImageFormat = "jpeg"
+	// ImageFormatPNG is always lossless.
+	ImageFormatPNG ImageFormat = "png"
+)
+
+// ImageFrames picks a video input's stills in an image job: at AtSeconds, or
+// Count evenly spaced. Set one; neither is one frame 10% of the way in. An
+// image input refuses Frames.
+type ImageFrames struct {
+	// AtSeconds are seconds from the start, 1–100 of them, each within the
+	// video.
+	AtSeconds []float64 `json:"at_seconds,omitempty"`
+	// Count is 1–100 stills, evenly spaced through the video.
+	Count *int `json:"count,omitempty"`
+}
+
+// Image is the image output settings, for ModeImage only: every rendition
+// is made in every format. Fields left zero are not sent.
+type Image struct {
+	// Formats are 1–4 distinct formats; the API's default is avif.
+	Formats []ImageFormat `json:"formats,omitempty"`
+	// Quality is 1–100, for the lossy formats. Left nil, each format's own
+	// default: AVIF 60, WebP 80, JPEG 82.
+	Quality *int `json:"quality,omitempty"`
+	// Lossless makes WebP lossless. Only with webp and png (PNG always is).
+	Lossless *bool `json:"lossless,omitempty"`
+	// KeepColorProfile keeps the source's colour profile instead of
+	// converting to sRGB. EXIF, XMP and GPS are never kept.
+	KeepColorProfile *bool `json:"keep_color_profile,omitempty"`
+	// Frames are a video input's stills.
+	Frames *ImageFrames `json:"frames,omitempty"`
+}
 
 // Audio modes (Audio.Mode).
 const (
@@ -237,8 +284,8 @@ type Trim struct {
 // OutputSpec is a fully resolved output specification, as returned on jobs
 // and presets.
 type OutputSpec struct {
-	// Mode is "single" (one MP4 per rendition), "hls" or "audio" (one .mp3,
-	// .flac or .m4a).
+	// Mode is "single" (one MP4 per rendition), "hls", "audio" (one .mp3,
+	// .flac or .m4a) or "image" (still images).
 	Mode string `json:"mode"`
 	// Codec is av1, h264 or h265.
 	Codec      string      `json:"codec"`
@@ -262,6 +309,8 @@ type OutputSpec struct {
 	MaxFPS   *float64 `json:"max_fps"`
 	Filters  *string  `json:"filters"`
 	Trim     *Trim    `json:"trim"`
+	// Image is the image output settings; nil unless Mode is "image".
+	Image *Image `json:"image,omitempty"`
 
 	raw json.RawMessage
 }
@@ -303,6 +352,8 @@ type OutputSpecInput struct {
 	MaxFPS         Nullable[float64] `json:"max_fps,omitzero"`
 	Filters        Nullable[string]  `json:"filters,omitzero"`
 	Trim           Nullable[Trim]    `json:"trim,omitzero"`
+	// Image is the image output settings, with ModeImage only.
+	Image Nullable[Image] `json:"image,omitzero"`
 
 	verbatim json.RawMessage // sent as is (RawOutputSpec)
 	raw      json.RawMessage // as decoded

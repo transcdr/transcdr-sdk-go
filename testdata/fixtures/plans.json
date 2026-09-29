@@ -12,6 +12,18 @@
         "test_mode"
       ],
       "id": "free",
+      "image_rates": {
+        "currency": "usd",
+        "over_4mp": 0.004,
+        "tiers": {
+          "over_4mp": "over 4 megapixels",
+          "up_to_1mp": "up to 1 megapixel",
+          "up_to_4mp": "over 1, up to 4 megapixels"
+        },
+        "unit": "output_image",
+        "up_to_1mp": 0.001,
+        "up_to_4mp": 0.002
+      },
       "max_concurrent_jobs": 1,
       "max_input_bytes": 2147483648,
       "max_resolution": 1080,
@@ -56,6 +68,18 @@
         "auto_recharge"
       ],
       "id": "pay_as_you_go",
+      "image_rates": {
+        "currency": "usd",
+        "over_4mp": 0.004,
+        "tiers": {
+          "over_4mp": "over 4 megapixels",
+          "up_to_1mp": "up to 1 megapixel",
+          "up_to_4mp": "over 1, up to 4 megapixels"
+        },
+        "unit": "output_image",
+        "up_to_1mp": 0.001,
+        "up_to_4mp": 0.002
+      },
       "max_concurrent_jobs": 3,
       "max_input_bytes": 21474836480,
       "max_resolution": 2160,
@@ -100,6 +124,18 @@
         "auto_recharge"
       ],
       "id": "starter",
+      "image_rates": {
+        "currency": "usd",
+        "over_4mp": 0.004,
+        "tiers": {
+          "over_4mp": "over 4 megapixels",
+          "up_to_1mp": "up to 1 megapixel",
+          "up_to_4mp": "over 1, up to 4 megapixels"
+        },
+        "unit": "output_image",
+        "up_to_1mp": 0.001,
+        "up_to_4mp": 0.002
+      },
       "max_concurrent_jobs": 5,
       "max_input_bytes": 21474836480,
       "max_resolution": 2160,
@@ -146,6 +182,18 @@
         "team"
       ],
       "id": "growth",
+      "image_rates": {
+        "currency": "usd",
+        "over_4mp": 0.004,
+        "tiers": {
+          "over_4mp": "over 4 megapixels",
+          "up_to_1mp": "up to 1 megapixel",
+          "up_to_4mp": "over 1, up to 4 megapixels"
+        },
+        "unit": "output_image",
+        "up_to_1mp": 0.001,
+        "up_to_4mp": 0.002
+      },
       "max_concurrent_jobs": 10,
       "max_input_bytes": 53687091200,
       "max_resolution": 2160,
@@ -192,6 +240,18 @@
         "team"
       ],
       "id": "scale",
+      "image_rates": {
+        "currency": "usd",
+        "over_4mp": 0.004,
+        "tiers": {
+          "over_4mp": "over 4 megapixels",
+          "up_to_1mp": "up to 1 megapixel",
+          "up_to_4mp": "over 1, up to 4 megapixels"
+        },
+        "unit": "output_image",
+        "up_to_1mp": 0.001,
+        "up_to_4mp": 0.002
+      },
       "max_concurrent_jobs": 25,
       "max_input_bytes": 107374182400,
       "max_resolution": 4320,
@@ -242,6 +302,18 @@
         "invoicing"
       ],
       "id": "enterprise",
+      "image_rates": {
+        "currency": "usd",
+        "over_4mp": 0.004,
+        "tiers": {
+          "over_4mp": "over 4 megapixels",
+          "up_to_1mp": "up to 1 megapixel",
+          "up_to_4mp": "over 1, up to 4 megapixels"
+        },
+        "unit": "output_image",
+        "up_to_1mp": 0.001,
+        "up_to_4mp": 0.002
+      },
       "max_concurrent_jobs": 50,
       "max_input_bytes": 214748364800,
       "max_resolution": 4320,

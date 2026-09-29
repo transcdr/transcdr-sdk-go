@@ -236,6 +236,37 @@ type CapabilityMode struct {
 	Description string `json:"description"`
 }
 
+// CapabilityImageFormat is an image output format the service offers.
+type CapabilityImageFormat struct {
+	ID      ImageFormat `json:"id"`
+	Name    string      `json:"name"`
+	Default bool        `json:"default"`
+	// Lossy formats take Image.Quality.
+	Lossy bool `json:"lossy"`
+	// Lossless is whether it can be lossless (PNG always, WebP with
+	// Image.Lossless).
+	Lossless bool `json:"lossless"`
+	// Alpha is whether it keeps transparency.
+	Alpha bool `json:"alpha"`
+	// DefaultQuality is the quality used when Image.Quality is nil; lossy
+	// formats only.
+	DefaultQuality *int `json:"default_quality,omitempty"`
+}
+
+// ImageLimits are the image output limits (limits.image).
+type ImageLimits struct {
+	// MinDimension and MaxDimension bound a rendition's sides.
+	MinDimension int `json:"min_dimension"`
+	MaxDimension int `json:"max_dimension"`
+	// MaxOutputs is the most files one job may make: stills × renditions ×
+	// formats.
+	MaxOutputs int `json:"max_outputs"`
+	// MaxFrames is the most stills one video may give.
+	MaxFrames int `json:"max_frames"`
+	// MaxInputMegapixels is the largest image input.
+	MaxInputMegapixels float64 `json:"max_input_megapixels"`
+}
+
 // Capabilities are what the service supports.
 type Capabilities struct {
 	Codecs           []CapabilityCodec `json:"codecs"`
@@ -248,7 +279,14 @@ type Capabilities struct {
 	InputContainers  []string          `json:"input_containers"`
 	InputVideoCodecs []string          `json:"input_video_codecs"`
 	InputAudioCodecs []string          `json:"input_audio_codecs"`
-	// Limits are the spec limits, e.g. max_width and segment_seconds.
+	// ImageFormats are the image output formats; empty when image output is
+	// unavailable.
+	ImageFormats []CapabilityImageFormat `json:"image_formats"`
+	// InputImageFormats are the image inputs read: jpeg, png, webp, avif, gif
+	// (first frame), tiff, bmp, heic.
+	InputImageFormats []string `json:"input_image_formats"`
+	// Limits are the spec limits, e.g. max_width and segment_seconds; see
+	// [Capabilities.ImageLimits] for limits.image.
 	Limits        json.RawMessage `json:"limits"`
 	SystemPresets []Preset        `json:"system_presets"`
 	raw           json.RawMessage
@@ -256,6 +294,18 @@ type Capabilities struct {
 
 // Raw is the whole response, including fields newer than this SDK.
 func (c *Capabilities) Raw() json.RawMessage { return c.raw }
+
+// ImageLimits are the image output limits in Limits, or nil when the
+// service does not list them.
+func (c *Capabilities) ImageLimits() *ImageLimits {
+	var l struct {
+		Image *ImageLimits `json:"image"`
+	}
+	if len(c.Limits) == 0 || json.Unmarshal(c.Limits, &l) != nil {
+		return nil
+	}
+	return l.Image
+}
 
 // UnmarshalJSON decodes and keeps the raw response.
 func (c *Capabilities) UnmarshalJSON(b []byte) error {

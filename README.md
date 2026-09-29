@@ -194,6 +194,60 @@ Audio system presets (`CategoryAudio`): `audio-mp3-podcast` and `audio-mp3-speec
 one MP4. The reach presets (`mp4-h264-compat-1080p`, `mp4-h265-1080p`, `hls-h264-abr`, `hls-h264-cbr`,
 `social-vertical-1080x1920`, `hls-h264-surround` and `mp4-h264-surround-1080p`, now in `CategoryTV`) use AAC audio.
 
+### Image jobs
+
+`ModeImage` makes still images, of an image input (JPEG, PNG, WebP, AVIF, GIF, TIFF, BMP, HEIC) or taken from a
+video. Every rendition is made in every format of `Image.Formats`: `ImageFormatAVIF` (the default), `ImageFormatWebP`,
+`ImageFormatJPEG` and `ImageFormatPNG`, one to four of them. Image renditions are 16 to 8192 on a side, odd sizes
+allowed, and fit as video renditions do.
+
+- `Image.Quality` (1 to 100) applies to the lossy formats; left nil, each has its own default (AVIF 60, WebP 80,
+  JPEG 82). `Image.Lossless = transcdr.Bool(true)` makes WebP lossless; PNG always is.
+- Outputs are upright, sRGB unless `Image.KeepColorProfile` is true, and never carry EXIF, XMP or GPS.
+- From a video, `Image.Frames` picks the stills: `AtSeconds` or `Count` evenly spaced. Left nil, one frame 10% of the
+  way in.
+- Each `JobOutput` carries its `Format`, its `Rendition`, and for a video's stills its `Frame` (from 1) and
+  `AtSeconds`.
+- Images are billed per output image by the pixels it came out at: `JobBilling.BillableImages` counts them and
+  `JobBilling.Tier` is `ImageTierUpTo1MP`, `ImageTierUpTo4MP` or `ImageTierOver4MP`. The prices are `ImageRates` on a
+  `Plan` and on `Billing`.
+
+```go
+// A photo as AVIF with a JPEG fallback, at two sizes.
+job, err := client.Jobs.Create(ctx, &transcdr.JobCreateParams{
+	Input: transcdr.AssetInput("ast_..."),
+	Output: &transcdr.OutputSpecInput{
+		Mode:       transcdr.ModeImage,
+		Renditions: []transcdr.Rendition{{Width: 1920, Height: 1920}, {Width: 640, Height: 640, Label: transcdr.String("small")}},
+		Image: transcdr.Value(transcdr.Image{
+			Formats: []transcdr.ImageFormat{transcdr.ImageFormatAVIF, transcdr.ImageFormatJPEG},
+			Quality: transcdr.Int(70),
+		}),
+	},
+})
+
+// Twelve evenly spaced JPEG stills of a video.
+stills := &transcdr.OutputSpecInput{
+	Mode:       transcdr.ModeImage,
+	Renditions: []transcdr.Rendition{{Width: 480, Height: 270}},
+	Image: transcdr.Value(transcdr.Image{
+		Formats: []transcdr.ImageFormat{transcdr.ImageFormatJPEG},
+		Frames:  &transcdr.ImageFrames{Count: transcdr.Int(12)},
+	}),
+}
+
+job, err = client.Jobs.WaitFor(ctx, job.ID, nil)
+for _, o := range job.Outputs {
+	fmt.Println(o.Rendition, o.Format, o.URL)
+}
+fmt.Println(job.Billing.BillableImages, *job.Billing.Tier)
+```
+
+Image system presets (`CategoryImage`): `web-avif` and `web-webp` (1920, 1280 and 640 wide), `thumbnail-jpeg`,
+`png-lossless`, `video-poster` (AVIF and JPEG of the frame 10% in) and `contact-sheet` (12 evenly spaced JPEG stills of
+a video). `Capabilities` lists the `ImageFormats` and `InputImageFormats`, and `Capabilities.ImageLimits()` the image
+limits.
+
 ## Explicit nulls
 
 Where the API clears a value with `null`, the field is a `transcdr.Nullable[T]`:

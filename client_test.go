@@ -396,6 +396,119 @@ func TestLosslessAndAACAudioSpec(t *testing.T) {
 	}
 }
 
+func TestImageSpec(t *testing.T) {
+	in := OutputSpecInput{
+		Mode:       ModeImage,
+		Renditions: []Rendition{{Width: 1920, Height: 1920}, {Width: 641, Height: 17, Label: String("small")}},
+		Image: Value(Image{
+			Formats:          []ImageFormat{ImageFormatAVIF, ImageFormatJPEG},
+			Quality:          Int(70),
+			Lossless:         Bool(false),
+			KeepColorProfile: Bool(true),
+			Frames:           &ImageFrames{AtSeconds: []float64{1.5, 10}},
+		}),
+	}
+	want := `{"mode":"image","renditions":[{"width":1920,"height":1920},{"width":641,"height":17,"label":"small"}],` +
+		`"image":{"formats":["avif","jpeg"],"quality":70,"lossless":false,"keep_color_profile":true,"frames":{"at_seconds":[1.5,10]}}}`
+	got, err := json.Marshal(in)
+	must(t, err)
+	if string(got) != want {
+		t.Fatalf("marshal = %s, want %s", got, want)
+	}
+	// Unset fields are left out; Null clears a preset's image settings.
+	got, err = json.Marshal(OutputSpecInput{Mode: ModeImage, Image: Value(Image{Frames: &ImageFrames{Count: Int(12)}})})
+	must(t, err)
+	if string(got) != `{"mode":"image","image":{"frames":{"count":12}}}` {
+		t.Fatalf("marshal = %s", got)
+	}
+	got, err = json.Marshal(OutputSpecInput{Mode: ModeSingle, Image: Null[Image]()})
+	must(t, err)
+	if string(got) != `{"mode":"single","image":null}` {
+		t.Fatalf("marshal = %s", got)
+	}
+	got, err = json.Marshal(OutputSpecInput{Mode: ModeSingle})
+	must(t, err)
+	if string(got) != `{"mode":"single"}` {
+		t.Fatalf("image sent when unset: %s", got)
+	}
+
+	var s OutputSpec
+	must(t, json.Unmarshal([]byte(`{"mode":"image","renditions":[{"width":1920,"height":1920}],"image":{"formats":["avif","webp"],"lossless":true,"frames":{"count":2}}}`), &s))
+	if s.Mode != ModeImage || s.Image == nil || len(s.Image.Formats) != 2 || s.Image.Formats[1] != ImageFormatWebP ||
+		!*s.Image.Lossless || *s.Image.Frames.Count != 2 {
+		t.Fatalf("decoded %+v", s.Image)
+	}
+	var v OutputSpec
+	must(t, json.Unmarshal([]byte(`{"mode":"single","codec":"av1"}`), &v))
+	if v.Image != nil {
+		t.Fatalf("image on a video spec: %+v", v.Image)
+	}
+}
+
+func TestImageJobDecodes(t *testing.T) {
+	var j Job
+	decodeStrict(t, "job_image.json", &j)
+	if j.Output.Mode != ModeImage || j.Output.Image == nil || len(j.Outputs) != 4 {
+		t.Fatalf("decoded %+v", j)
+	}
+	o := j.Outputs[3]
+	if o.Format != ImageFormatJPEG || o.Rendition != "small" || o.Frame == nil || *o.Frame != 2 || o.AtSeconds == nil || *o.AtSeconds != 6.6 {
+		t.Fatalf("output %+v", o)
+	}
+	if j.Billing == nil || j.Billing.BillableImages != 4 || j.Billing.Tier == nil || *j.Billing.Tier != ImageTierUpTo1MP {
+		t.Fatalf("billing %+v", j.Billing)
+	}
+	// A video job from an older server has none of the image fields.
+	var old Job
+	must(t, json.Unmarshal([]byte(fixture(t, "job.json")), &old))
+	if old.Billing.BillableImages != 0 || old.Output.Image != nil || old.Outputs[0].Format != "" || old.Outputs[0].Frame != nil {
+		t.Fatalf("image fields on a video job: %+v", old)
+	}
+}
+
+func TestImageBillingAndCapabilitiesDecode(t *testing.T) {
+	var b Billing
+	decodeStrict(t, "billing.json", &b)
+	if b.ImageRates == nil || b.ImageRates.Unit != "output_image" || b.ImageRates.Over4MP != 0.004 || b.UsageImages != 4 ||
+		b.Plan.ImageRates == nil {
+		t.Fatalf("billing %+v", b)
+	}
+	plans := decodeStrictPage[Plan](t, "plans.json")
+	if plans.Data[0].ImageRates == nil || plans.Data[0].ImageRates.Tiers[ImageTierUpTo1MP] == "" {
+		t.Fatalf("plan %+v", plans.Data[0])
+	}
+	var u Usage
+	decodeStrict(t, "usage.json", &u)
+	if u.Totals.BillableImages != 4 || u.ByImageTier[ImageTierUpTo1MP] != 4 || u.Series[len(u.Series)-1].BillableImages != 4 {
+		t.Fatalf("usage %+v", u.Totals)
+	}
+	statements := decodeStrictPage[Statement](t, "statements.json")
+	if s := statements.Data[0]; s.UsageImages != 4 || s.Lines[len(s.Lines)-1].Unit != "output_image" {
+		t.Fatalf("statement %+v", s)
+	}
+	var c Capabilities
+	decodeStrict(t, "capabilities.json", &c)
+	if len(c.ImageFormats) != 4 || c.ImageFormats[0].ID != ImageFormatAVIF || !c.ImageFormats[0].Default ||
+		*c.ImageFormats[0].DefaultQuality != 60 || c.ImageFormats[3].DefaultQuality != nil || len(c.InputImageFormats) == 0 {
+		t.Fatalf("capabilities %+v", c.ImageFormats)
+	}
+	if l := c.ImageLimits(); l == nil || l.MinDimension != 16 || l.MaxDimension != 8192 || l.MaxOutputs != 200 {
+		t.Fatalf("image limits %+v", l)
+	}
+
+	// An older server leaves every image field out.
+	var old Capabilities
+	must(t, json.Unmarshal([]byte(`{"codecs":[],"limits":{"max_width":7680}}`), &old))
+	if old.ImageFormats != nil || old.ImageLimits() != nil {
+		t.Fatalf("capabilities %+v", old)
+	}
+	var oldBilling Billing
+	must(t, json.Unmarshal([]byte(`{"plan":{"id":"free"},"usage_minutes":1}`), &oldBilling))
+	if oldBilling.ImageRates != nil || oldBilling.UsageImages != 0 {
+		t.Fatalf("billing %+v", oldBilling)
+	}
+}
+
 func TestHTTPClientOption(t *testing.T) {
 	f := newFakeAPI(t)
 	var used bool

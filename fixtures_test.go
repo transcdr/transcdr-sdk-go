@@ -98,6 +98,7 @@ func checkNested(t *testing.T, name, key string, newV func() any) {
 func TestFixturesNestedSpecs(t *testing.T) {
 	checkNested(t, "job.json", "output", func() any { return new(strictSpec) })
 	checkNested(t, "jobs.json", "output", func() any { return new(strictSpec) })
+	checkNested(t, "job_image.json", "output", func() any { return new(strictSpec) })
 	checkNested(t, "presets.json", "output", func() any { return new(strictSpec) })
 	checkNested(t, "automations.json", "output", func() any { return new(strictInput) })
 	var caps strictCaps
@@ -161,6 +162,13 @@ func TestFixturesDecode(t *testing.T) {
 			decodeStrict(t, "job.json", &j)
 			if j.ID == "" || j.Output.Codec == "" {
 				t.Fatal("job incomplete")
+			}
+		},
+		"job_image.json": func(t *testing.T) {
+			var j Job
+			decodeStrict(t, "job_image.json", &j)
+			if j.Output.Image == nil || len(j.Outputs) == 0 || j.Outputs[0].Format == "" {
+				t.Fatal("image job incomplete")
 			}
 		},
 		"job_events.json": func(t *testing.T) {
@@ -247,7 +255,7 @@ func TestFixturesDecode(t *testing.T) {
 			}
 		},
 	}
-	if len(cases) != 22 {
+	if len(cases) != 23 {
 		t.Fatalf("expected a case per fixture, have %d", len(cases))
 	}
 	for name, run := range cases {

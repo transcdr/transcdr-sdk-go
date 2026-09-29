@@ -16,6 +16,7 @@ type UsagePoint struct {
 	Date            string  `json:"date"`
 	Jobs            int64   `json:"jobs"`
 	BillableMinutes float64 `json:"billable_minutes"`
+	BillableImages  int64   `json:"billable_images,omitempty"`
 	AmountCents     int64   `json:"amount_cents"`
 	AmountUSD       float64 `json:"amount_usd"`
 }
@@ -24,10 +25,12 @@ type UsagePoint struct {
 type UsageTotals struct {
 	Jobs            int64   `json:"jobs"`
 	BillableMinutes float64 `json:"billable_minutes"`
-	InputMinutes    float64 `json:"input_minutes"`
-	OutputBytes     int64   `json:"output_bytes"`
-	AmountCents     int64   `json:"amount_cents"`
-	AmountUSD       float64 `json:"amount_usd"`
+	// BillableImages is the output images billed.
+	BillableImages int64   `json:"billable_images,omitempty"`
+	InputMinutes   float64 `json:"input_minutes"`
+	OutputBytes    int64   `json:"output_bytes"`
+	AmountCents    int64   `json:"amount_cents"`
+	AmountUSD      float64 `json:"amount_usd"`
 }
 
 // Usage is usage over a window.
@@ -37,8 +40,12 @@ type Usage struct {
 	Granularity string             `json:"granularity"`
 	Totals      UsageTotals        `json:"totals"`
 	ByTier      map[string]float64 `json:"by_tier"`
-	ByCodec     map[string]float64 `json:"by_codec"`
-	Series      []UsagePoint       `json:"series"`
+	// ByImageTier is the output images billed, by tier (the ImageTier*
+	// constants).
+	ByImageTier map[string]int64 `json:"by_image_tier,omitempty"`
+	// ByCodec is minutes by codec; image jobs are not counted here.
+	ByCodec map[string]float64 `json:"by_codec"`
+	Series  []UsagePoint       `json:"series"`
 }
 
 // RateCard is the price per output minute, in dollars.
@@ -49,6 +56,19 @@ type RateCard struct {
 	HD       float64 `json:"hd"`
 	UHD      float64 `json:"uhd"`
 	// Tiers say what each tier covers, e.g. "577p to 1440p".
+	Tiers map[string]string `json:"tiers"`
+}
+
+// ImageRateCard is the price per output image, in dollars, by the pixels it
+// came out at.
+type ImageRateCard struct {
+	// Unit is output_image.
+	Unit     string  `json:"unit"`
+	Currency string  `json:"currency"`
+	UpTo1MP  float64 `json:"up_to_1mp"`
+	UpTo4MP  float64 `json:"up_to_4mp"`
+	Over4MP  float64 `json:"over_4mp"`
+	// Tiers say what each tier covers, e.g. "up to 1 megapixel".
 	Tiers map[string]string `json:"tiers"`
 }
 
@@ -67,13 +87,15 @@ type Plan struct {
 	TrialCreditCents   int64    `json:"trial_credit_cents"`
 	TrialDays          int      `json:"trial_days"`
 	Rates              RateCard `json:"rates"`
-	MaxConcurrentJobs  int      `json:"max_concurrent_jobs"`
-	MaxResolution      int      `json:"max_resolution"`
-	MaxInputBytes      *int64   `json:"max_input_bytes,omitempty"`
-	Priority           bool     `json:"priority"`
-	RetentionDays      int      `json:"retention_days"`
-	RequestsPerMinute  *int     `json:"requests_per_minute,omitempty"`
-	Features           []string `json:"features"`
+	// ImageRates are the image output prices.
+	ImageRates        *ImageRateCard `json:"image_rates,omitempty"`
+	MaxConcurrentJobs int            `json:"max_concurrent_jobs"`
+	MaxResolution     int            `json:"max_resolution"`
+	MaxInputBytes     *int64         `json:"max_input_bytes,omitempty"`
+	Priority          bool           `json:"priority"`
+	RetentionDays     int            `json:"retention_days"`
+	RequestsPerMinute *int           `json:"requests_per_minute,omitempty"`
+	Features          []string       `json:"features"`
 }
 
 // AutoRecharge tops credit up when it runs low.
@@ -136,16 +158,20 @@ type CreditAccount struct {
 
 // Billing is the plan, credit, spending controls and this month's usage.
 type Billing struct {
-	Plan    Plan          `json:"plan"`
-	Rates   RateCard      `json:"rates"`
-	Account CreditAccount `json:"account"`
+	Plan  Plan     `json:"plan"`
+	Rates RateCard `json:"rates"`
+	// ImageRates are the image output prices.
+	ImageRates *ImageRateCard `json:"image_rates,omitempty"`
+	Account    CreditAccount  `json:"account"`
 	// Period is YYYY-MM.
 	Period       string    `json:"period"`
 	PeriodStart  time.Time `json:"period_start"`
 	PeriodEnd    time.Time `json:"period_end"`
 	UsageMinutes float64   `json:"usage_minutes"`
-	UsageUSD     float64   `json:"usage_usd"`
-	Currency     string    `json:"currency"`
+	// UsageImages is the output images billed this period.
+	UsageImages int64   `json:"usage_images,omitempty"`
+	UsageUSD    float64 `json:"usage_usd"`
+	Currency    string  `json:"currency"`
 	// PaymentsEnabled is false when credit is granted by the operator.
 	PaymentsEnabled bool `json:"payments_enabled"`
 }
@@ -216,7 +242,8 @@ type StatementLine struct {
 	CreditUSD   float64    `json:"credit_usd"`
 	Date        *time.Time `json:"date,omitempty"`
 	Quantity    *float64   `json:"quantity,omitempty"`
-	Unit        string     `json:"unit,omitempty"`
+	// Unit is output_minute or output_image.
+	Unit string `json:"unit,omitempty"`
 }
 
 // Statement is a monthly statement: credit added and the usage drawn from it.
@@ -230,8 +257,10 @@ type Statement struct {
 	Status       string          `json:"status"`
 	Lines        []StatementLine `json:"lines"`
 	UsageMinutes float64         `json:"usage_minutes"`
-	UsageCents   int64           `json:"usage_cents"`
-	Currency     string          `json:"currency"`
+	// UsageImages is the output images billed this period.
+	UsageImages int64  `json:"usage_images,omitempty"`
+	UsageCents  int64  `json:"usage_cents"`
+	Currency    string `json:"currency"`
 }
 
 // InputReportParams choose the input report's range.

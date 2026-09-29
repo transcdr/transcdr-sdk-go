@@ -29,6 +29,18 @@
     }
   },
   "currency": "usd",
+  "image_rates": {
+    "currency": "usd",
+    "over_4mp": 0.004,
+    "tiers": {
+      "over_4mp": "over 4 megapixels",
+      "up_to_1mp": "up to 1 megapixel",
+      "up_to_4mp": "over 1, up to 4 megapixels"
+    },
+    "unit": "output_image",
+    "up_to_1mp": 0.001,
+    "up_to_4mp": 0.002
+  },
   "object": "billing",
   "payments_enabled": true,
   "period": "2026-09",
@@ -57,6 +69,18 @@
       "invoicing"
     ],
     "id": "enterprise",
+    "image_rates": {
+      "currency": "usd",
+      "over_4mp": 0.004,
+      "tiers": {
+        "over_4mp": "over 4 megapixels",
+        "up_to_1mp": "up to 1 megapixel",
+        "up_to_4mp": "over 1, up to 4 megapixels"
+      },
+      "unit": "output_image",
+      "up_to_1mp": 0.001,
+      "up_to_4mp": 0.002
+    },
     "max_concurrent_jobs": 50,
     "max_input_bytes": 214748364800,
     "max_resolution": 4320,
@@ -96,6 +120,7 @@
     "uhd": 0.025,
     "unit": "output_minute"
   },
+  "usage_images": 4,
   "usage_minutes": 263.84,
   "usage_usd": 0.0773
 }

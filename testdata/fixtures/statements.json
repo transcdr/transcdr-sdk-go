@@ -16,6 +16,13 @@
           "kind": "usage",
           "quantity": 263.84,
           "unit": "output_minute"
+        },
+        {
+          "credit_usd": -0.004,
+          "description": "Images drawn from credit",
+          "kind": "usage",
+          "quantity": 4,
+          "unit": "output_image"
         }
       ],
       "object": "statement",
@@ -24,6 +31,7 @@
       "period_start": "2026-09-01T00:00:00Z",
       "status": "open",
       "usage_cents": 8,
+      "usage_images": 4,
       "usage_minutes": 263.84
     }
   ],

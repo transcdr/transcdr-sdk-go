@@ -61,6 +61,43 @@
     "saturation=N",
     "denoise=\u2026"
   ],
+  "image_formats": [
+    {
+      "alpha": true,
+      "default": true,
+      "default_quality": 60,
+      "id": "avif",
+      "lossless": false,
+      "lossy": true,
+      "name": "AVIF"
+    },
+    {
+      "alpha": true,
+      "default": false,
+      "default_quality": 80,
+      "id": "webp",
+      "lossless": true,
+      "lossy": true,
+      "name": "WebP"
+    },
+    {
+      "alpha": false,
+      "default": false,
+      "default_quality": 82,
+      "id": "jpeg",
+      "lossless": false,
+      "lossy": true,
+      "name": "JPEG"
+    },
+    {
+      "alpha": true,
+      "default": false,
+      "id": "png",
+      "lossless": true,
+      "lossy": false,
+      "name": "PNG"
+    }
+  ],
   "input_audio_codecs": [
     "aac",
     "opus",
@@ -80,6 +117,16 @@
     "m2ts",
     "avi"
   ],
+  "input_image_formats": [
+    "jpeg",
+    "png",
+    "webp",
+    "avif",
+    "gif",
+    "tiff",
+    "bmp",
+    "heic"
+  ],
   "input_video_codecs": [
     "h264",
     "hevc",
@@ -91,6 +138,13 @@
     "prores"
   ],
   "limits": {
+    "image": {
+      "max_dimension": 8192,
+      "max_frames": 100,
+      "max_input_megapixels": 100,
+      "max_outputs": 200,
+      "min_dimension": 16
+    },
     "max_height": 4320,
     "max_renditions": 8,
     "max_width": 7680,
@@ -108,6 +162,10 @@
     {
       "description": "A CMAF/HLS package with a master playlist.",
       "id": "hls"
+    },
+    {
+      "description": "Still images, of an image or taken from a video: AVIF, WebP, JPEG or PNG at one or more sizes.",
+      "id": "image"
     }
   ],
   "object": "capabilities",
