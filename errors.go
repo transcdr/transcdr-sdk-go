@@ -35,7 +35,8 @@ const (
 type Error struct {
 	// Type is the error class, e.g. [ErrorTypeInvalidRequest].
 	Type string `json:"type"`
-	// Status is the HTTP status.
+	// Status is the HTTP status; 0 for a request the SDK refused before
+	// sending it.
 	Status int `json:"-"`
 	// Code is machine-readable, e.g. "validation_failed" or "insufficient_scope".
 	Code string `json:"code"`
@@ -45,6 +46,11 @@ type Error struct {
 	Param string `json:"param"`
 	// Details holds per-field validation messages.
 	Details map[string][]string `json:"details"`
+	// Errors lists every problem with an output spec that was refused
+	// (validation_failed): missing fields first, in document order. Param and
+	// Message are the first. The SDK returns the same, with Status 0, for a
+	// whole spec it refuses before sending (see [ValidateOutput]).
+	Errors []FieldError `json:"errors"`
 	// RequestID identifies the request to support (X-Request-Id).
 	RequestID string `json:"request_id"`
 	// Header is the response's headers.
@@ -53,7 +59,10 @@ type Error struct {
 
 func (e *Error) Error() string {
 	var b strings.Builder
-	fmt.Fprintf(&b, "transcdr: %d", e.Status)
+	b.WriteString("transcdr:")
+	if e.Status != 0 {
+		fmt.Fprintf(&b, " %d", e.Status)
+	}
 	if e.Code != "" {
 		fmt.Fprintf(&b, " %s", e.Code)
 	} else if e.Type != "" {
@@ -75,6 +84,13 @@ func (e *Error) Error() string {
 			}
 		}
 		fmt.Fprintf(&b, " (%s)", strings.Join(parts, "; "))
+	}
+	if len(e.Errors) > 1 {
+		parts := make([]string, 0, len(e.Errors)-1)
+		for _, fe := range e.Errors[1:] {
+			parts = append(parts, fe.Message)
+		}
+		fmt.Fprintf(&b, " (and: %s)", strings.Join(parts, " "))
 	}
 	if e.RequestID != "" {
 		fmt.Fprintf(&b, " [request %s]", e.RequestID)

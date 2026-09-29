@@ -1,0 +1,1016 @@
+[
+ {
+  "name": "hls cbr sizes",
+  "output": {
+   "kind": "video",
+   "container": {
+    "format": "hls",
+    "segment_seconds": 6
+   },
+   "video": {
+    "codec": "h264",
+    "cbr": {
+     "bitrate": "standard",
+     "buffer_ms": 1000
+    },
+    "bit_depth": "8bit",
+    "color": "sdr",
+    "frame_rate": {
+     "max": "source"
+    },
+    "gop": "segment",
+    "filters": []
+   },
+   "audio": {
+    "handling": "encode",
+    "codec": "aac",
+    "bitrate": "standard",
+    "channels": "source",
+    "he_aac": "auto",
+    "stereo_fallback": false
+   },
+   "renditions": {
+    "sizes": [
+     {
+      "label": "by_size",
+      "width": 1920,
+      "height": 1080,
+      "fit": "contain",
+      "orientation": "auto",
+      "upscale": false,
+      "video": {
+       "cbr": {
+        "bitrate": "5M"
+       }
+      }
+     },
+     {
+      "label": "by_size",
+      "width": 1280,
+      "height": 720,
+      "fit": "contain",
+      "orientation": "auto",
+      "upscale": false,
+      "video": {
+       "cbr": {
+        "bitrate": "3M"
+       }
+      }
+     }
+    ]
+   },
+   "subtitles": {
+    "tracks": "all"
+   },
+   "trim": {
+    "start": 0,
+    "end": "source"
+   },
+   "privacy": {
+    "preset": "strip_all"
+   }
+  },
+  "errors": []
+ },
+ {
+  "name": "single mp4",
+  "output": {
+   "kind": "video",
+   "container": {
+    "format": "mp4"
+   },
+   "video": {
+    "codec": "h264",
+    "quality": "high",
+    "bit_depth": "from_color",
+    "color": "sdr",
+    "frame_rate": {
+     "max": 30
+    },
+    "gop": {
+     "seconds": 2
+    },
+    "filters": []
+   },
+   "audio": {
+    "handling": "encode",
+    "codec": "aac",
+    "bitrate": "standard",
+    "channels": "source",
+    "he_aac": "auto"
+   },
+   "renditions": {
+    "sizes": [
+     {
+      "label": "by_size",
+      "width": 1080,
+      "height": 1920,
+      "fit": "cover",
+      "orientation": "fixed",
+      "upscale": false
+     }
+    ]
+   },
+   "subtitles": {
+    "tracks": "all"
+   },
+   "trim": {
+    "start": 0,
+    "end": "source"
+   },
+   "privacy": {
+    "preset": "strip_all"
+   }
+  },
+  "errors": []
+ },
+ {
+  "name": "audio mp3",
+  "output": {
+   "kind": "audio",
+   "container": {
+    "format": "mp3"
+   },
+   "audio": {
+    "handling": "encode",
+    "codec": "mp3",
+    "bitrate": "64k",
+    "channels": "mono",
+    "he_aac": "auto"
+   },
+   "privacy": {
+    "preset": "strip_all"
+   }
+  },
+  "errors": []
+ },
+ {
+  "name": "image stills",
+  "output": {
+   "kind": "image",
+   "image": {
+    "formats": [
+     "jpeg"
+    ],
+    "quality": {
+     "jpeg": 80
+    },
+    "color_profile": "srgb",
+    "frames": {
+     "count": 12
+    }
+   },
+   "renditions": {
+    "sizes": [
+     {
+      "label": "sheet",
+      "width": 320,
+      "height": 320,
+      "fit": "contain",
+      "orientation": "auto",
+      "upscale": false
+     }
+    ]
+   },
+   "privacy": {
+    "preset": "strip_all"
+   }
+  },
+  "errors": []
+ },
+ {
+  "name": "hls ladder",
+  "output": {
+   "kind": "video",
+   "container": {
+    "format": "hls",
+    "segment_seconds": 6
+   },
+   "video": {
+    "codec": "h264",
+    "cbr": {
+     "bitrate": "standard",
+     "buffer_ms": 1000
+    },
+    "bit_depth": "8bit",
+    "color": "sdr",
+    "frame_rate": {
+     "max": "source"
+    },
+    "gop": "segment",
+    "filters": []
+   },
+   "audio": {
+    "handling": "encode",
+    "codec": "aac",
+    "bitrate": "standard",
+    "channels": "source",
+    "he_aac": "auto",
+    "stereo_fallback": false
+   },
+   "renditions": {
+    "ladder": {
+     "max_short_side": 1080,
+     "fit": "contain",
+     "upscale": false
+    }
+   },
+   "subtitles": {
+    "tracks": "all"
+   },
+   "trim": {
+    "start": 0,
+    "end": "source"
+   },
+   "privacy": {
+    "preset": "strip_all"
+   }
+  },
+  "errors": []
+ },
+ {
+  "name": "audio flac, privacy fields",
+  "output": {
+   "kind": "audio",
+   "container": {
+    "format": "flac"
+   },
+   "audio": {
+    "handling": "encode",
+    "codec": "flac",
+    "channels": "source",
+    "he_aac": "auto",
+    "bit_depth": "source",
+    "flac_compression": "best"
+   },
+   "privacy": {
+    "location": "strip",
+    "capture_time": "keep",
+    "device": "strip",
+    "descriptive": "keep"
+   }
+  },
+  "errors": []
+ },
+ {
+  "name": "image lossless webp",
+  "output": {
+   "kind": "image",
+   "image": {
+    "formats": [
+     "webp",
+     "png"
+    ],
+    "lossless": true,
+    "color_profile": "keep",
+    "frames": "poster"
+   },
+   "renditions": {
+    "source_size": {
+     "label": "by_size",
+     "fit": "contain",
+     "upscale": false
+    }
+   },
+   "privacy": {
+    "preset": "strip_all"
+   }
+  },
+  "errors": []
+ },
+ {
+  "name": "empty",
+  "output": {},
+  "errors": [
+   {
+    "param": "output.kind",
+    "message": "output.kind is required: video, audio or image."
+   }
+  ]
+ },
+ {
+  "name": "kind only video",
+  "output": {
+   "kind": "video"
+  },
+  "errors": [
+   {
+    "param": "output.privacy",
+    "message": "output.privacy is required: give privacy.preset (strip_all, strip_location or keep_all), or all of location, capture_time, device and descriptive."
+   },
+   {
+    "param": "output.container.format",
+    "message": "output.container.format is required when kind is video or audio."
+   },
+   {
+    "param": "output.video.codec",
+    "message": "output.video.codec is required when kind is video."
+   },
+   {
+    "param": "output.video.bit_depth",
+    "message": "output.video.bit_depth is required when kind is video."
+   },
+   {
+    "param": "output.video.color",
+    "message": "output.video.color is required when kind is video."
+   },
+   {
+    "param": "output.video.frame_rate.max",
+    "message": "output.video.frame_rate.max is required when kind is video."
+   },
+   {
+    "param": "output.video.gop",
+    "message": "output.video.gop is required when kind is video."
+   },
+   {
+    "param": "output.video.filters",
+    "message": "output.video.filters is required when kind is video."
+   },
+   {
+    "param": "output.audio.handling",
+    "message": "output.audio.handling is required when kind is video or audio."
+   },
+   {
+    "param": "output.trim.start",
+    "message": "output.trim.start is required when kind is video."
+   },
+   {
+    "param": "output.trim.end",
+    "message": "output.trim.end is required when kind is video."
+   },
+   {
+    "param": "output.video",
+    "message": "output.video needs one of quality, crf or cbr."
+   },
+   {
+    "param": "output.renditions",
+    "message": "output.renditions needs one of sizes, ladder or source_size."
+   },
+   {
+    "param": "output.subtitles",
+    "message": "output.subtitles needs one of tracks or languages."
+   }
+  ]
+ },
+ {
+  "name": "kind only audio",
+  "output": {
+   "kind": "audio"
+  },
+  "errors": [
+   {
+    "param": "output.privacy",
+    "message": "output.privacy is required: give privacy.preset (strip_all, strip_location or keep_all), or all of location, capture_time, device and descriptive."
+   },
+   {
+    "param": "output.container.format",
+    "message": "output.container.format is required when kind is video or audio."
+   },
+   {
+    "param": "output.audio.handling",
+    "message": "output.audio.handling is required when kind is video or audio."
+   }
+  ]
+ },
+ {
+  "name": "kind only image",
+  "output": {
+   "kind": "image"
+  },
+  "errors": [
+   {
+    "param": "output.privacy",
+    "message": "output.privacy is required: give privacy.preset (strip_all, strip_location or keep_all), or all of location, capture_time, device and descriptive."
+   },
+   {
+    "param": "output.image.formats",
+    "message": "output.image.formats is required when kind is image."
+   },
+   {
+    "param": "output.image.color_profile",
+    "message": "output.image.color_profile is required when kind is image."
+   },
+   {
+    "param": "output.image.frames",
+    "message": "output.image.frames is required when kind is image."
+   },
+   {
+    "param": "output.renditions",
+    "message": "output.renditions needs one of sizes, ladder or source_size."
+   }
+  ]
+ },
+ {
+  "name": "bad kind",
+  "output": {
+   "kind": "movie",
+   "privacy": {
+    "preset": "strip_all"
+   }
+  },
+  "errors": [
+   {
+    "param": "output.kind",
+    "message": "output.kind must be video, audio or image."
+   }
+  ]
+ },
+ {
+  "name": "audio bitrate missing etc",
+  "output": {
+   "kind": "video",
+   "container": {
+    "format": "mp4"
+   },
+   "video": {
+    "codec": "h264",
+    "quality": "high",
+    "bit_depth": "from_color",
+    "color": "sdr",
+    "gop": {
+     "seconds": 2
+    },
+    "filters": []
+   },
+   "audio": {
+    "handling": "encode",
+    "codec": "aac",
+    "channels": "source",
+    "he_aac": "auto"
+   },
+   "renditions": {
+    "sizes": [
+     {
+      "label": "by_size",
+      "width": 1080,
+      "height": 1920,
+      "fit": "cover",
+      "orientation": "fixed",
+      "upscale": false
+     }
+    ]
+   },
+   "subtitles": {
+    "tracks": "all"
+   },
+   "trim": {
+    "start": 0,
+    "end": "source"
+   }
+  },
+  "errors": [
+   {
+    "param": "output.privacy",
+    "message": "output.privacy is required: give privacy.preset (strip_all, strip_location or keep_all), or all of location, capture_time, device and descriptive."
+   },
+   {
+    "param": "output.video.frame_rate.max",
+    "message": "output.video.frame_rate.max is required when kind is video."
+   },
+   {
+    "param": "output.audio.bitrate",
+    "message": "output.audio.bitrate is required when kind is video or audio and audio.handling is auto or encode and audio.codec is opus, mp3 or aac."
+   }
+  ]
+ },
+ {
+  "name": "two rates",
+  "output": {
+   "kind": "video",
+   "container": {
+    "format": "mp4"
+   },
+   "video": {
+    "codec": "h264",
+    "quality": "high",
+    "bit_depth": "from_color",
+    "color": "sdr",
+    "frame_rate": {
+     "max": 30
+    },
+    "gop": {
+     "seconds": 2
+    },
+    "filters": [],
+    "crf": 23
+   },
+   "audio": {
+    "handling": "encode",
+    "codec": "aac",
+    "bitrate": "standard",
+    "channels": "source",
+    "he_aac": "auto"
+   },
+   "renditions": {
+    "sizes": [
+     {
+      "label": "by_size",
+      "width": 1080,
+      "height": 1920,
+      "fit": "cover",
+      "orientation": "fixed",
+      "upscale": false
+     }
+    ]
+   },
+   "subtitles": {
+    "tracks": "all"
+   },
+   "trim": {
+    "start": 0,
+    "end": "source"
+   },
+   "privacy": {
+    "preset": "strip_all"
+   }
+  },
+  "errors": [
+   {
+    "param": "output.video.crf",
+    "message": "output.video takes one of quality, crf or cbr, not video.quality and video.crf."
+   }
+  ]
+ },
+ {
+  "name": "image with container and trim",
+  "output": {
+   "kind": "image",
+   "image": {
+    "formats": [
+     "jpeg"
+    ],
+    "quality": {
+     "jpeg": 80
+    },
+    "color_profile": "srgb",
+    "frames": {
+     "count": 12
+    }
+   },
+   "renditions": {
+    "sizes": [
+     {
+      "label": "sheet",
+      "width": 320,
+      "height": 320,
+      "fit": "contain",
+      "orientation": "auto",
+      "upscale": false
+     }
+    ]
+   },
+   "privacy": {
+    "preset": "strip_all"
+   },
+   "container": {
+    "format": "mp4"
+   },
+   "trim": {
+    "start": 0,
+    "end": "source"
+   }
+  },
+  "errors": [
+   {
+    "param": "output.container",
+    "message": "output.container does not apply here: it applies when kind is video or audio. Remove it (or set it to null)."
+   },
+   {
+    "param": "output.trim",
+    "message": "output.trim does not apply here: it applies when kind is video. Remove it (or set it to null)."
+   }
+  ]
+ },
+ {
+  "name": "segment_seconds on mp4",
+  "output": {
+   "kind": "video",
+   "container": {
+    "format": "mp4",
+    "segment_seconds": 4
+   },
+   "video": {
+    "codec": "h264",
+    "quality": "high",
+    "bit_depth": "from_color",
+    "color": "sdr",
+    "frame_rate": {
+     "max": 30
+    },
+    "gop": {
+     "seconds": 2
+    },
+    "filters": []
+   },
+   "audio": {
+    "handling": "encode",
+    "codec": "aac",
+    "bitrate": "standard",
+    "channels": "source",
+    "he_aac": "auto"
+   },
+   "renditions": {
+    "sizes": [
+     {
+      "label": "by_size",
+      "width": 1080,
+      "height": 1920,
+      "fit": "cover",
+      "orientation": "fixed",
+      "upscale": false
+     }
+    ]
+   },
+   "subtitles": {
+    "tracks": "all"
+   },
+   "trim": {
+    "start": 0,
+    "end": "source"
+   },
+   "privacy": {
+    "preset": "strip_all"
+   }
+  },
+  "errors": [
+   {
+    "param": "output.container.segment_seconds",
+    "message": "output.container.segment_seconds does not apply here: it applies when kind is video and container.format is hls. Remove it (or set it to null)."
+   }
+  ]
+ },
+ {
+  "name": "drop audio with codec",
+  "output": {
+   "kind": "video",
+   "container": {
+    "format": "mp4"
+   },
+   "video": {
+    "codec": "h264",
+    "quality": "high",
+    "bit_depth": "from_color",
+    "color": "sdr",
+    "frame_rate": {
+     "max": 30
+    },
+    "gop": {
+     "seconds": 2
+    },
+    "filters": []
+   },
+   "audio": {
+    "handling": "drop",
+    "codec": "aac"
+   },
+   "renditions": {
+    "sizes": [
+     {
+      "label": "by_size",
+      "width": 1080,
+      "height": 1920,
+      "fit": "cover",
+      "orientation": "fixed",
+      "upscale": false
+     }
+    ]
+   },
+   "subtitles": {
+    "tracks": "all"
+   },
+   "trim": {
+    "start": 0,
+    "end": "source"
+   },
+   "privacy": {
+    "preset": "strip_all"
+   }
+  },
+  "errors": [
+   {
+    "param": "output.audio.codec",
+    "message": "output.audio.codec does not apply here: it applies when kind is video or audio and audio.handling is auto or encode. Remove it (or set it to null)."
+   }
+  ]
+ },
+ {
+  "name": "size missing fields",
+  "output": {
+   "kind": "image",
+   "image": {
+    "formats": [
+     "jpeg"
+    ],
+    "quality": {
+     "jpeg": 80
+    },
+    "color_profile": "srgb",
+    "frames": {
+     "count": 12
+    }
+   },
+   "renditions": {
+    "sizes": [
+     {
+      "width": 320,
+      "height": 320
+     },
+     {
+      "label": "x",
+      "width": 1,
+      "height": 2,
+      "fit": "cover",
+      "orientation": "auto",
+      "upscale": true
+     }
+    ]
+   },
+   "privacy": {
+    "preset": "strip_all"
+   }
+  },
+  "errors": [
+   {
+    "param": "output.renditions.sizes.0.label",
+    "message": "output.renditions.sizes.0.label is required when kind is video or image and renditions.sizes is given."
+   },
+   {
+    "param": "output.renditions.sizes.0.fit",
+    "message": "output.renditions.sizes.0.fit is required when kind is video or image and renditions.sizes is given."
+   },
+   {
+    "param": "output.renditions.sizes.0.orientation",
+    "message": "output.renditions.sizes.0.orientation is required when kind is video or image and renditions.sizes is given."
+   },
+   {
+    "param": "output.renditions.sizes.0.upscale",
+    "message": "output.renditions.sizes.0.upscale is required when kind is video or image and renditions.sizes is given."
+   }
+  ]
+ },
+ {
+  "name": "lossy webp without quality",
+  "output": {
+   "kind": "image",
+   "image": {
+    "formats": [
+     "webp",
+     "avif"
+    ],
+    "lossless": false,
+    "color_profile": "srgb",
+    "frames": "poster"
+   },
+   "renditions": {
+    "sizes": [
+     {
+      "label": "sheet",
+      "width": 320,
+      "height": 320,
+      "fit": "contain",
+      "orientation": "auto",
+      "upscale": false
+     }
+    ]
+   },
+   "privacy": {
+    "preset": "strip_all"
+   }
+  },
+  "errors": [
+   {
+    "param": "output.image.quality",
+    "message": "output.image.quality is required when kind is image and image.formats is avif or jpeg, or kind is image and image.formats is webp and image.lossless is false."
+   }
+  ]
+ },
+ {
+  "name": "privacy preset plus field",
+  "output": {
+   "kind": "audio",
+   "container": {
+    "format": "mp3"
+   },
+   "audio": {
+    "handling": "encode",
+    "codec": "mp3",
+    "bitrate": "64k",
+    "channels": "mono",
+    "he_aac": "auto"
+   },
+   "privacy": {
+    "preset": "strip_all",
+    "location": "keep"
+   }
+  },
+  "errors": [
+   {
+    "param": "output.privacy.location",
+    "message": "output.privacy.location does not apply here: it applies when privacy.preset is not given. Remove it (or set it to null)."
+   }
+  ]
+ },
+ {
+  "name": "privacy partial fields",
+  "output": {
+   "kind": "audio",
+   "container": {
+    "format": "mp3"
+   },
+   "audio": {
+    "handling": "encode",
+    "codec": "mp3",
+    "bitrate": "64k",
+    "channels": "mono",
+    "he_aac": "auto"
+   },
+   "privacy": {
+    "location": "keep"
+   }
+  },
+  "errors": [
+   {
+    "param": "output.privacy.capture_time",
+    "message": "output.privacy.capture_time is required when privacy.preset is not given."
+   },
+   {
+    "param": "output.privacy.device",
+    "message": "output.privacy.device is required when privacy.preset is not given."
+   },
+   {
+    "param": "output.privacy.descriptive",
+    "message": "output.privacy.descriptive is required when privacy.preset is not given."
+   }
+  ]
+ },
+ {
+  "name": "no rendition choice",
+  "output": {
+   "kind": "image",
+   "image": {
+    "formats": [
+     "jpeg"
+    ],
+    "quality": {
+     "jpeg": 80
+    },
+    "color_profile": "srgb",
+    "frames": {
+     "count": 12
+    }
+   },
+   "renditions": {},
+   "privacy": {
+    "preset": "strip_all"
+   }
+  },
+  "errors": [
+   {
+    "param": "output.renditions",
+    "message": "output.renditions needs one of sizes, ladder or source_size."
+   }
+  ]
+ },
+ {
+  "name": "size video without cbr",
+  "output": {
+   "kind": "video",
+   "container": {
+    "format": "mp4"
+   },
+   "video": {
+    "codec": "h264",
+    "quality": "high",
+    "bit_depth": "from_color",
+    "color": "sdr",
+    "frame_rate": {
+     "max": 30
+    },
+    "gop": {
+     "seconds": 2
+    },
+    "filters": []
+   },
+   "audio": {
+    "handling": "encode",
+    "codec": "aac",
+    "bitrate": "standard",
+    "channels": "source",
+    "he_aac": "auto"
+   },
+   "renditions": {
+    "sizes": [
+     {
+      "label": "by_size",
+      "width": 1080,
+      "height": 1920,
+      "fit": "cover",
+      "orientation": "fixed",
+      "upscale": false,
+      "video": {
+       "cbr": {
+        "bitrate": "5M"
+       }
+      }
+     }
+    ]
+   },
+   "subtitles": {
+    "tracks": "all"
+   },
+   "trim": {
+    "start": 0,
+    "end": "source"
+   },
+   "privacy": {
+    "preset": "strip_all"
+   }
+  },
+  "errors": [
+   {
+    "param": "output.renditions.sizes.0.video",
+    "message": "output.renditions.sizes.0.video does not apply here: it applies when kind is video and video.cbr is given and renditions.sizes is given. Remove it (or set it to null)."
+   }
+  ]
+ },
+ {
+  "name": "hls missing stereo_fallback and segment",
+  "output": {
+   "kind": "video",
+   "container": {
+    "format": "hls"
+   },
+   "video": {
+    "codec": "h264",
+    "cbr": {
+     "bitrate": "standard",
+     "buffer_ms": 1000
+    },
+    "bit_depth": "8bit",
+    "color": "sdr",
+    "frame_rate": {
+     "max": "source"
+    },
+    "gop": "segment",
+    "filters": []
+   },
+   "audio": {
+    "handling": "encode",
+    "codec": "aac",
+    "bitrate": "standard",
+    "channels": "source",
+    "he_aac": "auto"
+   },
+   "renditions": {
+    "sizes": [
+     {
+      "label": "by_size",
+      "width": 1920,
+      "height": 1080,
+      "fit": "contain",
+      "orientation": "auto",
+      "upscale": false,
+      "video": {
+       "cbr": {
+        "bitrate": "5M"
+       }
+      }
+     },
+     {
+      "label": "by_size",
+      "width": 1280,
+      "height": 720,
+      "fit": "contain",
+      "orientation": "auto",
+      "upscale": false,
+      "video": {
+       "cbr": {
+        "bitrate": "3M"
+       }
+      }
+     }
+    ]
+   },
+   "subtitles": {
+    "tracks": "all"
+   },
+   "trim": {
+    "start": 0,
+    "end": "source"
+   },
+   "privacy": {
+    "preset": "strip_all"
+   }
+  },
+  "errors": [
+   {
+    "param": "output.container.segment_seconds",
+    "message": "output.container.segment_seconds is required when kind is video and container.format is hls."
+   },
+   {
+    "param": "output.audio.stereo_fallback",
+    "message": "output.audio.stereo_fallback is required when kind is video and container.format is hls and audio.handling is auto or encode."
+   }
+  ]
+ }
+]

@@ -209,11 +209,13 @@ type Automation struct {
 	Source              AutomationSource `json:"source"`
 	PollIntervalSeconds int              `json:"poll_interval_seconds"`
 	SettleSeconds       int              `json:"settle_seconds"`
-	// Preset is a system preset slug or pre_… id.
+	// Preset is a preset slug, pre_… id, or "<slug>@N" for version N.
 	Preset *string `json:"preset"`
-	// Output holds spec overrides merged over the preset.
-	Output      OutputSpecInput `json:"output"`
-	Destination *JobDestination `json:"destination"`
+	// Output holds fields merged over the preset when a job is made, in v2.
+	Output OutputOverrides `json:"output"`
+	// ResolvedOutput is the complete spec they resolve to now.
+	ResolvedOutput *OutputSpec     `json:"resolved_output"`
+	Destination    *JobDestination `json:"destination"`
 	// AfterSuccess is keep or delete (the source file).
 	AfterSuccess string   `json:"after_success"`
 	Priority     string   `json:"priority"`
@@ -258,11 +260,11 @@ type AutomationParams struct {
 	PollIntervalSeconds *int `json:"poll_interval_seconds,omitempty"`
 	// SettleSeconds is 0–86400.
 	SettleSeconds *int `json:"settle_seconds,omitempty"`
-	// Preset is a system preset slug or pre_… id.
+	// Preset is a preset slug, pre_… id, or "<slug>@N" to pin version N;
+	// otherwise each job uses the preset's latest version.
 	Preset Nullable[string] `json:"preset,omitzero"`
-	// Output holds spec overrides merged over the preset, e.g.
-	// Value(RawOutputSpec(b)).
-	Output Nullable[*OutputSpecInput] `json:"output,omitzero"`
+	// Output holds fields merged over the preset when a job is made, in v2.
+	Output Nullable[OutputOverrides] `json:"output,omitzero"`
 	// Destination delivers outputs to a storage connection.
 	Destination Nullable[JobDestination] `json:"destination,omitzero"`
 	// AfterSuccess is keep or delete.

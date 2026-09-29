@@ -49,23 +49,49 @@
           "object": "job",
           "output": {
             "audio": {
-              "mode": "auto"
+              "bitrate": "standard",
+              "channels": "source",
+              "codec": "opus",
+              "handling": "auto",
+              "he_aac": "auto"
             },
-            "bit_depth": "auto",
-            "codec": "av1",
-            "color": "sdr",
-            "filters": null,
-            "gop": null,
-            "ladder": null,
-            "max_fps": null,
-            "mode": "single",
-            "quality": {
-              "target": "visually_lossless"
+            "container": {
+              "format": "mp4"
             },
-            "renditions": [],
-            "segment_seconds": null,
-            "subtitles": null,
-            "trim": null
+            "kind": "video",
+            "privacy": {
+              "capture_time": "strip",
+              "descriptive": "strip",
+              "device": "strip",
+              "location": "strip"
+            },
+            "renditions": {
+              "source_size": {
+                "fit": "contain",
+                "label": "by_size",
+                "upscale": false
+              }
+            },
+            "subtitles": {
+              "tracks": "all"
+            },
+            "trim": {
+              "end": "source",
+              "start": 0
+            },
+            "video": {
+              "bit_depth": "from_color",
+              "codec": "av1",
+              "color": "sdr",
+              "filters": [],
+              "frame_rate": {
+                "max": "source"
+              },
+              "gop": {
+                "seconds": 2
+              },
+              "quality": "visually_lossless"
+            }
           },
           "outputs": [
             {
@@ -80,6 +106,11 @@
             }
           ],
           "playlist_url": null,
+          "preset": {
+            "id": "archive-av1-high",
+            "overrides": null,
+            "version": 1
+          },
           "preset_id": "archive-av1-high",
           "priority": "normal",
           "progress": {
@@ -140,26 +171,57 @@
           "object": "job",
           "output": {
             "audio": {
-              "mode": "auto"
+              "bitrate": "standard",
+              "channels": "source",
+              "codec": "opus",
+              "handling": "auto",
+              "he_aac": "auto"
             },
-            "bit_depth": "auto",
-            "codec": "av1",
-            "color": "sdr",
-            "filters": null,
-            "gop": null,
-            "ladder": null,
-            "max_fps": null,
-            "mode": "single",
-            "quality": {
-              "target": "visually_lossless"
+            "container": {
+              "format": "mp4"
             },
-            "renditions": [],
-            "segment_seconds": null,
-            "subtitles": null,
-            "trim": null
+            "kind": "video",
+            "privacy": {
+              "capture_time": "strip",
+              "descriptive": "strip",
+              "device": "strip",
+              "location": "strip"
+            },
+            "renditions": {
+              "source_size": {
+                "fit": "contain",
+                "label": "by_size",
+                "upscale": false
+              }
+            },
+            "subtitles": {
+              "tracks": "all"
+            },
+            "trim": {
+              "end": "source",
+              "start": 0
+            },
+            "video": {
+              "bit_depth": "from_color",
+              "codec": "av1",
+              "color": "sdr",
+              "filters": [],
+              "frame_rate": {
+                "max": "source"
+              },
+              "gop": {
+                "seconds": 2
+              },
+              "quality": "visually_lossless"
+            }
           },
           "outputs": [],
           "playlist_url": null,
+          "preset": {
+            "id": "archive-av1-high",
+            "overrides": null,
+            "version": 1
+          },
           "preset_id": "archive-av1-high",
           "priority": "normal",
           "progress": {
@@ -207,26 +269,57 @@
           "object": "job",
           "output": {
             "audio": {
-              "mode": "auto"
+              "bitrate": "standard",
+              "channels": "source",
+              "codec": "opus",
+              "handling": "auto",
+              "he_aac": "auto"
             },
-            "bit_depth": "auto",
-            "codec": "av1",
-            "color": "sdr",
-            "filters": null,
-            "gop": null,
-            "ladder": null,
-            "max_fps": null,
-            "mode": "single",
-            "quality": {
-              "target": "visually_lossless"
+            "container": {
+              "format": "mp4"
             },
-            "renditions": [],
-            "segment_seconds": null,
-            "subtitles": null,
-            "trim": null
+            "kind": "video",
+            "privacy": {
+              "capture_time": "strip",
+              "descriptive": "strip",
+              "device": "strip",
+              "location": "strip"
+            },
+            "renditions": {
+              "source_size": {
+                "fit": "contain",
+                "label": "by_size",
+                "upscale": false
+              }
+            },
+            "subtitles": {
+              "tracks": "all"
+            },
+            "trim": {
+              "end": "source",
+              "start": 0
+            },
+            "video": {
+              "bit_depth": "from_color",
+              "codec": "av1",
+              "color": "sdr",
+              "filters": [],
+              "frame_rate": {
+                "max": "source"
+              },
+              "gop": {
+                "seconds": 2
+              },
+              "quality": "visually_lossless"
+            }
           },
           "outputs": [],
           "playlist_url": null,
+          "preset": {
+            "id": "archive-av1-high",
+            "overrides": null,
+            "version": 1
+          },
           "preset_id": "archive-av1-high",
           "priority": "normal",
           "progress": {
@@ -274,26 +367,57 @@
           "object": "job",
           "output": {
             "audio": {
-              "mode": "auto"
+              "bitrate": "standard",
+              "channels": "source",
+              "codec": "opus",
+              "handling": "auto",
+              "he_aac": "auto"
             },
-            "bit_depth": "auto",
-            "codec": "av1",
-            "color": "sdr",
-            "filters": null,
-            "gop": null,
-            "ladder": null,
-            "max_fps": null,
-            "mode": "single",
-            "quality": {
-              "target": "visually_lossless"
+            "container": {
+              "format": "mp4"
             },
-            "renditions": [],
-            "segment_seconds": null,
-            "subtitles": null,
-            "trim": null
+            "kind": "video",
+            "privacy": {
+              "capture_time": "strip",
+              "descriptive": "strip",
+              "device": "strip",
+              "location": "strip"
+            },
+            "renditions": {
+              "source_size": {
+                "fit": "contain",
+                "label": "by_size",
+                "upscale": false
+              }
+            },
+            "subtitles": {
+              "tracks": "all"
+            },
+            "trim": {
+              "end": "source",
+              "start": 0
+            },
+            "video": {
+              "bit_depth": "from_color",
+              "codec": "av1",
+              "color": "sdr",
+              "filters": [],
+              "frame_rate": {
+                "max": "source"
+              },
+              "gop": {
+                "seconds": 2
+              },
+              "quality": "visually_lossless"
+            }
           },
           "outputs": [],
           "playlist_url": null,
+          "preset": {
+            "id": "archive-av1-high",
+            "overrides": null,
+            "version": 1
+          },
           "preset_id": "archive-av1-high",
           "priority": "normal",
           "progress": {
@@ -389,30 +513,56 @@
           "object": "job",
           "output": {
             "audio": {
-              "mode": "auto"
+              "bitrate": "standard",
+              "channels": "source",
+              "codec": "opus",
+              "handling": "auto",
+              "he_aac": "auto"
             },
-            "bit_depth": "10bit",
-            "codec": "av1",
-            "color": "hdr10",
-            "filters": "hflip",
-            "gop": null,
-            "ladder": {
-              "max_short_side": 720
+            "container": {
+              "format": "mp4"
             },
-            "max_fps": 5.0,
-            "mode": "single",
-            "quality": {
-              "target": "standard"
+            "kind": "video",
+            "privacy": {
+              "capture_time": "strip",
+              "descriptive": "strip",
+              "device": "strip",
+              "location": "strip"
             },
-            "renditions": [
-              {
-                "height": 2160,
-                "width": 3840
-              }
-            ],
-            "segment_seconds": null,
-            "subtitles": null,
-            "trim": null
+            "renditions": {
+              "sizes": [
+                {
+                  "fit": "contain",
+                  "height": 2160,
+                  "label": "by_size",
+                  "orientation": "auto",
+                  "upscale": false,
+                  "width": 3840
+                }
+              ]
+            },
+            "subtitles": {
+              "tracks": "all"
+            },
+            "trim": {
+              "end": "source",
+              "start": 0
+            },
+            "video": {
+              "bit_depth": "10bit",
+              "codec": "av1",
+              "color": "hdr10",
+              "filters": [
+                "hflip"
+              ],
+              "frame_rate": {
+                "max": 5.0
+              },
+              "gop": {
+                "seconds": 2
+              },
+              "quality": "standard"
+            }
           },
           "outputs": [
             {
@@ -427,6 +577,11 @@
             }
           ],
           "playlist_url": null,
+          "preset": {
+            "id": "hdr10-av1-2160p",
+            "overrides": null,
+            "version": 1
+          },
           "preset_id": "hdr10-av1-2160p",
           "priority": "normal",
           "progress": {
@@ -489,33 +644,64 @@
           "object": "job",
           "output": {
             "audio": {
-              "mode": "auto"
+              "bitrate": "standard",
+              "channels": "source",
+              "codec": "opus",
+              "handling": "auto",
+              "he_aac": "auto"
             },
-            "bit_depth": "10bit",
-            "codec": "av1",
-            "color": "hdr10",
-            "filters": "hflip",
-            "gop": null,
-            "ladder": {
-              "max_short_side": 720
+            "container": {
+              "format": "mp4"
             },
-            "max_fps": 5.0,
-            "mode": "single",
-            "quality": {
-              "target": "standard"
+            "kind": "video",
+            "privacy": {
+              "capture_time": "strip",
+              "descriptive": "strip",
+              "device": "strip",
+              "location": "strip"
             },
-            "renditions": [
-              {
-                "height": 2160,
-                "width": 3840
-              }
-            ],
-            "segment_seconds": null,
-            "subtitles": null,
-            "trim": null
+            "renditions": {
+              "sizes": [
+                {
+                  "fit": "contain",
+                  "height": 2160,
+                  "label": "by_size",
+                  "orientation": "auto",
+                  "upscale": false,
+                  "width": 3840
+                }
+              ]
+            },
+            "subtitles": {
+              "tracks": "all"
+            },
+            "trim": {
+              "end": "source",
+              "start": 0
+            },
+            "video": {
+              "bit_depth": "10bit",
+              "codec": "av1",
+              "color": "hdr10",
+              "filters": [
+                "hflip"
+              ],
+              "frame_rate": {
+                "max": 5.0
+              },
+              "gop": {
+                "seconds": 2
+              },
+              "quality": "standard"
+            }
           },
           "outputs": [],
           "playlist_url": null,
+          "preset": {
+            "id": "hdr10-av1-2160p",
+            "overrides": null,
+            "version": 1
+          },
           "preset_id": "hdr10-av1-2160p",
           "priority": "normal",
           "progress": {
@@ -565,33 +751,64 @@
           "object": "job",
           "output": {
             "audio": {
-              "mode": "auto"
+              "bitrate": "standard",
+              "channels": "source",
+              "codec": "opus",
+              "handling": "auto",
+              "he_aac": "auto"
             },
-            "bit_depth": "10bit",
-            "codec": "av1",
-            "color": "hdr10",
-            "filters": "hflip",
-            "gop": null,
-            "ladder": {
-              "max_short_side": 720
+            "container": {
+              "format": "mp4"
             },
-            "max_fps": 5.0,
-            "mode": "single",
-            "quality": {
-              "target": "standard"
+            "kind": "video",
+            "privacy": {
+              "capture_time": "strip",
+              "descriptive": "strip",
+              "device": "strip",
+              "location": "strip"
             },
-            "renditions": [
-              {
-                "height": 2160,
-                "width": 3840
-              }
-            ],
-            "segment_seconds": null,
-            "subtitles": null,
-            "trim": null
+            "renditions": {
+              "sizes": [
+                {
+                  "fit": "contain",
+                  "height": 2160,
+                  "label": "by_size",
+                  "orientation": "auto",
+                  "upscale": false,
+                  "width": 3840
+                }
+              ]
+            },
+            "subtitles": {
+              "tracks": "all"
+            },
+            "trim": {
+              "end": "source",
+              "start": 0
+            },
+            "video": {
+              "bit_depth": "10bit",
+              "codec": "av1",
+              "color": "hdr10",
+              "filters": [
+                "hflip"
+              ],
+              "frame_rate": {
+                "max": 5.0
+              },
+              "gop": {
+                "seconds": 2
+              },
+              "quality": "standard"
+            }
           },
           "outputs": [],
           "playlist_url": null,
+          "preset": {
+            "id": "hdr10-av1-2160p",
+            "overrides": null,
+            "version": 1
+          },
           "preset_id": "hdr10-av1-2160p",
           "priority": "normal",
           "progress": {
@@ -641,33 +858,64 @@
           "object": "job",
           "output": {
             "audio": {
-              "mode": "auto"
+              "bitrate": "standard",
+              "channels": "source",
+              "codec": "opus",
+              "handling": "auto",
+              "he_aac": "auto"
             },
-            "bit_depth": "10bit",
-            "codec": "av1",
-            "color": "hdr10",
-            "filters": "hflip",
-            "gop": null,
-            "ladder": {
-              "max_short_side": 720
+            "container": {
+              "format": "mp4"
             },
-            "max_fps": 5.0,
-            "mode": "single",
-            "quality": {
-              "target": "standard"
+            "kind": "video",
+            "privacy": {
+              "capture_time": "strip",
+              "descriptive": "strip",
+              "device": "strip",
+              "location": "strip"
             },
-            "renditions": [
-              {
-                "height": 2160,
-                "width": 3840
-              }
-            ],
-            "segment_seconds": null,
-            "subtitles": null,
-            "trim": null
+            "renditions": {
+              "sizes": [
+                {
+                  "fit": "contain",
+                  "height": 2160,
+                  "label": "by_size",
+                  "orientation": "auto",
+                  "upscale": false,
+                  "width": 3840
+                }
+              ]
+            },
+            "subtitles": {
+              "tracks": "all"
+            },
+            "trim": {
+              "end": "source",
+              "start": 0
+            },
+            "video": {
+              "bit_depth": "10bit",
+              "codec": "av1",
+              "color": "hdr10",
+              "filters": [
+                "hflip"
+              ],
+              "frame_rate": {
+                "max": 5.0
+              },
+              "gop": {
+                "seconds": 2
+              },
+              "quality": "standard"
+            }
           },
           "outputs": [],
           "playlist_url": null,
+          "preset": {
+            "id": "hdr10-av1-2160p",
+            "overrides": null,
+            "version": 1
+          },
           "preset_id": "hdr10-av1-2160p",
           "priority": "normal",
           "progress": {

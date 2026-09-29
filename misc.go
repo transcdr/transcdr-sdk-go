@@ -22,27 +22,49 @@ func (s *PresetsService) All(ctx context.Context, params PresetListQuery, opts .
 	return iterate[Preset](ctx, s.client, "/v1/presets", presetQuery(params), opts)
 }
 
-// Create creates a preset; its output is merged over the defaults.
+// Create creates a preset, version 1. Its output is the whole spec: an
+// incomplete one returns an [*Error] listing every problem, and nothing is
+// sent.
 func (s *PresetsService) Create(ctx context.Context, params *PresetCreateParams, opts ...RequestOption) (*Preset, error) {
+	if err := checkOutput(params.Output); err != nil {
+		return nil, err
+	}
 	return create[Preset](ctx, s.client, "/v1/presets", params, opts)
 }
 
-// Get retrieves a preset by pre_… id or by slug (system or custom).
+// Get retrieves a preset, its latest version, by pre_… id or by slug
+// (system or custom).
 func (s *PresetsService) Get(ctx context.Context, idOrSlug string, opts ...RequestOption) (*Preset, error) {
 	return doJSON[Preset](ctx, s.client, "GET", "/v1/presets/"+seg(idOrSlug), nil, opts)
 }
 
-// Update changes the fields set in params (PATCH); output is merged into
-// the stored spec, so a field left out of it keeps its value.
+// GetVersion retrieves a preset as it was at version n: Version and Output
+// are that version's.
+func (s *PresetsService) GetVersion(ctx context.Context, idOrSlug string, n int, opts ...RequestOption) (*Preset, error) {
+	return doJSON[Preset](ctx, s.client, "GET", "/v1/presets/"+seg(idOrSlug)+"@"+strconv.Itoa(n), nil, opts)
+}
+
+// Versions lists every version of a preset, oldest first: each a complete
+// spec that never changes.
+func (s *PresetsService) Versions(ctx context.Context, idOrSlug string, opts ...RequestOption) ([]PresetVersion, error) {
+	return getAll[PresetVersion](ctx, s.client, "/v1/presets/"+seg(idOrSlug)+"/versions", nil, opts)
+}
+
+// Update changes the fields set in params (PATCH); output is merged over the
+// latest version, so a field left out of it keeps its value, and a changed
+// spec is a new version.
 func (s *PresetsService) Update(ctx context.Context, id string, params *PresetUpdateParams, opts ...RequestOption) (*Preset, error) {
 	return doJSONBody[Preset](ctx, s.client, "PATCH", "/v1/presets/"+seg(id), params, opts)
 }
 
-// Replace sets the whole preset (PUT): output is merged over the defaults,
-// not the stored spec, so a field left out of it goes back to its default.
-// Description and metadata left out are emptied; the slug is kept unless
-// set. PUT is safe to retry.
+// Replace sets the whole preset (PUT): output is the whole spec, checked
+// before sending, and a changed spec is a new version. Description and
+// metadata left out are emptied; the slug is kept unless set. PUT is safe
+// to retry.
 func (s *PresetsService) Replace(ctx context.Context, id string, params *PresetReplaceParams, opts ...RequestOption) (*Preset, error) {
+	if err := checkOutput(params.Output); err != nil {
+		return nil, err
+	}
 	return doJSONBody[Preset](ctx, s.client, "PUT", "/v1/presets/"+seg(id), params, opts)
 }
 

@@ -62,23 +62,56 @@ func ExamplePresetsService_Create() {
 	ctx := context.Background()
 	client := transcdr.NewClient()
 
-	// Constant bit rate HLS: each rendition at its own rate, else quality.bitrate.
-	preset, err := client.Presets.Create(ctx, &transcdr.PresetCreateParams{
-		Name: "Broadcast CBR",
-		Output: &transcdr.OutputSpecInput{
-			Mode:    "hls",
-			Codec:   "h264",
-			Quality: &transcdr.Quality{Target: transcdr.String(transcdr.QualityCBR), Bitrate: transcdr.String("3M")},
-			Renditions: []transcdr.Rendition{
-				{Width: 1920, Height: 1080, Bitrate: transcdr.String("6M")},
-				{Width: 1280, Height: 720},
-			},
-		},
-	})
+	// Constant bit rate HLS: each size at its own rate, else video.cbr's.
+	// Every field is stated; an incomplete spec is refused before it is sent.
+	spec := transcdr.NewVideoOutput(
+		transcdr.ContainerHLS(6),
+		transcdr.NewVideo(transcdr.CodecH264, transcdr.ConstantBitRate("3M", 1000), transcdr.BitDepth8,
+			transcdr.ColorSDR, transcdr.FrameRateSource(), transcdr.GopSegment(), nil),
+		transcdr.Audio{Handling: transcdr.HandlingEncode, Codec: transcdr.AudioCodecAAC, Bitrate: transcdr.BitrateStandard,
+			Channels: transcdr.ChannelsSource, HeAac: transcdr.HeAacAuto, StereoFallback: transcdr.Bool(false)},
+		transcdr.RenditionSizes(
+			transcdr.NewSize(transcdr.LabelBySize, 1920, 1080, transcdr.FitContain, transcdr.OrientationAuto, false).WithBitrate("6M"),
+			transcdr.NewSize(transcdr.LabelBySize, 1280, 720, transcdr.FitContain, transcdr.OrientationAuto, false),
+		),
+		transcdr.SubtitlesAll(),
+		transcdr.NewTrim(0, transcdr.TrimEndSource()),
+		transcdr.PrivacyPreset(transcdr.PrivacyStripAll),
+	)
+	preset, err := client.Presets.Create(ctx, &transcdr.PresetCreateParams{Name: "Broadcast CBR", Output: &spec})
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(preset.ID)
+	fmt.Println(preset.ID, preset.Version)
+}
+
+func ExampleJobsService_Create_overrides() {
+	ctx := context.Background()
+	client := transcdr.NewClient()
+
+	// A preset version, with one field changed.
+	_, err := client.Jobs.Create(ctx, &transcdr.JobCreateParams{
+		Input:     transcdr.URLInput("https://example.com/talk.mov"),
+		Preset:    transcdr.String("social-vertical-1080x1920@1"),
+		Overrides: transcdr.OutputOverrides{"video": map[string]any{"frame_rate": map[string]any{"max": 24}}},
+	})
+	if e, ok := transcdr.AsError(err); ok && e.Code == "validation_failed" {
+		for _, f := range e.Errors {
+			fmt.Println(f.Param, f.Message)
+		}
+	}
+}
+
+func ExampleValidateOutput() {
+	spec := transcdr.NewAudioOutput(
+		transcdr.ContainerAudio(transcdr.FormatMP3),
+		transcdr.NewAudio(transcdr.HandlingEncode, transcdr.AudioCodecMP3, transcdr.ChannelsMono, transcdr.HeAacAuto),
+		transcdr.PrivacyPreset(transcdr.PrivacyStripAll),
+	)
+	for _, e := range transcdr.ValidateOutput(spec) {
+		fmt.Println(e.Param)
+	}
+	// Output: output.audio.bitrate
 }
 
 func ExampleBillingService_UpdateSettings() {

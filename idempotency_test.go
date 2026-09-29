@@ -15,7 +15,7 @@ func TestEveryCreateIsIdempotentAndRetried(t *testing.T) {
 		create func(c *Client) error
 	}{
 		{"/v1/jobs", func(c *Client) error {
-			_, err := c.Jobs.Create(ctx, &JobCreateParams{Input: URLInput("https://example.com/in.mp4")})
+			_, err := c.Jobs.Create(ctx, &JobCreateParams{Input: URLInput("https://example.com/in.mp4"), Preset: String("hls-av1-abr")})
 			return err
 		}},
 		{"/v1/probe", func(c *Client) error {
@@ -31,7 +31,7 @@ func TestEveryCreateIsIdempotentAndRetried(t *testing.T) {
 			return err
 		}},
 		{"/v1/presets", func(c *Client) error {
-			_, err := c.Presets.Create(ctx, &PresetCreateParams{Name: "p", Output: &OutputSpecInput{Codec: "av1"}})
+			_, err := c.Presets.Create(ctx, &PresetCreateParams{Name: "p", Output: testSpec()})
 			return err
 		}},
 		{"/v1/webhooks", func(c *Client) error {
@@ -102,7 +102,7 @@ func TestCreateIdempotencyKeysAreFresh(t *testing.T) {
 func TestIdempotencyKeyReused(t *testing.T) {
 	f := newFakeAPI(t)
 	f.reply(409, `{"error":{"type":"invalid_request_error","code":"idempotency_key_reused","message":"This Idempotency-Key was used for a different request."}}`)
-	_, err := f.client().Presets.Create(context.Background(), &PresetCreateParams{Name: "p", Output: &OutputSpecInput{}}, WithIdempotencyKey("k"))
+	_, err := f.client().Presets.Create(context.Background(), &PresetCreateParams{Name: "p", Output: testSpec()}, WithIdempotencyKey("k"))
 	e, ok := AsError(err)
 	if !ok || !IsConflict(err) || e.Code != "idempotency_key_reused" || len(f.all()) != 1 {
 		t.Fatalf("err = %v after %d requests", err, len(f.all()))

@@ -13,7 +13,14 @@ type JobsService struct{ client *Client }
 
 // Create submits a job. An Idempotency-Key is generated automatically, so a
 // retried request never creates a duplicate job.
+//
+// A whole spec (Output) is checked with [ValidateOutput] first: an
+// incomplete one returns an [*Error] listing every problem in Errors, and
+// nothing is sent.
 func (s *JobsService) Create(ctx context.Context, params *JobCreateParams, opts ...RequestOption) (*Job, error) {
+	if err := params.check(); err != nil {
+		return nil, err
+	}
 	var job Job
 	if err := s.client.do(ctx, "POST", "/v1/jobs", nil, params, &job, withAutoIdempotency(opts)); err != nil {
 		return nil, err
